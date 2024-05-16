@@ -7,6 +7,8 @@ const sql = require('mssql');
 //Objects for calling functions
 const app = express();
 
+const router = express.Router();
+
 const multer = require('multer');
 const upload = multer();
 
@@ -25,6 +27,11 @@ const config = {
     }
 };
 
+//Import Routers
+//const router_user = require('./routes/routes_user');
+const { loginUser } = require('./controller/loginuser_controller');
+
+
 //Analyze data
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));//Decode data
@@ -36,11 +43,16 @@ app.set('views', './views');
 
 //Initialize
 app.get("/", function (req, res) {
-    res.render("vacio");
+    res.render("login");
+});
+
+//Path to render 'login.ejs'
+app.get("/login", function (req, res){
+    res.render('login');
 });
 
 //Path to render 'vacio.ejs'
-app.get("/vacio.ejs", function (req, res){
+app.get("/vacio", function (req, res){
     res.render('vacio');
 });
 
@@ -49,6 +61,14 @@ app.use(express.static("public"));
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
+
+//app.use('/user', router_user);
+
+//:::Methods:::POSTS::::::::::::::::::::::::::::::::::::
+app.post('/login_user', upload.none(), loginUser, function (req, res) {
+    res.render('vacio');
+});
+
 
 //Port configuration :::::::::::::::::::::::::::::::::::::::::::::::::::::
 app.listen(3000, function () {

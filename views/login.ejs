@@ -40,12 +40,12 @@
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Bienvenido</h1>
                                     </div>
-                                    <form class="user">
+                                    <form class="user" action="/login_user" method="post">
                                         <div class="form-group">
-                                            <input type="email" class="form-control form-control-user" placeholder="Correo" asp-for="Correo">
+                                            <input type="email" class="form-control form-control-user" placeholder="Correo" asp-for="Correo" id="mail">
                                         </div>
                                         <div class="form-group">
-                                            <input type="password" class="form-control form-control-user" placeholder="Contraseña" asp-for="Clave">
+                                            <input type="password" class="form-control form-control-user" placeholder="Contraseña" asp-for="Clave" id="password">
                                         </div>
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
@@ -64,10 +64,10 @@
                                         }
                                          -->
                                         
-										<a class="btn btn-primary btn-user btn-block" href="Index.html">Ingresar</a>
-                                        <!-- <button type="submit" class="btn btn-primary btn-user btn-block">
+										<!--a class="btn btn-primary btn-user btn-block" id="btn_get_into">Ingresar</a>-->
+                                        <button type="submit" class="btn btn-primary btn-user btn-block" id="btn_get_into">
                                             Ingresar 
-                                        </button> -->
+                                        </button>
                                     </form>
                                     <hr>
                                     <div class="text-center">
@@ -84,7 +84,7 @@
         </div>
 
     </div>
-
+<script src="/ajax/ajax_login.js"></script>
 
 </body>
 
