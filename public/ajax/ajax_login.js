@@ -20,7 +20,7 @@ function sendDataUser(mail, password) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('btn_get_into').addEventListener('click', function(event) {
+    document.getElementById('btn_get_into').addEventListener('submit', function(event) {
         var mail_user = document.getElementById('mail').value;
         var password_user = document.getElementById('password').value;
 

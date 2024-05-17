@@ -2,15 +2,19 @@ const { getUserById, getInvoicesByUserId } = require('../model/loginuser_model')
 
 const loginUser = async function (req, res) {
     try {
+        let user;
+        let invoices;
         const { mail, password } = req.body;
-        const user = await getUserById(mail, password);
+        user = await getUserById(mail, password);
+        console.log(user);
 
         if (!user) {
-            // Si el usuario o la contraseña son incorrectos, renderiza la vista de login con un mensaje de error.
-            //return res.render('login', { error: 'Credenciales de inicio de sesión inválidas' });
+            // If the username or password is incorrect, render the login view with an error message.
+            console.log('Error de correo o contrasena');
+            return res.send('<script>alert("Correo o contraseña inválidos"); window.location.href = "/login";</script>');
         }
 
-        const invoices = await getInvoicesByUserId(user.IdUsuario);
+        invoices = await getInvoicesByUserId(user.IdUsuario);
         const formattedInvoices = invoices.map(invoice => {
             invoice.Fecha = new Date(invoice.Fecha).toLocaleDateString('es-ES');
             return invoice;
@@ -18,7 +22,6 @@ const loginUser = async function (req, res) {
         
         res.render('vacio' , { user, formattedInvoices });
         
-        console.log(user);
     } catch (error) {
         console.error('Error durante el inicio de sesión:', error);
         res.render('vacio', { error: 'Error al iniciar sesión' });

@@ -7,8 +7,6 @@ const sql = require('mssql');
 //Objects for calling functions
 const app = express();
 
-const router = express.Router();
-
 const multer = require('multer');
 const upload = multer();
 
@@ -65,9 +63,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //app.use('/user', router_user);
 
 //:::Methods:::POSTS::::::::::::::::::::::::::::::::::::
-app.post('/login_user', upload.none(), loginUser, function (req, res) {
-    res.render('vacio');
-});
+app.post('/login_user', upload.none(), loginUser);
 
 
 //Port configuration :::::::::::::::::::::::::::::::::::::::::::::::::::::
