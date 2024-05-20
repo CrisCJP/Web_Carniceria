@@ -1,12 +1,12 @@
 const { getUserById, getInvoicesByUserId } = require('../model/loginuser_model');
-
+const { getSelledProducts } = require('../model/mostselledproducts_model');
+const { getDetailsDashboard, getCountProductCategories, getCountCategories } = require('../model/detailsdashboard_model');
 const loginUser = async function (req, res) {
     try {
-        let user;
-        let invoices;
+        let user, historyinvoices, selledproduct, detailsdashboard, countproduct, countcategories;
+
         const { mail, password } = req.body;
         user = await getUserById(mail, password);
-        console.log(user);
 
         if (!user) {
             // If the username or password is incorrect, render the login view with an error message.
@@ -14,17 +14,17 @@ const loginUser = async function (req, res) {
             return res.send('<script>alert("Correo o contraseña inválidos"); window.location.href = "/login";</script>');
         }
 
-        invoices = await getInvoicesByUserId(user.IdUsuario);
-        const formattedInvoices = invoices.map(invoice => {
-            invoice.Fecha = new Date(invoice.Fecha).toLocaleDateString('es-ES');
-            return invoice;
-        });
+        historyinvoices = await getInvoicesByUserId(user.IdUsuario);
+        selledproduct = await getSelledProducts(user.IdUsuario);
+        detailsdashboard = await getDetailsDashboard(user.IdUsuario);
+        countproduct = await getCountProductCategories();
+        countcategories = await getCountCategories();
         
-        res.render('vacio' , { user, formattedInvoices });
+        res.render('index', { user: user, historyInvoice: historyinvoices, selledProduct: selledproduct, detailsDashboard: detailsdashboard, countProduct: countproduct, countCategories: countcategories });
         
     } catch (error) {
         console.error('Error durante el inicio de sesión:', error);
-        res.render('vacio', { error: 'Error al iniciar sesión' });
+        res.render('index', { error: 'Error al iniciar sesión' });
     }
 };
 
