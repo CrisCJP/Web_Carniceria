@@ -26,6 +26,10 @@ const config = {
 
 // Global variables
 let user_temp, historyInvoice_temp, mostselledproducts_temp, detailsdashboard_temp, countproducts_temp, countcategories_temp;
+
+//Global arrays
+let array_sale = [];
+
 //const router_user = require('./routes/routes_user');
 
 //CALL THE CONTROLLERS:::::::::::::::::::::::
@@ -36,13 +40,16 @@ const { loginUser } = require('./controller/loginuser_controller');
 //CALL THE MODELS::::::::::::::::::::::::::::
 // "loginuser_model"
 const { getUserById, getInvoicesByUserId } = require('./model/loginuser_model');
-
 // "mostselledproducts_model"
 const { getSelledProducts } = require('./model/mostselledproducts_model');
-
 // "detailsdashboard_model"
 const { getDetailsDashboard, getCountProductCategories, getCountCategories } = require('./model/detailsdashboard_model');
+// 'adddetailinvoices_model'
 
+
+
+
+const { findProductforSales } = require('./model/finderofproductsforsale_model');
 
 //Analyze data
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -75,6 +82,19 @@ app.get("/vacio", function (req, res) {
     res.render('vacio');
 });
 
+//Path to send 'find product'
+app.get ('/search_productsale', async (req, res) => {
+    const searchTerm = req.query.term.toLowerCase();
+    const findproduct_temp = await findProductforSales();
+    const productArray = Object.values(findproduct_temp);
+
+    const filteredProducts = productArray.filter(product =>
+        product.NombreProducto.toLowerCase().includes(searchTerm)
+    );
+
+    res.json(filteredProducts);
+});
+
 //:::Middleware:::
 app.use(express.static("public"));
 
@@ -82,16 +102,33 @@ app.use(express.static("public"));
 //app.use('/user', router_user);
 
 //:::Methods:::POSTS::::::::::::::::::::::::::::::::::::
+
+//For login.ejs
 app.post('/login_user', upload.none(), async (req, res) => {
     const { mail, password } = req.body;
     await loginUser(req, res);
     user_temp = await getUserById(mail, password);
-    historyInvoice_temp = await getInvoicesByUserId(user_temp.IdUsuario);
-    mostselledproducts_temp = await getSelledProducts(user_temp.IdUsuario);
-    detailsdashboard_temp = await getDetailsDashboard(user_temp.IdUsuario);
-    countproducts_temp = await getCountProductCategories();
-    countcategories_temp = await getCountCategories();
+    if (typeof user_temp != undefined && user_temp != null && user_temp != '') {
+        historyInvoice_temp = await getInvoicesByUserId(user_temp.IdUsuario);
+        mostselledproducts_temp = await getSelledProducts(user_temp.IdUsuario);
+        detailsdashboard_temp = await getDetailsDashboard(user_temp.IdUsuario);
+        countproducts_temp = await getCountProductCategories();
+        countcategories_temp = await getCountCategories();
+    }
+
 });
+
+//For 'nueva_venta.ejs'
+app.post('/addDataforSale', upload.none(), async (req, res) => {
+    const { first_name, last_name, product_name, amount_product } = req.body;
+    if (first_name === '')
+        first_name = '-';
+    if (last_name === '')
+        last_name = '-';
+    
+    res.send('correcto');
+});
+
 
 
 //Port configuration :::::::::::::::::::::::::::::::::::::::::::::::::::::

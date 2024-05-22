@@ -11341,3 +11341,8 @@ body.sidebar-toggled footer.sticky-footer {
   width: 67px;
   height: 67px;
 }
+
+#resultados {
+  display: none;
+  cursor: pointer;
+}
