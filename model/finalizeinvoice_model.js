@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 //library import
 const sql = require('mssql');
 
@@ -14,6 +15,9 @@ const config = {
         encrypt: true,
     }
 };
+=======
+const { sql, config } = require('./connection');
+>>>>>>> 450c28d71037c4aa9bde29a7cb2be9d19df67f59
 
 module.exports = {
     finalizeInvoice: async function (list_products) {

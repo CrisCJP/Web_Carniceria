@@ -11335,3 +11335,14 @@ footer.sticky-footer .copyright {
 body.sidebar-toggled footer.sticky-footer {
   width: 100%;
 }
+
+
+.list__img {
+  width: 67px;
+  height: 67px;
+}
+
+#resultados {
+  display: none;
+  cursor: pointer;
+}
