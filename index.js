@@ -11,8 +11,13 @@ const upload = multer();
 const bodyParser = require('body-parser');
 const session = require('express-session');
 
+<<<<<<< HEAD
 /*const config = {
     server: 'DESKTOP-DEUHLCS',
+=======
+const config = {
+    server: 'DESKTOP-OP1FG8F',
+>>>>>>> 8307da28860b774e881bf175dcd06ac14c4b2817
     database: 'CarniceriaLupita',
     user: 'prueba',
     password: '1234',
@@ -70,6 +75,10 @@ app.set('views', './views');
 //Initialize
 app.get("/", function (req, res) {
     res.render("login");
+});
+
+app.get("/compras", function (req, res) {
+    res.render("compras")
 });
 
 //Path to render 'login.ejs'
@@ -135,6 +144,78 @@ app.post('/addDataforSale', upload.none(), async (req, res) => {
 });
 
 
+//
+app.post('/inventary',upload.none(),function(req,res){
+    sql.connect(config).then(pool =>{
+        return pool.request()
+        .query('select * from Inventario')
+        .then(result => {
+            
+            let Id = new Array(result.recordset.length);
+            let Marca = new Array(result.recordset.length);
+            let Categoria = new Array(result.recordset.length);
+            let Stock = new Array(result.recordset.length);
+            let Precio = new Array(result.recordset.length);
+
+            for(let i = 0; i < result.recordset.length; i++){
+                Id[i] = result.recordset[i].ID;
+                Marca[i] = result.recordset[i].Marca;
+                Categoria[i] = result.recordset[i].Categoria;
+                Stock[i] = result.recordset[i].Stock;
+                Precio[i] = result.recordset[i].Precio;
+            }
+
+            res.send({id:Id, marca:Marca, categoria:Categoria, stock:Stock, precio:Precio});
+        })
+        .catch(err => {
+            // Manejo de errores en la consulta SQL
+            console.error('Error en la consulta SQL:', err);
+            res.status(500).send('Error en la consulta SQL');
+        });
+    })
+    .catch(err => {
+        // Manejo de errores en la conexión a la base de datos
+        console.error('Error al conectar con la base de datos:', err);
+        res.status(500).send('Error al conectar con la base de datos');
+    });
+})
+
+app.post('/option',upload.none(),function(req,res){
+    sql.connect(config).then(pool =>{
+        
+        return pool.request()
+       .query('select IdProveedor, Nombre_Proveedor from Proveedor')
+       .then(result => {
+           let IdProveedor = new Array(result.recordset.length);
+           let Nombre_Proveedor = new Array(result.recordset.length);
+           for(let i=0;i<result.recordset.length;i++){
+               IdProveedor[i] = result.recordset[i].IdProveedor;
+               Nombre_Proveedor[i] = result.recordset[i].Nombre_Proveedor;
+            }
+            res.send({idproveedor:IdProveedor, nombre_proveedor:Nombre_Proveedor});
+        })
+    })
+})
+var IdProveedor = '';
+app.post('/option2',upload.none(),function(req,res){
+    const {txtDocumentoProveedor} = req.body;
+    IdProveedor = txtDocumentoProveedor;
+    sql.connect(config).then(pool =>{
+        return pool.request()
+        .input('IdProveedor', sql.VarChar, IdProveedor)
+        .query('select IdProducto, NombreProducto from Producto A inner join Proveedor B on A.IdProveedor = B.IdProveedor where B.IdProveedor = @IdProveedor')
+        .then(result =>{
+            let NombreProducto = new Array(result.recordset.length);
+            let IdProducto = new Array(result.recordset.length);
+            for(let i = 0; i < result.recordset.length; i++){
+                NombreProducto[i] = result.recordset[i].NombreProducto;
+                IdProducto[i] = result.recordset[i].IdProducto;
+            }
+            res.send({idproducto:IdProducto, nombreproducto:NombreProducto});
+        })
+
+    })
+})
 
 //Port configuration :::::::::::::::::::::::::::::::::::::::::::::::::::::
 app.listen(3000, function () {
