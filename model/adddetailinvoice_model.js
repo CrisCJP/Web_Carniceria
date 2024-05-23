@@ -1,4 +1,4 @@
-const { sql, config } = require('./connection');
+const { sql, config } = require('./connection_model');
 
 
 const getIdCustomer = async () => {
@@ -24,15 +24,23 @@ function modifyIdCustomer(idcustomer) {
 
 const getDatasProductSale = async (product_name) => {
     let pool;
-    try  {
-        pool = await pool.request()
+    try {
+        // Crea una instancia del objeto pool
+        pool = await sql.connect(config); // Asegúrate de que config esté correctamente configurado
+
+        const result = await pool.request()
             .input('NombreProducto', sql.VarChar, `%${product_name}%`)
-            .query('SELECT IdProducto, Existencia, PrecioVenta FROM Producto WHERE NombreProducto LIKE @NombreProducto')//Search for the product if it exists and Get existences
-            return result.recordset[0];
+            .query('SELECT IdProducto, Existencia, PrecioVenta FROM Producto WHERE NombreProducto LIKE @NombreProducto');
+
+        return result.recordset[0];
     } finally {
-        pool.close();
+        // Cierra la conexión del pool
+        if (pool) {
+            pool.close();
+        }
     }
 };
 
 
-module.exports = {};
+
+module.exports = { getIdCustomer, getDatasProductSale };

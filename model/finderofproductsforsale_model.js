@@ -1,4 +1,4 @@
-const { sql, config } = require('./connection');
+const { sql, config } = require('./connection_model');
 
 //Show all products
 const findProductforSales = async () => {

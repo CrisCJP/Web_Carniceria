@@ -31,4 +31,4 @@ function getDate() {
     return fecha;
 }
 
-module.exports = { getDateTimeId, getDateTimeDetail, getDate};
+module.exports = { getDateTimeId, getDateTimeDetail, getDate };

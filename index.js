@@ -11,7 +11,7 @@ const upload = multer();
 const bodyParser = require('body-parser');
 const session = require('express-session');
 
-const config = {
+/*const config = {
     server: 'DESKTOP-DEUHLCS',
     database: 'CarniceriaLupita',
     user: 'prueba',
@@ -22,7 +22,7 @@ const config = {
         trustServerCertificate: true,
         encrypt: true,
     }
-};
+};*/
 
 // Global variables
 let user_temp, historyInvoice_temp, mostselledproducts_temp, detailsdashboard_temp, countproducts_temp, countcategories_temp;
@@ -36,6 +36,10 @@ let array_sale = [];
 // Call the controller "loginuser_controller"
 const { loginUser } = require('./controller/loginuser_controller');
 
+const { getArrayforSale } = require('./controller/pushArrayTempDetailsforSale_controller');
+
+const { sendArrayDeytails } = require('./controller/sendDetailsforSale_controller');
+
 
 //CALL THE MODELS::::::::::::::::::::::::::::
 // "loginuser_model"
@@ -45,6 +49,7 @@ const { getSelledProducts } = require('./model/mostselledproducts_model');
 // "detailsdashboard_model"
 const { getDetailsDashboard, getCountProductCategories, getCountCategories } = require('./model/detailsdashboard_model');
 // 'adddetailinvoices_model'
+
 
 
 
@@ -82,6 +87,11 @@ app.get("/vacio", function (req, res) {
     res.render('vacio');
 });
 
+//Path to render 'nueva_venta.ejs'
+app.get("/nueva_venta", function (req, res) {
+    res.render('nueva_venta', { list: array_sale });
+});
+
 //Path to send 'find product'
 app.get ('/search_productsale', async (req, res) => {
     const searchTerm = req.query.term.toLowerCase();
@@ -91,7 +101,6 @@ app.get ('/search_productsale', async (req, res) => {
     const filteredProducts = productArray.filter(product =>
         product.NombreProducto.toLowerCase().includes(searchTerm)
     );
-
     res.json(filteredProducts);
 });
 
@@ -115,18 +124,14 @@ app.post('/login_user', upload.none(), async (req, res) => {
         countproducts_temp = await getCountProductCategories();
         countcategories_temp = await getCountCategories();
     }
-
 });
 
 //For 'nueva_venta.ejs'
 app.post('/addDataforSale', upload.none(), async (req, res) => {
     var { first_name, last_name, product_name, amount_product } = req.body;
-    if (first_name === '')
-        first_name = '-';
-    if (last_name === '')
-        last_name = '-';
-    
-    res.send('correcto');
+    const arraysale_temp = await getArrayforSale(req, res, user_temp.IdUsuario);
+    array_sale.push(...arraysale_temp);
+    await sendArrayDeytails(req, res, arraysale_temp);
 });
 
 

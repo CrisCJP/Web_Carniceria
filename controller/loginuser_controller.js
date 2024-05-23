@@ -1,6 +1,7 @@
 const { getUserById, getInvoicesByUserId } = require('../model/loginuser_model');
 const { getSelledProducts } = require('../model/mostselledproducts_model');
 const { getDetailsDashboard, getCountProductCategories, getCountCategories } = require('../model/detailsdashboard_model');
+
 const loginUser = async function (req, res) {
     try {
         let user, historyinvoices, selledproduct, detailsdashboard, countproduct, countcategories;

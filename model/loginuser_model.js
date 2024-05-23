@@ -1,4 +1,4 @@
-const { sql, config } = require('./connection');
+const { sql, config } = require('./connection_model');
 
 // Get User and Password
 const getUserById = async (username, password) => {

@@ -12,6 +12,20 @@ function sendDataDetail(firstname, lastname, productname, amountproduct) {
         if (xhr.status === 200) {
             console.log("Conectado");
 
+            var answer = JSON.parse(xhr.responseText);
+            if (answer) {
+                var table = document.getElementById('tbDetallesVenta');
+                const tbody = document.querySelector('#tbDetallesVenta tbody');
+                tbody.innerHTML = ''; // Limpia todas las filas existentes
+
+                answer.list.forEach(function(row) {
+                    var newRow = table.insertRow(); // Create a new row
+                    newRow.insertCell().textContent = row.nombreproducto; // Add product name
+                    newRow.insertCell().textContent = row.cantidadopeso; // Add amount
+                    newRow.insertCell().textContent = row.precioventa; // Add price
+                    newRow.insertCell().textContent = row.total; // Add total
+                });
+            }
             document.getElementById('cboBuscarProducto').value = '';
             document.getElementById('txtCantidad_Peso').value = '';
         }
