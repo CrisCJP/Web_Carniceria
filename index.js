@@ -120,7 +120,7 @@ app.post('/login_user', upload.none(), async (req, res) => {
 
 //For 'nueva_venta.ejs'
 app.post('/addDataforSale', upload.none(), async (req, res) => {
-    const { first_name, last_name, product_name, amount_product } = req.body;
+    var { first_name, last_name, product_name, amount_product } = req.body;
     if (first_name === '')
         first_name = '-';
     if (last_name === '')
