@@ -29,11 +29,13 @@ const getArrayforSale = async (req, res, iduser) => {
             fecha: date,
             efectivo: 0,
             iddetalle: dateTimeDetail,
-            cantidadopeso: amount_product,
+            cantidadopeso: parseFloat(amount_product),
             precioventa: datasProductSale.PrecioVenta,
-            existencia: datasProductSale.Existencia - amount_product,
-            total: datasProductSale.PrecioVenta * amount_product,
-            nombreproducto: product_name
+            existencia_defore: datasProductSale.Existencia,
+            existencia: parseFloat(datasProductSale.Existencia - amount_product),
+            costo: parseFloat(datasProductSale.PrecioVenta * amount_product),
+            nombreproducto: product_name,
+            total: 0
         });
         
         return arraysale_temp;

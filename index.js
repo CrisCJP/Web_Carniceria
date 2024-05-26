@@ -11,13 +11,11 @@ const upload = multer();
 const bodyParser = require('body-parser');
 const session = require('express-session');
 
-<<<<<<< HEAD
 /*const config = {
     server: 'DESKTOP-DEUHLCS',
-=======
+
 const config = {
     server: 'DESKTOP-OP1FG8F',
->>>>>>> 8307da28860b774e881bf175dcd06ac14c4b2817
     database: 'CarniceriaLupita',
     user: 'prueba',
     password: '1234',
@@ -35,15 +33,22 @@ let user_temp, historyInvoice_temp, mostselledproducts_temp, detailsdashboard_te
 //Global arrays
 let array_sale = [];
 
+
 //const router_user = require('./routes/routes_user');
 
 //CALL THE CONTROLLERS:::::::::::::::::::::::
 // Call the controller "loginuser_controller"
 const { loginUser } = require('./controller/loginuser_controller');
-
+// Call the controller "pushArrayTempDetailsforSale_controller"
 const { getArrayforSale } = require('./controller/pushArrayTempDetailsforSale_controller');
-
+// Call the controller "sendDetailsforSale_controller"
 const { sendArrayDeytails } = require('./controller/sendDetailsforSale_controller');
+// Call the controller "updateamountforarray_controller"
+const { getAmount } = require('./controller/updateamountforarray_controller');
+// Call the controller "sendsumfornewsale_controller"
+const { getSumforNewSale } = require('./controller/sendsumfornewsale_controller');
+// Call the controller "setcostoandtotal_controller"
+const { setCostoandTotal } = require('./controller/setcostoandtotal_controller');
 
 
 //CALL THE MODELS::::::::::::::::::::::::::::
@@ -55,9 +60,7 @@ const { getSelledProducts } = require('./model/mostselledproducts_model');
 const { getDetailsDashboard, getCountProductCategories, getCountCategories } = require('./model/detailsdashboard_model');
 // 'adddetailinvoices_model'
 
-
-
-
+const { finalizeInvoice } = require('./model/finalizeinvoice_model');
 
 const { findProductforSales } = require('./model/finderofproductsforsale_model');
 
@@ -88,17 +91,24 @@ app.get("/login", function (req, res) {
 
 //Path to render 'index.ejs'
 app.get("/index", upload.none(), async function (req, res) {
+    if (typeof user_temp != undefined && user_temp != null && user_temp != '') {
+        historyInvoice_temp = await getInvoicesByUserId(user_temp.IdUsuario);
+        mostselledproducts_temp = await getSelledProducts(user_temp.IdUsuario);
+        detailsdashboard_temp = await getDetailsDashboard(user_temp.IdUsuario);
+        countproducts_temp = await getCountProductCategories();
+        countcategories_temp = await getCountCategories();
+    }
     res.render('index', { user: user_temp, historyInvoice: historyInvoice_temp, selledProduct: mostselledproducts_temp, detailsDashboard: detailsdashboard_temp, countProduct: countproducts_temp, countCategories: countcategories_temp });
 });
 
 //Path to render 'vacio.ejs'
 app.get("/vacio", function (req, res) {
-    res.render('vacio');
+    res.render('vacio', { user: user_temp });
 });
 
 //Path to render 'nueva_venta.ejs'
 app.get("/nueva_venta", function (req, res) {
-    res.render('nueva_venta', { list: array_sale });
+    res.render('nueva_venta', { user: user_temp, list: array_sale });
 });
 
 //Path to send 'find product'
@@ -115,9 +125,6 @@ app.get ('/search_productsale', async (req, res) => {
 
 //:::Middleware:::
 app.use(express.static("public"));
-
-
-//app.use('/user', router_user);
 
 //:::Methods:::POSTS::::::::::::::::::::::::::::::::::::
 
@@ -137,10 +144,30 @@ app.post('/login_user', upload.none(), async (req, res) => {
 
 //For 'nueva_venta.ejs'
 app.post('/addDataforSale', upload.none(), async (req, res) => {
-    var { first_name, last_name, product_name, amount_product } = req.body;
     const arraysale_temp = await getArrayforSale(req, res, user_temp.IdUsuario);
     array_sale.push(...arraysale_temp);
-    await sendArrayDeytails(req, res, arraysale_temp);
+    await sendArrayDeytails(req, res, array_sale);
+});
+
+// Update the quantity of the product for sale
+app.post('/updateAmount', upload.none(), async (req, res) => {
+    const updateAmount = await getAmount(req, res, array_sale);
+    array_sale = updateAmount;
+    await sendArrayDeytails(req, res, array_sale);
+});
+
+// Send the SUM of the array for sale
+app.post('/get_sum_for_sale', upload.none(), async (req, res) => {
+    await getSumforNewSale(req, res, array_sale);
+});
+
+// Finally the sale
+app.post('/finally_new_sale', upload.none(), async (req, res) => {
+    const finallyupdate_array = await setCostoandTotal(req, res, array_sale);
+    array_sale = finallyupdate_array;
+    await finalizeInvoice(array_sale);
+    res.send({ success: array_sale });
+    array_sale = [];
 });
 
 

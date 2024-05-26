@@ -1,27 +1,4 @@
-<<<<<<< HEAD
 const { sql, config } = require('./connection_model');
-=======
-<<<<<<< HEAD
-//library import
-const sql = require('mssql');
-
-//Connect configuration
-const config = {
-    server: 'DESKTOP-OP1FG8F',
-    database: 'CarniceriaLupita',
-    user: 'prueba',
-    password: '1234',
-    port: 1433,
-
-    options: {
-        trustServerCertificate: true,
-        encrypt: true,
-    }
-};
-=======
-const { sql, config } = require('./connection');
->>>>>>> 450c28d71037c4aa9bde29a7cb2be9d19df67f59
->>>>>>> 8307da28860b774e881bf175dcd06ac14c4b2817
 
 // Get User and Password
 const getUserById = async (username, password) => {
