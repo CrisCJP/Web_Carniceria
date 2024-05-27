@@ -79,53 +79,65 @@ function generateInvoicePDF(invoiceData) {
     var doc = new jsPDF();
     var startY = 10;
     var lineSpacing = 5;
+    var imageWidth = 30; // Ancho de la imagen en el PDF
+    var imageHeight = imageWidth * (958 / 963); // Altura de la imagen manteniendo la proporción de aspecto
 
-    // Encabezado de la factura
-    doc.setFontSize(12);
-    doc.text('CARNICERÍA LUPITA', 105, startY, null, null, 'center');
-    doc.setFontSize(10);
-    doc.text('Dirección: De la gasolinera, 1/2 cuadra al norte', 105, (startY += lineSpacing), null, null, 'center');
-    // ... Agrega más detalles del encabezado como teléfono, email, etc.
+    // Carga la imagen de la carnicería
+    var img = new Image();
+    img.src = '../img/Logo_lupita.png'; // Asegúrate de reemplazar 'Logo_lupita.png' con el nombre real de tu imagen
+    img.onload = function() {
+        // Dibuja la imagen en el PDF a la derecha
+        doc.addImage(this, 'PNG', doc.internal.pageSize.width - imageWidth - 10, startY, imageWidth, imageHeight);
 
-    // Datos del cliente
-    doc.setFontSize(10);
-    doc.text('Datos del Cliente:', 10, (startY += lineSpacing * 2));
-    doc.text(`Nombre: ${invoiceData[0].nombreCliente} ${invoiceData[0].apellidoCliente}`, 10, (startY += lineSpacing));
-    doc.text(`Dirección: ${invoiceData[0].dir}`, 10, (startY += lineSpacing));
-    doc.text(`Teléfono: ${invoiceData[0].tel}`, 10, (startY += lineSpacing));
+        // Encabezado de la factura en negrita y tamaño 18
+        doc.setFontSize(18);
+        doc.setFont(undefined, 'bold');
+        doc.text('CARNICERÍA LUPITA', 10, startY + 10); // Alinea a la izquierda
 
-    // Títulos de las columnas de la tabla
-    startY += lineSpacing * 2; // Asegúrate de incrementar startY solo una vez para todos los encabezados
-    doc.setFontSize(10);
-    var columnTitles = ['Descripción', 'Cantidad/Peso', 'Precio U.', 'Costo'];
-    var columnPositions = [10, 70, 120, 170];
-    columnTitles.forEach(function(title, index) {
-        doc.text(title, columnPositions[index], startY);
-    });
+        // Restablece el tamaño de fuente para el resto del texto
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.text('Dirección: De la gasolinera, 1/2 cuadra al norte', 10, (startY += lineSpacing * 3));
 
-    // Líneas de la factura
-    invoiceData.forEach(function(item) {
-        startY += lineSpacing; // Incrementa startY antes de empezar a agregar los datos de cada línea
-        doc.text(item.nombreproducto, columnPositions[0], startY);
-        doc.text(item.cantidadopeso.toString(), columnPositions[1], startY);
-        doc.text(`C$ ${item.precioventa.toFixed(2)}`, columnPositions[2], startY);
-        doc.text(`C$ ${item.costo.toFixed(2)}`, columnPositions[3], startY);
-    });
+        // Datos del cliente: 'Datos del Cliente:' en negrita
+        doc.setFont(undefined, 'bold');
+        doc.text('Datos del Cliente:', 10, (startY += lineSpacing * 2));
+        doc.setFont(undefined, 'normal'); // Resto de datos del cliente en texto normal
+        doc.text(`Nombre: ${invoiceData[0].nombreCliente} ${invoiceData[0].apellidoCliente}`, 10, (startY += lineSpacing));
+        doc.text(`Dirección: ${invoiceData[0].dir}`, 10, (startY += lineSpacing));
+        doc.text(`Teléfono: ${invoiceData[0].tel}`, 10, (startY += lineSpacing));
 
-    // Totales
-    var total = invoiceData.reduce(function(acc, item) {
-        return acc + item.costo;
-    }, 0);
-    doc.text('Total: C$ ' + total.toFixed(2), 170, (startY += lineSpacing * 2));
+        // Títulos de las columnas de la tabla en negrita
+        startY += lineSpacing * 2; // Asegúrate de incrementar startY solo una vez para todos los encabezados
+        doc.setFont(undefined, 'bold');
+        var columnTitles = ['Descripción', 'Cantidad/Peso', 'Precio U.', 'Costo'];
+        var columnPositions = [10, 70, 120, 170];
+        columnTitles.forEach(function(title, index) {
+            doc.text(title, columnPositions[index], startY);
+        });
 
-    // Abre el PDF en una nueva pestaña del navegador
-    window.open(doc.output('bloburl'), '_blank');
-}
+        // Líneas de la factura en texto normal
+        doc.setFont(undefined, 'normal');
+        invoiceData.forEach(function(item) {
+            startY += lineSpacing; // Incrementa startY antes de empezar a agregar los datos de cada línea
+            doc.text(item.nombreproducto, columnPositions[0], startY);
+            doc.text(item.cantidadopeso.toString(), columnPositions[1], startY);
+            doc.text(`C$ ${item.precioventa.toFixed(2)}`, columnPositions[2], startY);
+            doc.text(`C$ ${item.costo.toFixed(2)}`, columnPositions[3], startY);
+        });
 
+        // Totales
+        var total = invoiceData.reduce(function(acc, item) {
+            return acc + item.costo;
+        }, 0);
+        var cambio = (invoiceData[0].efectivo - total);
+        doc.text('Cambio: C$ ' + cambio.toFixed(2), 170, (startY += lineSpacing * 2));
+        doc.text('Total: C$ ' + total.toFixed(2), 170, (startY += lineSpacing * 2));
 
-
-
-
+        // Abre el PDF en una nueva pestaña del navegador
+        window.open(doc.output('bloburl'), '_blank');
+    };
+};
 
 
 
