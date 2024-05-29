@@ -1,4 +1,5 @@
-const { sql, config } = require('./connection');
+
+const { sql, config } = require('./connection_model');
 
 module.exports = {
     viewCurrentInvoice: async function(userId) {
