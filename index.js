@@ -49,6 +49,11 @@ const { getAmount } = require('./controller/updateamountforarray_controller');
 const { getSumforNewSale } = require('./controller/sendsumfornewsale_controller');
 // Call the controller "setcostoandtotal_controller"
 const { setCostoandTotal } = require('./controller/setcostoandtotal_controller');
+//Call the controller "send_historyinvoice_controller"
+const { setHistoryInvoiceforDate, setHistoryInvoiceforNoVenta } = require('./controller/send_historyinvoice_controller');
+
+const { set_salesHistorywithAll } = require('./controller/send_detailsofhistoryofthesale_controller');
+
 
 
 //CALL THE MODELS::::::::::::::::::::::::::::
@@ -63,6 +68,8 @@ const { getDetailsDashboard, getCountProductCategories, getCountCategories } = r
 const { finalizeInvoice } = require('./model/finalizeinvoice_model');
 
 const { findProductforSales } = require('./model/finderofproductsforsale_model');
+
+const { getHistoryInvoicePreview } = require('./model/gethistoryinvoice_model');
 
 //Analyze data
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -123,6 +130,12 @@ app.get ('/search_productsale', async (req, res) => {
     res.json(filteredProducts);
 });
 
+//Path to render 'historial_venta.ejs'
+app.get('/historial_venta', async (req, res) => {
+    const historyinvoicepreview_temp = await getHistoryInvoicePreview(user_temp.IdUsuario);
+    res.render('historial_venta', { user: user_temp, historyinvoicepreview: historyinvoicepreview_temp });
+});
+
 //:::Middleware:::
 app.use(express.static("public"));
 
@@ -170,6 +183,21 @@ app.post('/finally_new_sale', upload.none(), async (req, res) => {
     array_sale = [];
 });
 
+
+// Send invoices for the date range
+app.post('/getHistoryInvoiceforDate', upload.none(), async (req, res) => {
+    await setHistoryInvoiceforDate(req, res, user_temp.IdUsuario);
+});
+
+// Send invoices for the sales number
+app.post('/getHistoryInvoiceforSalesNumber', upload.none(), async (req, res) => {
+    await setHistoryInvoiceforNoVenta(req, res, user_temp.IdUsuario);
+});
+
+// Send the details of the sale
+app.post('/getDetails_HistoryoftheSale', upload.none(), async (req,res) => {
+    await set_salesHistorywithAll(req, res, user_temp);
+});
 
 //
 app.post('/inventary',upload.none(),function(req,res){

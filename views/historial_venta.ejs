@@ -91,7 +91,7 @@
                 <div id="collapseVenta" class="collapse" aria-labelledby="headingInventario" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="/nueva_venta">Nueva Venta</a>
-                        <a class="collapse-item" href="historial_venta.html">Historial Venta</a>
+                        <a class="collapse-item" href="/historial_venta">Historial Venta</a>
                     </div>
                 </div>
             </li>
@@ -164,7 +164,7 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.Nombre %> <%= user.Apellido %></span>
                                 <img class="img-profile rounded-circle"
                                     src="https://images.unsplash.com/photo-1519648023493-d82b5f8d7b8a?w=300">
                             </a>
@@ -199,22 +199,22 @@
                             <div class="form-row align-items-end">
                                 <div class="form-group col-sm-3">
                                     <label for="cboBuscarPor">Buscar por</label>
-                                    <select class="form-control form-control-sm" id="cboBuscarPor">
-                                        <option value="fecha">Fechas</option>
+                                    <select class="form-control form-control-sm" name="cboBuscarPor" id="cboBuscarPor">
+                                        <option value="fecha" selected>Fechas</option>
                                         <option value="numero">Numero Venta</option>
                                     </select>
                                 </div>
                                 <div class="form-group col-sm-3 busqueda-fecha">
                                     <label for="txtFechaInicio">Fecha Inicio</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtFechaInicio">
+                                    <input type="date" class="form-control form-control-sm" name="txtFechaInicio" id="txtFechaInicio">
                                 </div>
                                 <div class="form-group col-sm-3 busqueda-fecha">
                                     <label for="txtFechaFin">Fecha Fin</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtFechaFin">
+                                    <input type="date" class="form-control form-control-sm" name="txtFechaFin" id="txtFechaFin">
                                 </div>
                                 <div class="form-group col-sm-3 busqueda-venta">
                                     <label for="txtNumeroVenta">Numero Venta</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtNumeroVenta">
+                                    <input type="text" class="form-control form-control-sm" name="txtNumeroVenta" id="txtNumeroVenta" disabled>
                                 </div>
                                 <div class="form-group col-sm-3">
                                    <button class="btn btn-success btn-block btn-sm" type="button" id="btnBuscar"><i class="fas fa-search"></i> Buscar</button>
@@ -229,23 +229,14 @@
                                             <tr>
                                                 <th>Fecha Registro</th>
                                                 <th>Numero Venta</th>
-                                                <th>Tipo Documento</th>
-                                                <th>Documento Cliente</th>
                                                 <th>Nombre Cliente</th>
+                                                <th>Id Usuario</th>
                                                 <th>Total</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>27/04/2022</td>
-                                                <td>00001</td>
-                                                <td>Boleta</td>
-                                                <td>101010</td>
-                                                <td>jose</td>
-                                                <td>2000</td>
-                                                <td><button class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalData"><i class="fas fa-eye"></i> Ver Detalle</button></td>
-                                            </tr>
+                                        <tbody id="table_body">
+                                            
                                         </tbody>
                                     </table>
                                 </div>
@@ -271,43 +262,39 @@
                                                 <div class="form-row">
                                                     <div class="form-group col-sm-4">
                                                         <label for="txtFechaRegistro">Fecha Registro</label>
-                                                        <input type="text" class="form-control form-control-sm" id="txtFechaRegistro" disabled>
+                                                        <input type="text" class="form-control form-control-sm" name="txtFechaRegistro" id="txtFechaRegistro" disabled>
                                                     </div>
                                                     <div class="form-group col-sm-4">
                                                         <label for="txtNumVenta">Numero Venta</label>
-                                                        <input type="text" class="form-control form-control-sm" id="txtNumVenta" disabled>
+                                                        <input type="text" class="form-control form-control-sm" name="txtNumVenta" id="txtNumVenta" disabled>
                                                     </div>
                                                     <div class="form-group col-sm-4">
                                                         <label for="txtUsuarioRegistro">Usuario Registro</label>
-                                                        <input type="text" class="form-control form-control-sm" id="txtUsuarioRegistro" disabled>
+                                                        <input type="text" class="form-control form-control-sm" name="txtUsuarioRegistro" id="txtUsuarioRegistro" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="form-row">
                                                     <div class="form-group col-sm-4">
-                                                        <label for="txtTipoDocumento">Tipo Documento</label>
-                                                        <input type="text" class="form-control form-control-sm" id="txtTipoDocumento" disabled>
-                                                    </div>
-                                                    <div class="form-group col-sm-4">
-                                                        <label for="txtDocumentoCliente">Documento Cliente</label>
-                                                        <input type="text" class="form-control form-control-sm" id="txtDocumentoCliente" disabled>
+                                                        <label for="txtDocumentoCliente">No. Cliente</label>
+                                                        <input type="text" class="form-control form-control-sm" name="txtDocumentoCliente" id="txtDocumentoCliente" disabled>
                                                     </div>
                                                     <div class="form-group col-sm-4">
                                                         <label for="txtNombreCliente">Nombre Cliente</label>
-                                                        <input type="text" class="form-control form-control-sm" id="txtNombreCliente" disabled>
+                                                        <input type="text" class="form-control form-control-sm" name="txtNombreCliente" id="txtNombreCliente" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="form-row">
                                                     <div class="form-group col-sm-4">
                                                         <label for="txtSubTotal">Sub Total</label>
-                                                        <input type="text" class="form-control form-control-sm" id="txtSubTotal" disabled>
+                                                        <input type="text" class="form-control form-control-sm" name="txtSubTotal" id="txtSubTotal" disabled>
                                                     </div>
                                                     <div class="form-group col-sm-4">
-                                                        <label for="txtIGV">IGV</label>
-                                                        <input type="text" class="form-control form-control-sm" id="txtIGV" disabled>
+                                                        <label for="txtEfectivo">Efectivo</label>
+                                                        <input type="text" class="form-control form-control-sm" name="txtEfectivo" id="txtEfectivo" disabled>
                                                     </div>
                                                     <div class="form-group col-sm-4">
-                                                        <label for="txtTotal">Total</label>
-                                                        <input type="text" class="form-control form-control-sm" id="txtTotal" disabled>
+                                                        <label for="txtCambio">Cambio</label>
+                                                        <input type="text" class="form-control form-control-sm" name="txtCambio" id="txtCambio" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -321,7 +308,7 @@
                                                                     <th>Total</th>
                                                                 </tr>
                                                             </thead>
-                                                            <tbody>
+                                                            <tbody id="table_body_modal">
 
                                                             </tbody>
                                                         </table>
@@ -376,8 +363,9 @@
     =SCRIPTS PARA ESTA PAGINA
     ===============================================================-->
 
-    <script src="vendor/jquery-ui/idioma/datepicker-es.js"></script>
     <script src="vendor/jquery-ui/jquery-ui.js"></script>
+
+    <script src="ajax/ajax_historyinvoice.js"></script>
 
 </body>
 
