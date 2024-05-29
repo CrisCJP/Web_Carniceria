@@ -207,6 +207,57 @@ app.post('/option2',upload.none(),function(req,res){
     })
 })
 
+app.post('/comprar', upload.none(), function(req,res){
+    const { idUsuario, idproducto, cantidad, precio, txtDocumentoId } = req.body;
+
+    const idUsuarios = JSON.parse(idUsuario);
+    const idproductos = JSON.parse(idproducto);
+    const cantidades = JSON.parse(cantidad);
+    const precios = JSON.parse(precio);
+    const txtDocumentoIds = JSON.parse(txtDocumentoId);
+
+    const FechaActual = new Date();
+
+    sql.connect(config).then(pool =>{
+        var CLidproducto = new sql.Table('CLidproducto');
+        var CLcantidad = new sql.Table('CLcantidad');
+        var CLprecio = new sql.Table('CLprecio');
+
+        CLcantidad.columns.add('UniqueId', sql.Int);
+        CLcantidad.columns.add('Cantidad', sql.Decimal(10,2));
+
+        CLidproducto.columns.add('UniqueId', sql.Int);
+        CLidproducto.columns.add('IdProducto', sql.VarChar(6));
+
+        CLprecio.columns.add('UniqueId', sql.Int);
+        CLprecio.columns.add('Precio', sql.Money);
+
+        for(let i=0; i<idproductos.length; i++){
+            CLcantidad.rows.add(i, parseFloat(cantidades[i]));
+            CLidproducto.rows.add(i, idproductos[i]);
+            CLprecio.rows.add(i, parseFloat( precios[i]));
+        }
+
+        return pool.request()
+        .input('FechaCompra', sql.Date, FechaActual)
+        .input('idProveedor', sql.VarChar(6), txtDocumentoIds)
+        .input('idusuario', sql.Int, idUsuarios)
+        .query('insert into Compras (FechaCompra, idProveedor, idUsuario) values (@FechaCompra, @idProveedor, @idusuario)')
+        .then(result =>{
+            return pool.request()
+            .query('select top 1 IdCompra from Compras order by IdCompra desc')
+            .then(result =>{
+                return pool.request()
+                .input('IdCompra', sql.Int, parseInt(result.recordset[0].IdCompra))
+                .input('CLcantidad', sql.TVP, CLcantidad)
+                .input('CLidproducto', sql.TVP, CLidproducto)
+                .input('CLprecio', sql.TVP, CLprecio)
+                .execute('Comprar')
+            })
+        })
+    })
+})
+
 //Port configuration :::::::::::::::::::::::::::::::::::::::::::::::::::::
 app.listen(3000, function () {
     console.log('Example app listening on port http://localhost:3000');

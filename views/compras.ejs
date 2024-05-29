@@ -31,9 +31,9 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
                 <div class="sidebar-brand-icon">
-                    <i class="fas fa-desktop"></i>
+                    <i> <img src="img/Logo_lupita.png" class="list__img" alt="null"> </i>
                 </div>
-                <div class="sidebar-brand-text mx-3">MI TIENDA</div>
+                <div class="sidebar-brand-text mx-3"></div>
             </a>
 
             <!-- Divider -->
@@ -41,7 +41,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="/index">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -154,7 +154,7 @@
                 <li class="nav-item dropdown no-arrow">
                     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">XD</span>
                         <img class="img-profile rounded-circle"
                             src="https://images.unsplash.com/photo-1519648023493-d82b5f8d7b8a?w=300">
                     </a>
@@ -525,7 +525,7 @@
                 var filaDatos = {
                     checkbox: celdas[0].querySelector('input[type="checkbox"]').checked,
                     producto: celdas[1].innerText,
-                    cantidad: parseInt(celdas[2].innerText),
+                    cantidad: parseFloat(celdas[2].innerText),
                     precio: parseFloat(celdas[3].innerText),
                     total: parseFloat(celdas[4].innerText)
                 };
@@ -544,36 +544,37 @@
         }
         function SubirDatosTabla(){
             var datosTable = leerTabla();
+
             var idproveedor = limpiarCadena(document.getElementById('txtDocumentoProveedor').value);
-            var nameprov = limpiarCadenaNameProv(document.getElementById('txtDocumentoProveedor').value);
-            var productos = datosTable.map(function(item) {
-                return item.producto;
-            });
-            var cantidades = datosTable.map(function(item) {
-                return item.cantidad;
-            });
-            var precios = datosTable.map(function(item) {
-                return item.precio;
-            });
+
+            var productos = datosTable.map(function(item) { return item.producto; });
+            var cantidades = datosTable.map(function(item) { return item.cantidad; });
+            var precios = datosTable.map(function(item) { return item.precio; });
+
             var idproducto = new Array(productos.length);
-            var nombreproducto = new Array(productos.length);
-            for(let i=0;i<productos.length;i++){
-                idproducto[i] = limpiarCadena(idproducto[i]);
-                nombreproducto[i] = limpiarCadenaNameProv(nombreproducto[i]);
-            }
+            
+            for(let i=0;i<productos.length;i++) { idproducto[i] = limpiarCadena(productos[i]); }
 
             var formData = new FormData();
 
-            formData.append('idUsuario', idproducto);
-            formData.append('idproducto', idproducto);
-            formData.append('nombreproducto', nombreproducto);
-            formData.append('cantidad', cantidades);
-            formData.append('precio', precios);
-            formData.append('txtDocumentoId', idproveedor);
-            formData.append('txtDocumentoName', nameprov);
+            const iduser = parseInt(1);
+
+            console.log(iduser);
+            console.log(idproducto);
+            console.log(cantidades);
+            console.log(precios);
+            console.log(idproveedor);
+
+            console.log(idproducto.length)
+
+            formData.append('idUsuario', JSON.stringify(iduser));
+            formData.append('idproducto', JSON.stringify(idproducto));
+            formData.append('cantidad', JSON.stringify(cantidades));
+            formData.append('precio', JSON.stringify(precios));
+            formData.append('txtDocumentoId', JSON.stringify(idproveedor));
 
             var xhr = new XMLHttpRequest();
-            xhr.open('post', '/comprarar', true);
+            xhr.open('post', '/comprar', true);
             xhr.onload = function() {
                 if (xhr.status === 200) {
                     console.log("formulario enviado con exito")
@@ -620,15 +621,31 @@
 
         });
 
+        function vaciarFilas(namm) {
+            // Obtener la referencia a la tabla
+            var tabla = document.getElementById(namm);
 
+            // Obtener una referencia a la sección de cuerpo de la tabla
+            var tbody = tabla.getElementsByTagName("tbody")[0];
+
+            // Eliminar todas las filas del cuerpo de la tabla
+            while (tbody.firstChild) {
+                tbody.removeChild(tbody.firstChild);
+            }
+        }
         document.getElementById('btnTerminarCompra').addEventListener('click', function(){
             var inptProveedor = document.getElementById("txtDocumentoProveedor");
             if(inptProveedor.disabled){
+
+                SubirDatosTabla();
 
                 var boton = document.getElementById("btnTerminarCompra");
                 var inptProducto = document.getElementById("cboBuscarProductoCompra");
                 var inptPrecio = document.getElementById("precioProducto");
                 var inputCantidad = document.getElementById("cantidadAcomprar");
+                
+                vaciarFilas('tbProductoCompra');
+
                 boton.disabled = true;
                 inptProveedor.value = '';
                 inptProducto.value = '';

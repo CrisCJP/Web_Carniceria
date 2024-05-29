@@ -1,24 +1,4 @@
-<<<<<<< HEAD
-//library import
-const sql = require('mssql');
-
-//Connect configuration
-const config = {
-    server: 'DESKTOP-OP1FG8F',
-    database: 'CarniceriaLupita',
-    user: 'prueba',
-    password: '1234',
-    port: 1433,
-
-    options: {
-        trustServerCertificate: true,
-        encrypt: true,
-    }
-};
-=======
 const { sql, config } = require('./connection');
->>>>>>> 450c28d71037c4aa9bde29a7cb2be9d19df67f59
-
 // Get User and Password
 const getUserById = async (username, password) => {
     let pool;
@@ -45,7 +25,9 @@ const getInvoicesByUserId = async (userId) => {
             .query(`SELECT i.No_Factura, FORMAT(i.Fecha, 'dd/MM/yyyy', 'es-ES') as Fecha, i.Efectivo, i.Total, i.Cambio, i.Nombre_Cliente, i.Id_Usuario FROM invoice_history_now i INNER JOIN Usuario u ON u.IdUsuario = i.Id_Usuario WHERE i.Id_Usuario = @Id ORDER BY i.Fecha DESC`);
         return result.recordset;
     } finally {
-        pool.close();
+        if (pool) {
+            pool.close();
+        }
     }
 };
 
