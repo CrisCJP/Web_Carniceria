@@ -90,11 +90,15 @@ function getHistoryInvoiceforSalesNumber(sales_number) {
                     tbody.appendChild(fila);
                 });
 
+                // Event listener para detectar clics en los botones
                 tbody.addEventListener('click', function(event) {
-                    if (event.target.tagName === 'BUTTON') {
-                        const noVenta = event.target.getAttribute('data-noventa');
+                    // Asegúrate de que el evento se dispare solo cuando se haga clic en un botón
+                    if (event.target.tagName === 'BUTTON' || event.target.parentNode.tagName === 'BUTTON') {
+                        // Obtén el número de venta desde el atributo 'data-noventa'
+                        const noVenta = event.target.getAttribute('data-noventa') || event.target.parentNode.getAttribute('data-noventa');
                         console.log('El botón con No_Venta', noVenta, 'fue presionado.');
                         // Aquí puedes llamar a una función para mostrar los detalles, pasando el No_Venta
+                        getDetails_HistoryoftheSale(noVenta);
                     }
                 });
                 
@@ -132,9 +136,23 @@ function getDetails_HistoryoftheSale (sales_number) {
                 document.getElementById('txtUsuarioRegistro').value = answer.user.IdUsuario;
                 document.getElementById('txtDocumentoCliente').value = answer.salesHistorywithData[0].IdCliente;
                 document.getElementById('txtNombreCliente').value = answer.salesHistorywithData[0].Nombre_Cliente;
-                document.getElementById('txtSubTotal').value = answer.salesHistorywithData[0].Total;
-                document.getElementById('txtEfectivo').value = answer.salesHistorywithData[0].Efectivo;
-                document.getElementById('txtCambio').value = answer.salesHistorywithData[0].Cambio;
+                document.getElementById('txtSubTotal').value = answer.salesHistorywithData[0].Total + 'C$';
+                document.getElementById('txtEfectivo').value = answer.salesHistorywithData[0].Efectivo + 'C$';
+                document.getElementById('txtCambio').value = answer.salesHistorywithData[0].Cambio + 'C$';
+
+                answer.salesHistorywithProducts.forEach((element) => {
+                    const fila = document.createElement('tr');
+                    fila.innerHTML = `
+                        <td>${element.Producto}</td>
+                        <td>${element.Cantidad}</td>
+                        <td>${element.Precio} C$</td>
+                        <td>${element.Total} C$</td>
+                    `;
+                    tbody.appendChild(fila);
+                });
+            }
+            else {
+                throw new Error('Invalid')
             }
         }
         else {

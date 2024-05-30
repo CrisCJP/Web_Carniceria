@@ -11,11 +11,8 @@ const upload = multer();
 const bodyParser = require('body-parser');
 const session = require('express-session');
 
-/*const config = {
-    server: 'DESKTOP-DEUHLCS',
-
 const config = {
-    server: 'DESKTOP-OP1FG8F',
+    server: 'PC-Roni',
     database: 'CarniceriaLupita',
     user: 'prueba',
     password: '1234',
@@ -25,7 +22,7 @@ const config = {
         trustServerCertificate: true,
         encrypt: true,
     }
-};*/
+};
 
 // Global variables
 let user_temp, historyInvoice_temp, mostselledproducts_temp, detailsdashboard_temp, countproducts_temp, countcategories_temp;
