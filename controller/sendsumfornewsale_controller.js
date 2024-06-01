@@ -13,4 +13,16 @@ const sumTotal = (array_sum) => {
     accumulator + current_object.costo, 0);
 };
 
-module.exports = { getSumforNewSale };
+const getSumforNewSale_return = async (array) => {
+    try {
+        const sum = await sumTotal(array);
+        return sum;
+    }
+    catch (err) {
+        console.error('Error al enviar datos', err);
+    }
+};
+
+
+
+module.exports = { getSumforNewSale, getSumforNewSale_return };

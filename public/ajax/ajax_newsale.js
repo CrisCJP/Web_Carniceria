@@ -13,8 +13,7 @@ function sendDataDetail(firstname, lastname, productname, amountproduct) {
             console.log("Conectado");
 
             var answer = JSON.parse(xhr.responseText);
-
-            if (answer && answer.list && answer.list.length > 0) {
+            if (answer && typeof answer === 'object' && Object.keys(answer).length > 0) {
                 var table = document.getElementById('tbDetallesVenta');
                 var row = answer.list[answer.list.length - 1]; // Get the last product added
                 var newRow = table.insertRow(); // Create a new row for the latest product
@@ -46,12 +45,13 @@ function sendDataDetail(firstname, lastname, productname, amountproduct) {
                     }
                 });
                 amountCell.appendChild(input);
-
                 // Add the sales price
-                newRow.insertCell().textContent = row.precioventa + 'C$';
-
+                newRow.insertCell().textContent = row.precioventa + ' C$';
                 // Add the total
-                newRow.insertCell().textContent = row.costo.toFixed(2) + 'C$';
+                newRow.insertCell().textContent = row.costo.toFixed(2) + ' C$';
+
+                document.getElementById('txtTotal').value = answer.total + ' C$';
+
             }
 
             document.getElementById('cboBuscarProducto').value = '';
@@ -110,6 +110,14 @@ function updateAmount (idproduct, amount, existence, costo) {
     xhr.onload = function() {
         if (xhr.status === 200) {
             console.log("Cantidad actualizada");
+
+            var answer = JSON.parse(xhr.responseText);
+            if (answer && typeof answer === 'object' && Object.keys(answer).length > 0) {
+                document.getElementById('txtTotal').value = answer.total + ' C$';
+            }
+            else {
+                console.log("Error al actualizar la cantidad");
+            }
         } else {
             console.log("Error al actualizar la cantidad");
         }

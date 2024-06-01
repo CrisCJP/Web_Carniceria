@@ -12,7 +12,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 
 const config = {
-    server: 'PC-Roni',
+    server: 'DESKTOP-DEUHLCS',
     database: 'CarniceriaLupita',
     user: 'prueba',
     password: '1234',
@@ -48,7 +48,7 @@ const { getSumforNewSale } = require('./controller/sendsumfornewsale_controller'
 const { setCostoandTotal } = require('./controller/setcostoandtotal_controller');
 //Call the controller "send_historyinvoice_controller"
 const { setHistoryInvoiceforDate, setHistoryInvoiceforNoVenta } = require('./controller/send_historyinvoice_controller');
-
+//Call the controller "send_detailsofhistoryofthesale_controller"
 const { set_salesHistorywithAll } = require('./controller/send_detailsofhistoryofthesale_controller');
 
 
@@ -176,7 +176,7 @@ app.post('/finally_new_sale', upload.none(), async (req, res) => {
     const finallyupdate_array = await setCostoandTotal(req, res, array_sale);
     array_sale = finallyupdate_array;
     await finalizeInvoice(array_sale);
-    res.send({ success: array_sale });
+    res.send({ success: array_sale, user: user_temp });
     array_sale = [];
 });
 

@@ -2,7 +2,7 @@ const sql = require('mssql');
 
 //Connect configuration
 const config = {
-    server: 'PC-Roni',
+    server: 'DESKTOP-DEUHLCS',
     database: 'CarniceriaLupita',
     user: 'prueba',
     password: '1234',

@@ -270,23 +270,23 @@
                                         </div>
                                         <div class="card-body">
                                             
-                                            <div class="input-group input-group-sm mb-3">
+                                            <!--<div class="input-group input-group-sm mb-3">
                                                 <div class="input-group-prepend">
                                                   <span class="input-group-text" id="inputGroupSubTotal">Sub Total</span>
                                                 </div>
-                                                <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupSubTotal" id="txtSubTotal" disabled>
-                                            </div>
+                                                <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupSubTotal" name="txtSubTotal" id="txtSubTotal" disabled>
+                                            </div>-->
                                             <div class="input-group input-group-sm mb-3">
                                                 <div class="input-group-prepend">
-                                                  <span class="input-group-text" id="inputGroupIGV">IGV(18%)</span>
+                                                  <span class="input-group-text" id="inputGroupIGV">El precio de los producto incluyen el iva</span>
                                                 </div>
-                                                <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupIGV" id="txtIGV" disabled>
+                                                <!--<input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupIGV" id="txtIGV" disabled>-->
                                             </div>
                                             <div class="input-group input-group-sm mb-3">
                                                 <div class="input-group-prepend">
                                                   <span class="input-group-text" id="inputGroupTotal">Total</span>
                                                 </div>
-                                                <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupTotal" id="txtTotal" disabled>
+                                                <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupTotal" name="txtTotal" id="txtTotal" disabled>
                                             </div>
                                         </div>
                                     </div>
@@ -320,10 +320,15 @@
             <!-- Modal HTML -->
             <div id="modalEfectivo" class="modal_efectivo">
                 <div class="modal-content_efectivo">
-                <span class="close_efectivo">&times;</span>
-                <p>Por favor, ingresa la cantidad de efectivo recibido:</p>
-                <input type="number" id="inputEfectivo" class="form-control form-control-sm" placeholder="Cantidad en efectivo" min="1">
-                <button id="submitEfectivo" class="btn btn-success btn-sm btn-block">Enviar</button>
+                    <span class="close_efectivo">&times;</span>
+                    <p>Por favor, ingresa la cantidad de efectivo recibido en "Córdoba":</p>
+                    <div class="form-group col-sm-6">
+                        <input type="number" id="inputEfectivo" class="form-control form-control-sm" placeholder="Cantidad en efectivo" min="1">
+                    </div>
+                    
+                    <div class="form-group col-sm-6">
+                        <button id="submitEfectivo" class="btn btn-success btn-sm btn-block">Enviar</button>
+                    </div>
                 </div>
             </div>
 
