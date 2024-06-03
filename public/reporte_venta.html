@@ -207,11 +207,11 @@
                                 
                                 <div class="form-group col-sm-3">
                                     <label for="txtFechaInicio">Fecha Inicio</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtFechaInicio">
+                                    <input type="date" class="form-control form-control-sm" name="txtFechaInicio" id="txtFechaInicio">
                                 </div>
                                 <div class="form-group col-sm-3">
                                     <label for="txtFechaFin">Fecha Fin</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtFechaFin">
+                                    <input type="date" class="form-control form-control-sm" name="txtFechaFin" id="txtFechaFin">
                                 </div>
                                 <div class="form-group col-sm-3">
                                    <button type="button" class="btn btn-primary btn-block btn-sm" id="btnBuscar"><i class="fas fa-search"></i> Buscar</button>
@@ -226,11 +226,10 @@
                                                 <tr>
                                                     <th scope="col">Fecha Registro</th>
                                                     <th scope="col">Numero Venta</th>
-                                                    <th scope="col">Tipo Documento</th>
                                                     <th scope="col">Documento Cliente</th>
                                                     <th scope="col">Nombre Cliente</th>
-                                                    <th scope="col">Sub Total Venta</th>
-                                                    <th scope="col">Impuesto Total Venta</th>
+                                                    <th scope="col">Numero de Usuario</th>
+                                                    <th scope="col">Usuario</th>
                                                     <th scope="col">Total Venta</th>
                                                     <th scope="col">Producto</th>
                                                     <th scope="col">Cantidad</th>
@@ -238,7 +237,7 @@
                                                     <th scope="col">Total</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody id="table_body">
                                                 
                                             </tbody>
                                         </table>
@@ -288,6 +287,8 @@
     <script src="vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
+    <script src="ajax/ajax_getreport.js"></script>
+
     <script src="vendor/datatables/extensiones/js/dataTables.responsive.min.js"></script>
 
     <script src="vendor/datatables/extensiones/js/dataTables.buttons.min.js"></script>
@@ -300,6 +301,8 @@
 
     <!-- SOLO ES DE EJEMPLO - IGNORAR -->
     <script src="js/vistas/datatables-demo.js"></script>
+
+    
 
 
 </body>

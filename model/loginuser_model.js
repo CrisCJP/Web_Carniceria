@@ -32,4 +32,18 @@ const getInvoicesByUserId = async (userId) => {
     }
 };
 
+const getUserById_limit = async (username) => {
+    let pool;
+    try {
+        pool = await sql.connect(config);
+        const result = await pool.request()
+            .input('NameUse', sql.VarChar, username)
+            .input('Password', sql.VarChar, password)
+            .query("select IdUsuario, Correo, Nombre, Apellido, idrol, convert(varchar(100), decryptbypassphrase('passwordCVB',Password_Encript)) as Contraseña_Desencryptada from Usuario where Correo LIKE @NameUse AND convert(varchar(100), decryptbypassphrase('passwordCVB',Password_Encript)) = @Password");
+        return result.recordset[0];
+    } finally {
+        pool.close();
+    }
+};
+
 module.exports = { getUserById, getInvoicesByUserId };

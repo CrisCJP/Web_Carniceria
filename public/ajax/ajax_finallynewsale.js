@@ -74,7 +74,6 @@ function setFinallyfornewSale (cash_amount, addition_costo) {
 
 
 // Asegúrate de haber incluido el script jspdf.min.js en tu proyecto
-
 function generateInvoicePDF(invoiceData, userData) {
     var doc = new jsPDF();
     var startY = 10;
@@ -168,11 +167,6 @@ function generateInvoicePDF(invoiceData, userData) {
         window.open(doc.output('bloburl'), '_blank');
     };
 };
-
-function agregarNegrita(texto) {
-    return '<b>' + texto + '</b>';
-};
-
 
 // Función para limpiar la tabla
 function clearTable(tableId) {

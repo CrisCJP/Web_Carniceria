@@ -8,6 +8,8 @@ function sendDataUser(mail, password) {
     xhr.onload = function() {
         if (xhr.status === 200) {
             console.log('responding to login');
+            document.getElementById('mail').value = '';
+            document.getElementById('password').value = '';
         }
         else {
             console.log('error');
@@ -25,6 +27,5 @@ document.addEventListener('DOMContentLoaded', function() {
         var password_user = document.getElementById('password').value;
 
         sendDataUser(mail_user, password_user);
-        
     });
 });

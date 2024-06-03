@@ -51,20 +51,22 @@
                     <span>Dashboard</span></a>
             </li>
 
-            <!-- Nav Item - Admnistración Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdministracion"
-                    aria-expanded="true" aria-controls="collapseAdministracion">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>Admnistración</span>
-                </a>
-                <div id="collapseAdministracion" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="usuarios.html">Usuarios</a>
-                        <a class="collapse-item" href="negocio.html">Negocio</a>
+            <% if(user.idrol == 1) { %>
+                <!-- Nav Item - Admnistración Collapse Menu -->
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdministracion"
+                        aria-expanded="true" aria-controls="collapseAdministracion">
+                        <i class="fas fa-fw fa-cog"></i>
+                        <span>Admnistración</span>
+                    </a>
+                    <div id="collapseAdministracion" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <a class="collapse-item" href="usuarios.html">Usuarios</a>
+                            <a class="collapse-item" href="negocio.html">Negocio</a>
+                        </div>
                     </div>
-                </div>
-            </li>
+                </li>
+            <% } %>
 
             <!-- Nav Item - Inventario Collapse Menu -->
             <li class="nav-item">
@@ -319,7 +321,7 @@
                                     </form>
                                 </div>
                                 <div class="modal-footer">
-                                    <a href="#" class="btn btn-primary btn-sm"  target="_blank" id="linkImprimir" >Imprimir</a>
+                                    <a class="btn btn-primary btn-sm" id="linkImprimir" >Imprimir</a>
                                     <button class="btn btn-danger btn-sm" type="button" data-dismiss="modal">Cerrar</button>
                                 </div>
                             </div>
@@ -360,6 +362,7 @@
     <script src="vendor/jquery-ui/jquery-ui.js"></script>
 
     <script src="ajax/ajax_historyinvoice.js"></script>
+    <script src="ajax/jspdf.min.js"></script>
 
 </body>
 
