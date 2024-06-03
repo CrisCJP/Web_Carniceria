@@ -10,12 +10,20 @@ const multer = require('multer');
 const upload = multer();
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const crypto = require('crypto');
+const secret = crypto.randomBytes(64).toString('hex');
+
+app.use(session({
+    secret: 'keyboard cat', // Cambia esto a tu secreto
+    resave: false,
+    saveUninitialized: false,
+}));
 
 /*const config = {
     server: 'DESKTOP-DEUHLCS',
 */
 const config = {
-    server: 'DESKTOP-OP1FG8F',
+    server: 'DESKTOP-DEUHLCS',
     database: 'CarniceriaLupita',
     user: 'prueba',
     password: '1234',
@@ -51,8 +59,10 @@ const { getSumforNewSale } = require('./controller/sendsumfornewsale_controller'
 const { setCostoandTotal } = require('./controller/setcostoandtotal_controller');
 //Call the controller "send_historyinvoice_controller"
 const { setHistoryInvoiceforDate, setHistoryInvoiceforNoVenta } = require('./controller/send_historyinvoice_controller');
-
+//Call the controller "send_detailsofhistoryofthesale_controller"
 const { set_salesHistorywithAll } = require('./controller/send_detailsofhistoryofthesale_controller');
+//Call the controller "send_reportfordate"
+const { setReport } = require('./controller/send_reportofordate_controller');
 
 
 
@@ -70,6 +80,8 @@ const { finalizeInvoice } = require('./model/finalizeinvoice_model');
 const { findProductforSales } = require('./model/finderofproductsforsale_model');
 
 const { getHistoryInvoicePreview } = require('./model/gethistoryinvoice_model');
+
+const { backupDatabase } = require('./model/backrest_model');
 
 //Analyze data
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -104,6 +116,7 @@ app.get("/index", upload.none(), async function (req, res) {
         detailsdashboard_temp = await getDetailsDashboard(user_temp.IdUsuario);
         countproducts_temp = await getCountProductCategories();
         countcategories_temp = await getCountCategories();
+        console.log (req.session.users);
     }
     res.render('index', { user: user_temp, historyInvoice: historyInvoice_temp, selledProduct: mostselledproducts_temp, detailsDashboard: detailsdashboard_temp, countProduct: countproducts_temp, countCategories: countcategories_temp });
 });
@@ -111,11 +124,13 @@ app.get("/index", upload.none(), async function (req, res) {
 //Path to render 'vacio.ejs'
 app.get("/vacio", function (req, res) {
     res.render('vacio', { user: user_temp });
+    array_sale = [];
 });
 
 //Path to render 'nueva_venta.ejs'
 app.get("/nueva_venta", function (req, res) {
-    res.render('nueva_venta', { user: user_temp, list: array_sale });
+    res.render('nueva_venta', { user: user_temp });
+    array_sale = [];
 });
 
 //Path to send 'find product'
@@ -134,12 +149,27 @@ app.get ('/search_productsale', async (req, res) => {
 app.get('/historial_venta', async (req, res) => {
     const historyinvoicepreview_temp = await getHistoryInvoicePreview(user_temp.IdUsuario);
     res.render('historial_venta', { user: user_temp, historyinvoicepreview: historyinvoicepreview_temp });
+    array_sale = [];
 });
+
+//
+app.get('/back_rest', async (req, res) => {
+    await backupDatabase(req, res);
+});
+
+app.get('/reporte_venta', async (req, res) => {
+    res.render('reporte_venta', { user: user_temp });
+});
+
 
 //:::Middleware:::
 app.use(express.static("public"));
 
 //:::Methods:::POSTS::::::::::::::::::::::::::::::::::::
+
+
+
+
 
 //For login.ejs
 app.post('/login_user', upload.none(), async (req, res) => {
@@ -179,7 +209,7 @@ app.post('/finally_new_sale', upload.none(), async (req, res) => {
     const finallyupdate_array = await setCostoandTotal(req, res, array_sale);
     array_sale = finallyupdate_array;
     await finalizeInvoice(array_sale);
-    res.send({ success: array_sale });
+    res.send({ success: array_sale, user: user_temp });
     array_sale = [];
 });
 
@@ -198,6 +228,13 @@ app.post('/getHistoryInvoiceforSalesNumber', upload.none(), async (req, res) => 
 app.post('/getDetails_HistoryoftheSale', upload.none(), async (req,res) => {
     await set_salesHistorywithAll(req, res, user_temp);
 });
+
+
+// Send report view
+app.post('/getReportforDate', upload.none(), async (req, res) => {
+    await setReport(req, res, user_temp.IdUsuario);
+});
+
 
 //
 app.post('/inventary',upload.none(),function(req,res){

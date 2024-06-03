@@ -55,20 +55,23 @@
                     <span>Dashboard</span></a>
             </li>
 
-            <!-- Nav Item - Admnistración Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdministracion"
-                    aria-expanded="true" aria-controls="collapseAdministracion">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>Admnistración</span>
-                </a>
-                <div id="collapseAdministracion" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="usuarios.html">Usuarios</a>
-                        <a class="collapse-item" href="negocio.html">Negocio</a>
+            <% if(user.idrol == 1) { %>
+                <!-- Nav Item - Admnistración Collapse Menu -->
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdministracion"
+                        aria-expanded="true" aria-controls="collapseAdministracion">
+                        <i class="fas fa-fw fa-cog"></i>
+                        <span>Admnistración</span>
+                    </a>
+                    <div id="collapseAdministracion" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <a class="collapse-item" href="usuarios.html">Usuarios</a>
+                            <a class="collapse-item" href="negocio.html">Negocio</a>
+                            <a class="collapse-item" href="/back_rest">Copia de respaldo</a>
+                        </div>
                     </div>
-                </div>
-            </li>
+                </li>
+            <% } %>
 
             <!-- Nav Item - Inventario Collapse Menu -->
             <li class="nav-item">
@@ -130,7 +133,7 @@
                 </a>
                 <div id="collapseReportes" class="collapse" aria-labelledby="headingInventario" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="reporte_venta.html">Reporte de Ventas</a>
+                        <a class="collapse-item" href="/reporte_venta">Reporte de Ventas</a>
                     </div>
                 </div>
             </li>
@@ -167,7 +170,7 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.Nombre %> <%= user.Apellido %></span>
                                 <img class="img-profile rounded-circle"
                                     src="https://images.unsplash.com/photo-1519648023493-d82b5f8d7b8a?w=300">
                             </a>
@@ -179,7 +182,7 @@
                                     Perfil
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                <a class="dropdown-item" href="/login" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Salir
                                 </a>
@@ -203,16 +206,23 @@
                                 
                                 <div class="form-group col-sm-3">
                                     <label for="txtFechaInicio">Fecha Inicio</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtFechaInicio">
+                                    <input type="date" class="form-control form-control-sm" name="txtFechaInicio" id="txtFechaInicio">
                                 </div>
                                 <div class="form-group col-sm-3">
                                     <label for="txtFechaFin">Fecha Fin</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtFechaFin">
+                                    <input type="date" class="form-control form-control-sm" name="txtFechaFin" id="txtFechaFin">
                                 </div>
                                 <div class="form-group col-sm-3">
                                    <button type="button" class="btn btn-primary btn-block btn-sm" id="btnBuscar"><i class="fas fa-search"></i> Buscar</button>
                                 </div>
                             </div>
+
+                            <div class="form-row align-items-end">
+                                <div class="form-group col-sm-3">
+                                    <button type="button" class="btn btn-primary btn-block btn-sm" id="btnExportar" disabled>Exportar a Excel</button>
+                                </div>
+                            </div>
+
 
                             <hr/>
                             <div class="row">
@@ -222,11 +232,10 @@
                                                 <tr>
                                                     <th scope="col">Fecha Registro</th>
                                                     <th scope="col">Numero Venta</th>
-                                                    <th scope="col">Tipo Documento</th>
                                                     <th scope="col">Documento Cliente</th>
                                                     <th scope="col">Nombre Cliente</th>
-                                                    <th scope="col">Sub Total Venta</th>
-                                                    <th scope="col">Impuesto Total Venta</th>
+                                                    <th scope="col">Numero de Usuario</th>
+                                                    <th scope="col">Usuario</th>
                                                     <th scope="col">Total Venta</th>
                                                     <th scope="col">Producto</th>
                                                     <th scope="col">Cantidad</th>
@@ -234,7 +243,7 @@
                                                     <th scope="col">Total</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody id="table_body">
                                                 
                                             </tbody>
                                         </table>
@@ -284,6 +293,13 @@
     <script src="vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
+    <script src="ajax/ajax_getreport.js"></script>
+    <!-- Incluir la biblioteca xlsx desde un CDN -->
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.2/FileSaver.min.js"></script>
+
+
+
     <script src="vendor/datatables/extensiones/js/dataTables.responsive.min.js"></script>
 
     <script src="vendor/datatables/extensiones/js/dataTables.buttons.min.js"></script>
@@ -295,7 +311,9 @@
     <script src="vendor/jquery-ui/idioma/datepicker-es.js"></script>
 
     <!-- SOLO ES DE EJEMPLO - IGNORAR -->
-    <script src="js/vistas/datatables-demo.js"></script>
+    
+
+    
 
 
 </body>

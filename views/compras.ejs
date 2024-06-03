@@ -62,20 +62,23 @@
                     <span>Dashboard</span></a>
             </li>
 
-            <!-- Nav Item - Admnistración Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdministracion"
-                    aria-expanded="true" aria-controls="collapseAdministracion">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>Admnistración</span>
-                </a>
-                <div id="collapseAdministracion" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="usuarios.html">Usuarios</a>
-                        <a class="collapse-item" href="negocio.html">Negocio</a>
+            <% if(user.idrol == 1) { %>
+                <!-- Nav Item - Admnistración Collapse Menu -->
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdministracion"
+                        aria-expanded="true" aria-controls="collapseAdministracion">
+                        <i class="fas fa-fw fa-cog"></i>
+                        <span>Admnistración</span>
+                    </a>
+                    <div id="collapseAdministracion" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <a class="collapse-item" href="usuarios.html">Usuarios</a>
+                            <a class="collapse-item" href="negocio.html">Negocio</a>
+                            <a class="collapse-item" href="/back_rest">Copia de respaldo</a>
+                        </div>
                     </div>
-                </div>
-            </li>
+                </li>
+            <% } %>
 
             <!-- Nav Item - Inventario Collapse Menu -->
             <li class="nav-item">
@@ -122,19 +125,21 @@
                 </div>
             </li>
 
-            <!-- Nav Item - Reportes Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReportes"
-                    aria-expanded="true" aria-controls="collapseReportes">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Reportes</span>
-                </a>
-                <div id="collapseReportes" class="collapse" aria-labelledby="headingInventario" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="reporte_venta.html">Reporte de Ventas</a>
+            <% if (user.idrol == 1) { %>
+                <!-- Nav Item - Reportes Collapse Menu -->
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReportes"
+                        aria-expanded="true" aria-controls="collapseReportes">
+                        <i class="fas fa-fw fa-chart-area"></i>
+                        <span>Reportes</span>
+                    </a>
+                    <div id="collapseReportes" class="collapse" aria-labelledby="headingInventario" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <a class="collapse-item" href="/reporte_venta">Reporte de Ventas</a>
+                        </div>
                     </div>
-                </div>
-            </li>
+                </li>
+            <% } %>
 
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -182,7 +187,7 @@
                             Perfil
                         </a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                        <a class="dropdown-item" href="/login" data-toggle="modal" data-target="#logoutModal">
                             <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                             Salir
                         </a>
