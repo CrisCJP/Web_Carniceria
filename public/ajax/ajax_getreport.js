@@ -11,6 +11,7 @@ function getReportforDate(initial_date, final_date) {
 
             var answer = JSON.parse(xhr.responseText);
             if (answer && typeof answer === 'object' && Object.keys(answer).length > 0) {
+                document.getElementById('btnExportar').disabled = false;
                 const tbody = document.getElementById('table_body');
                 tbody.innerHTML = '';
 
@@ -35,6 +36,9 @@ function getReportforDate(initial_date, final_date) {
             else {
                 console.log("No hay datos");
             }
+            document.getElementById('btnExportar').addEventListener('click', function(event) {
+                exportToExcel(answer.reportList, "Reporte_Ventas");
+            });
         }
         else {
             console.log(xhr.status);
@@ -75,3 +79,35 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 });
+
+
+
+function removeDateProperty(reportList) {
+    return reportList.map(({ Fecha, ...rest }) => rest);
+};
+
+function exportToExcel(reportList, fileName) {
+    // Eliminar la propiedad Fecha de cada objeto en reportList
+    const dataWithoutDate = removeDateProperty(reportList);
+
+    // Crear un nuevo libro de trabajo y una hoja de cálculo
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(dataWithoutDate);
+
+    // Añadir la hoja de cálculo al libro de trabajo
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
+
+    // Especificar opciones para el archivo Excel
+    const options = { bookType: 'xlsx', type: 'array' };
+
+    // Escribir el archivo Excel
+    const excelBuffer = XLSX.write(workbook, options);
+
+    // Guardar el archivo Excel
+    saveAsExcelFile(excelBuffer, fileName);
+};
+
+function saveAsExcelFile(buffer, fileName) {
+    const data = new Blob([buffer], {type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8"});
+    saveAs(data, fileName + '.xlsx');
+};

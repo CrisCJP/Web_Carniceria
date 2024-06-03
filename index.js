@@ -10,7 +10,6 @@ const multer = require('multer');
 const upload = multer();
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const FileStore = require('session-file-store')(session);
 const crypto = require('crypto');
 const secret = crypto.randomBytes(64).toString('hex');
 
@@ -99,7 +98,7 @@ app.get("/", function (req, res) {
 });
 
 app.get("/compras", function (req, res) {
-    res.render("compras")
+    res.render("compras", { user: user_temp })
 });
 
 //Path to render 'login.ejs'
@@ -157,7 +156,7 @@ app.get('/back_rest', async (req, res) => {
 });
 
 app.get('/reporte_venta', async (req, res) => {
-    res.render('reporte_venta');
+    res.render('reporte_venta', { user: user_temp });
 });
 
 
