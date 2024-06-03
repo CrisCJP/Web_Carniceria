@@ -13,7 +13,7 @@ const session = require('express-session');
 
 /*const config = {
     server: 'DESKTOP-DEUHLCS',
-
+*/
 const config = {
     server: 'DESKTOP-OP1FG8F',
     database: 'CarniceriaLupita',
@@ -25,7 +25,7 @@ const config = {
         trustServerCertificate: true,
         encrypt: true,
     }
-};*/
+};
 
 // Global variables
 let user_temp, historyInvoice_temp, mostselledproducts_temp, detailsdashboard_temp, countproducts_temp, countcategories_temp;
@@ -88,7 +88,7 @@ app.get("/", function (req, res) {
 });
 
 app.get("/compras", function (req, res) {
-    res.render("compras")
+    res.render('compras', {user:user_temp});
 });
 
 //Path to render 'login.ejs'
@@ -233,6 +233,21 @@ app.post('/inventary',upload.none(),function(req,res){
         console.error('Error al conectar con la base de datos:', err);
         res.status(500).send('Error al conectar con la base de datos');
     });
+})
+
+app.post('/getmedida',upload.none(),function(req,res){
+    const{Producto} = req.body;
+    var NameProduct = Producto;
+    sql.connect(config).then(pool =>{
+        return pool.request()
+        .input('Producto', sql.VarChar, NameProduct)
+        .query('select UnidadDeMedida from Producto where NombreProducto = @Producto')
+        .then(result =>{
+            let unidMedida = result.recordset[0].UnidadDeMedida;
+            console.log(unidMedida);
+            res.send({categoria:unidMedida});
+        })
+    })
 })
 
 app.post('/option',upload.none(),function(req,res){

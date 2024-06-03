@@ -18,6 +18,22 @@
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.css" rel="stylesheet">
 
+    <style>
+        .currency-input {
+            position: relative;
+        }
+        .currency-input input {
+            padding-left: 30px; /* Espacio para el símbolo */
+        }
+        .currency-input .symbol {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(15%);
+            pointer-events: none;
+        }
+    </style>
+
 </head>
 
 <body id="page-top">
@@ -154,7 +170,7 @@
                 <li class="nav-item dropdown no-arrow">
                     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">XD</span>
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.Nombre %> <%= user.Apellido %></span>
                         <img class="img-profile rounded-circle"
                             src="https://images.unsplash.com/photo-1519648023493-d82b5f8d7b8a?w=300">
                     </a>
@@ -200,9 +216,10 @@
                                                 <!-- Agrega más opciones según sea necesario -->
                                             </datalist>
                                         </div>
-                                        <div class="form-group col-sm-6">
+                                        <div class="form-group col-sm-6 currency-input">
                                             <label for="precioProducto" style="display: inline-block; margin-right: 5px;">Precio del producto:</label>
-                                            <input type="number" class="form-control form-control-sm" id="precioProducto" placeholder="0.0" step="0.25" disabled>
+                                            <span class="symbol">C$</span>
+                                            <input type="text" class="form-control form-control-sm" id="precioProducto" placeholder="0.0" step="0.25" oninput="formatCurrency(this)">
                                         </div>
                                         
                                     </div>
@@ -220,7 +237,7 @@
                                     <div class="form-row">
                                         <div class="form-group col-sm-6">
                                             <label for="cboBuscarProductoCompra" style="display: inline-block; margin-right: 5px;">Producto:</label>
-                                            <input class="form-control form-control-sm" list="datalistOptions" id="cboBuscarProductoCompra" placeholder="Buscar producto..." disabled>
+                                            <input class="form-control form-control-sm" list="datalistOptions" id="cboBuscarProductoCompra" placeholder="Buscar producto...">
                                             <datalist id="datalistOptions">
                                                 <!-- Opciones de productos aquí -->
 
@@ -229,8 +246,8 @@
                                         </div>
                                         
                                         <div class="form-group col-sm-6">
-                                            <label for="cantidadAcomprar" style="display: inline-block; margin-right: 5px;">Cantidad de producto:</label>
-                                            <input type="number" class="form-control form-control-sm" id="cantidadAcomprar" placeholder="0.0" step="0.5" disabled>
+                                            <label for="cantidadAcomprar" style="display: inline-block; margin-right: 5px;" id="LabelCantidadAComprar">Cantidad:</label>
+                                            <input type="number" class="form-control form-control-sm" id="cantidadAcomprar" placeholder="0.0" step="0.5">
                                             
                                         </div>
                                     </div>
@@ -304,7 +321,7 @@
                             <div class="card shadow">
                                 <div class="card-body">
                                     <div class="form-group mb-0 d-flex flex-row">
-                                        <button class="btn btn-success btn-sm flex-grow-1 mr-1" id="btnAgregarProducto">Elegir Proveedor</button>
+                                        <button class="btn btn-success btn-sm flex-grow-1 mr-1" id="btnAgregarProducto">Agregar Producto</button>
                                         <button class="btn btn-success btn-sm flex-grow-1 ml-1" id="btnTerminarCompra" disabled>Terminar Compra</button>
                                     </div>
                                 </div>
@@ -401,7 +418,7 @@
             }
 
             if (!opcionEncontrada) {
-                alert("La opción introducida no se encuentra en la lista.");
+                document.getElementById('datalistOptions').innerHTML = '';
                 return false;
             }else{
                 return true;
@@ -423,9 +440,10 @@
             }
 
             if (!opcionEncontrada) {
-                alert("La opción introducida no se encuentra en la lista.");
+                document.getElementById('LabelCantidadAComprar').textContent = 'Cantidad'
                 return false;
             }else{
+
                 return true;
             }
         }
@@ -434,19 +452,48 @@
             // Obtener el botón por su ID
             
             var inptProveedor = document.getElementById("txtDocumentoProveedor");
-            var inptProducto = document.getElementById("cboBuscarProductoCompra");
-            var inptPrecio = document.getElementById("precioProducto");
-            var inputCantidad = document.getElementById("cantidadAcomprar");
+            //var inptProducto = document.getElementById("cboBuscarProductoCompra");
+            //var inptPrecio = document.getElementById("precioProducto");
+            //var inputCantidad = document.getElementById("cantidadAcomprar");
             // Deshabilitar el botón cambiando su atributo disabled a true
             inptProveedor.disabled = true;
-            inptProducto.disabled = false;
-            inptPrecio.disabled = false;
-            inputCantidad.disabled = false;
+            //inptProducto.disabled = false;
+            //inptPrecio.disabled = false;
+            //inputCantidad.disabled = false;
 
         }
 
         function limpiarCadena(cadena) {
             return cadena.replace(/\s+/g, '').split('-')[0];
+        }
+
+        function getUnidadMedida(Producto){
+            var formData = new FormData();
+
+            formData.append('Producto', Producto);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('post', '/getmedida', true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var answer = JSON.parse(xhr.responseText);
+                    if(answer.categoria){
+                        var labelcantidad = document.getElementById('LabelCantidadAComprar');
+                        if(parseInt(answer.categoria)==1){
+                            labelcantidad.textContent = 'Unidad/es'
+                        }else{
+                            labelcantidad.textContent = 'Libra/s'
+                        }
+                        return parseInt(answer.categoria)
+                    }else{
+                        alert('no return product')
+                        return 0
+                    }
+                } else {
+                    console.log("Error al agregar producto");
+                }
+            };
+            xhr.send(formData);
         }
 
         function optionProduct(){
@@ -490,28 +537,78 @@
             
         }
 
+        function establecerValoresEnFila(tablaId, indiceFila, valores) {
+            var tabla = document.getElementById(tablaId);
+            var fila = tabla.getElementsByTagName('tbody')[0].getElementsByTagName('tr')[indiceFila];
+
+            if (fila) {
+                var celdas = fila.getElementsByTagName('td');
+                for (var i = 0; i < 5; i++) {
+                    if (celdas[i]) {
+                        celdas[i].innerText = valores[i];
+                    }
+                }
+            } else {
+                console.error("Fila no encontrada en el índice especificado.");
+            }
+        }
+
+        function obtenerFilaConValor(tablaId, indiceColumna, valorBuscado) {
+            // Obtener la tabla por ID
+            var tabla = document.getElementById(tablaId);
+            var filas = tabla.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+            // Recorrer las filas de la tabla
+            for (var i = 0; i < filas.length; i++) {
+                var celdas = filas[i].getElementsByTagName('td');
+                // Verificar si el valor en la columna especificada coincide con el valor buscado
+                if (celdas[indiceColumna].innerText.trim() === valorBuscado) {
+                    return i; // Retornar el índice de la fila donde se encontró el valor
+                }
+            }
+            return -1; // Valor no encontrado
+        }
+
         function agregarFila(producto, cantidad, precio) {
-            var tabla = document.getElementById("tbProductoCompra").getElementsByTagName('tbody')[0];
+            if(obtenerFilaConValor("tbProductoCompra", 1, producto)!==-1){
+                var tabla = document.getElementById("tbProductoCompra");
+                var fila = tabla.getElementsByTagName('tbody')[0].getElementsByTagName('tr')[obtenerFilaConValor("tbProductoCompra", 1, producto)];
+
+                if (fila) {
+                    var celdas = fila.getElementsByTagName('td');
+
+                    celdas[0].innerHTML = '<input type="checkbox">';
+                    celdas[1].innerHTML = producto;
+                    celdas[2].innerHTML = parseFloat(celdas[2].innerText) + parseFloat(cantidad);
+                    celdas[3].innerHTML = 'C$'+parseFloat(precio);
+                    celdas[4].innerHTML = 'C$'+(parseFloat(celdas[2].innerText)*precio);
+                      
+                } else {
+                    console.error("Fila no encontrada en el índice especificado.");
+                }
+            }else{
+                var tabla = document.getElementById("tbProductoCompra").getElementsByTagName('tbody')[0];
             
-            // Crear una nueva fila
-            var nuevaFila = tabla.insertRow();
+                // Crear una nueva fila
+                var nuevaFila = tabla.insertRow();
 
-            // Crear nuevas celdas
-            var celda0 = nuevaFila.insertCell(0);
-            var celda1 = nuevaFila.insertCell(1);
-            var celda2 = nuevaFila.insertCell(2);
-            var celda3 = nuevaFila.insertCell(3);
-            var celda4 = nuevaFila.insertCell(4);
+                // Crear nuevas celdas
+                var celda0 = nuevaFila.insertCell(0);
+                var celda1 = nuevaFila.insertCell(1);
+                var celda2 = nuevaFila.insertCell(2);
+                var celda3 = nuevaFila.insertCell(3);
+                var celda4 = nuevaFila.insertCell(4);
 
-            // Calcular el total
-            var total = cantidad * precio;
+                // Calcular el total
+                var total = cantidad * precio;
 
-            // Agregar contenido a las celdas
-            celda0.innerHTML = '<input type="checkbox">';
-            celda1.innerHTML = producto;
-            celda2.innerHTML = cantidad;
-            celda3.innerHTML = precio;
-            celda4.innerHTML = total.toFixed(2);
+                // Agregar contenido a las celdas
+                celda0.innerHTML = '<input type="checkbox">';
+                celda1.innerHTML = producto;
+                celda2.innerHTML = cantidad;
+                celda3.innerHTML = 'C$'+precio;
+                celda4.innerHTML = 'C$'+total.toFixed(2);
+            }
         }
         
         function leerTabla() {
@@ -525,9 +622,9 @@
                 var filaDatos = {
                     checkbox: celdas[0].querySelector('input[type="checkbox"]').checked,
                     producto: celdas[1].innerText,
-                    cantidad: parseFloat(celdas[2].innerText),
-                    precio: parseFloat(celdas[3].innerText),
-                    total: parseFloat(celdas[4].innerText)
+                    cantidad: parseFloat(celdas[2].innerText.replace('C$','').trim()),
+                    precio: parseFloat(celdas[3].innerText.replace('C$','').trim()),
+                    total: parseFloat(celdas[4].innerText.replace('C$','').trim())
                 };
                 datosTabla.push(filaDatos);
             }
@@ -548,7 +645,7 @@
             var idproveedor = limpiarCadena(document.getElementById('txtDocumentoProveedor').value);
 
             var productos = datosTable.map(function(item) { return item.producto; });
-            var cantidades = datosTable.map(function(item) { return item.cantidad; });
+            var cantidades = datosTable.map(function(item) { return item.cantidad; }); 
             var precios = datosTable.map(function(item) { return item.precio; });
 
             var idproducto = new Array(productos.length);
@@ -585,16 +682,31 @@
             xhr.send(formData);
             
         }
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.getElementById('txtDocumentoProveedor').addEventListener(('input'),(event) => {
+                if(verificarOpcion()){
+                    optionProduct();
+                }
+            });
+        });
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.getElementById('cboBuscarProductoCompra').addEventListener(('input'),(event) => {
+                if(verificarOpcion2()){
+                    getUnidadMedida(limpiarCadenaNameProv(document.getElementById('cboBuscarProductoCompra').value));
+                }
+            });
+        });
+        
         // Agregar evento de clic al botón "Agregar Producto"
         document.getElementById('btnAgregarProducto').addEventListener('click', function() {
             // Llamar a la función verificarCampos cuando se haga clic en el botón
             if(verificarOpcion()){
-                var inptProveedor = document.getElementById("txtDocumentoProveedor");
-                if(inptProveedor.disabled){
+                
+                //if(inptProveedor.disabled){
                     if(verificarOpcion2()){
                         if(verificarCampos()){
 
-                            
+                            deshabilitarBoton();
 
                             var boton = document.getElementById("btnTerminarCompra");
                             var inptProducto = document.getElementById("cboBuscarProductoCompra");
@@ -610,12 +722,14 @@
                             inputCantidad.value = '';
                         }
                     }
-                }else{
+                /*}else{
                     document.getElementById('btnAgregarProducto').textContent = 'Agregar Producto'
                     deshabilitarBoton();
                     optionProduct();
-                }
+                }*/
                 
+            }else{
+                alert('El Proveedor no coincide')
             }
             
 
@@ -652,9 +766,9 @@
                 inptPrecio.value = '';
                 inputCantidad.value = '';
                 inptProveedor.disabled = false;
-                inptPrecio.disabled = true;
-                inputCantidad.disabled = true;
-                inptProducto.disabled = true;
+                //inptPrecio.disabled = true;
+                //inputCantidad.disabled = true;
+                //inptProducto.disabled = true;
             }
         })
     </script>
