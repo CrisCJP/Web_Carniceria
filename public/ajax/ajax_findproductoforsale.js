@@ -11,12 +11,13 @@ inputBusqueda.addEventListener('input', async () => {
     // Update the results list with product names
     listaResultados.innerHTML = '';
     listaResultados.style.display = 'block';
-    data.forEach(producto => {
+    data.filteredProducts.forEach(producto => {
         const li = document.createElement('li');
         li.textContent = producto.NombreProducto;
 
         li.addEventListener('click', () => {
             inputBusqueda.value = producto.NombreProducto;
+            document.getElementById('txtCosto').value = producto.PrecioVenta + ' C$';
             listaResultados.innerHTML = '';
         });
 
@@ -25,6 +26,7 @@ inputBusqueda.addEventListener('input', async () => {
     if (inputBusqueda.value === '') {
         listaResultados.innerHTML = '';
         listaResultados.style.display = 'none';
+        document.getElementById('txtCosto').value = '';
     }
 });
 

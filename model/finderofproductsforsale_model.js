@@ -6,7 +6,7 @@ const findProductforSales = async () => {
     try {
         pool = await sql.connect(config);
         const result = await pool.request()
-            .query("SELECT NombreProducto FROM Producto GO");
+            .query("SELECT NombreProducto, precioventa FROM Producto WHERE Existencia > 0;");
         return result.recordset;
     } finally {
         pool.close();

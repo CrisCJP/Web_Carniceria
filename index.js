@@ -142,7 +142,7 @@ app.get ('/search_productsale', async (req, res) => {
     const filteredProducts = productArray.filter(product =>
         product.NombreProducto.toLowerCase().includes(searchTerm)
     );
-    res.json(filteredProducts);
+    res.json({ filteredProducts: filteredProducts, price: findproduct_temp.PrecioVenta });
 });
 
 //Path to render 'historial_venta.ejs'
