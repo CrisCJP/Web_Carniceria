@@ -1,4 +1,4 @@
-const { getReport, getReport_quincenal } = require('../model/reportview_model');
+const { getReport, getReport_quincenal, getReport_mensual, getReport_semanal } = require('../model/reportview_model');
 
 const setReport = async (req, res, user) => {
     try {
@@ -12,13 +12,19 @@ const setReport = async (req, res, user) => {
         else if (option_report == 'quincenal')
             report_list = await getReport_quincenal(date_temp.quincenal, date_temp.month, date_temp.year);
 
+        else if (option_report == 'mensual')
+            report_list = await getReport_mensual(date_temp.year);
+
+        else if (option_report =='semanal')
+            report_list = await getReport_semanal(date_temp.year);
+
         else
-            console.log('Nadad');
+            console.error('Opcion no encontrada');
 
         if (report_list.length === 0) 
             return res.status(404).json({ message: 'No se encontraron resultados' });
 
-        console.log(report_list);
+        
         res.status(200).json({ reportList: report_list });
     
     } catch (err) {

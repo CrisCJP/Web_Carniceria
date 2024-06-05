@@ -84,7 +84,16 @@
         </div>
 
     </div>
+<script>
+    // Deshabilitar el botón de retroceso apenas se carga la página de inicio de sesión
+    window.history.pushState(null, null, window.location.href);
+    window.onpopstate = function() {
+        window.history.go(1);
+    };
+</script>
+
 <script src="/ajax/ajax_login.js"></script>
+
 
 </body>
 

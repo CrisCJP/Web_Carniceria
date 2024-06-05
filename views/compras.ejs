@@ -74,6 +74,7 @@
                         <div class="bg-white py-2 collapse-inner rounded">
                             <a class="collapse-item" href="usuarios.html">Usuarios</a>
                             <a class="collapse-item" href="negocio.html">Negocio</a>
+                            <!--<a class="collapse-item" href="negocio.html">Negocio</a>-->
                             <a class="collapse-item" href="/back_rest">Copia de respaldo</a>
                         </div>
                     </div>
@@ -187,7 +188,7 @@
                             Perfil
                         </a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/login" data-toggle="modal" data-target="#logoutModal">
+                        <a id="logout-link" class="dropdown-item" href="/login" data-toggle="modal" data-target="#logoutModal">
                             <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                             Salir
                         </a>
@@ -343,13 +344,7 @@
     <!-- End of Main Content -->
 
     <!-- Footer -->
-    <footer class="sticky-footer bg-white">
-        <div class="container my-auto">
-            <div class="copyright text-center my-auto">
-                <span>Copyright &copy; Your Website 2021</span>
-            </div>
-        </div>
-    </footer>
+    
     <!-- End of Footer -->
 
 </div>
@@ -780,6 +775,7 @@
 
 
     <script src="ajax/ajax_opciones.js"></script>
+    <script src="ajax/ajax_logout.js"></script>
 
 </body>
 

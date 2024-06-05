@@ -14,53 +14,31 @@ function getReportforDate(initial_date, final_date, option_report) {
             if (answer && typeof answer === 'object' && Object.keys(answer).length > 0) {
 
                 if (option_report == 'fecha') {
-                    const array = ['Fecha', 'Numero de Venta', 'Producto', 'Precio', 'Cantidad', 'Total'];
+                    const array = ['Fecha', 'Numero de Venta', 'Producto', 'Cantidad', 'Precio', 'Total'];
                     actualizarEncabezados(array);
-                    agregarDatos(answer);
+                    agregarDatos(answer, option_report);
                 }
                 else if (option_report == 'quincenal') {
-                    const array = ['Fecha', 'Numero de Venta', 'Mes', 'Quincena del mes', 'Producto', 'Precio', 'Cantidad', 'Total'];
+                    const array = ['Fecha', 'Numero de Venta', 'Mes', 'Quincena del mes', 'Producto', 'Cantidad', 'Precio', 'Total'];
                     actualizarEncabezados(array);
-                    agregarDatos(answer);
+                    agregarDatos(answer, option_report);
                 }
                 else if (option_report == 'mensual') {
-
+                    const array = ['Año', 'Mes', 'Venta del mes'];
+                    actualizarEncabezados(array);
+                    agregarDatos(answer, option_report);
                 }
                 else if (option_report == 'semanal') {
-
+                    const array = ['Año', 'Mes', 'Semana del mes', 'Total'];
+                    actualizarEncabezados(array);
+                    agregarDatos(answer, option_report);
                 }
                 else if (option_report == 'anual') {
-
+                    const array = ['Fecha', 'Numero de Venta', 'Mes', 'Quincena del mes', 'Producto', 'Precio', 'Cantidad', 'Total'];
                 }
-
-                /*else if (option_report == '')
-                    else if (option_report == '')
-                        else if (option_report == '')
-                            else if (option_report == '')
-                                else if (option_report == '')*/
-
-
-                /*document.getElementById('btnExportar').disabled = false;
-                const tbody = document.getElementById('table_body');
-                tbody.innerHTML = '';
-
-                answer.reportList.forEach((element) => {
-                    const fila = document.createElement('tr');
-                    fila.innerHTML = `
-                        <td>${element.FechaFormateada}</td>
-                        <td>${element.No_Venta}</td>
-                        <td>${element.IdCliente}</td>
-                        <td>${element.NombreCliente}</td>
-                        <td>${element.IdUsuario}</td>
-                        <td>${element.NombreUsuario}</td>
-                        <td>${element.TotalVenta} C$</td>
-                        <td>${element.Producto}</td>
-                        <td>${element.Cantidad}</td>
-                        <td>${element.Precio} C$</td>
-                        <td>${element.Total} C$</td>
-                    `;
-                    tbody.appendChild(fila);
-                });*/
+                else {
+                    console.error('Opcion no disponible');
+                }
             }
             else {
                 console.log("No hay datos");
@@ -145,7 +123,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (value_element == 'fecha') {
             initial_date.disabled = false;
             final_date.disabled = false;
-            
         }
         else {
             final_date.disabled = true;
@@ -170,10 +147,10 @@ function actualizarEncabezados(headers) {
 };
 
 // Función para agregar filas de datos a la tabla
-function agregarDatos(datas) {
+function agregarDatos(datas, option) {
     const tbody = document.querySelector('#tbdata tbody');
     tbody.innerHTML = ''; // Limpia las filas de datos existentes
-    console.log(datas);
+    
     // Asumiendo que 'datas' es un objeto que contiene una propiedad 'reportList' que es un arreglo
     if (datas.reportList && Array.isArray(datas.reportList)) {
         datas.reportList.forEach(filaDatos => {
@@ -181,19 +158,87 @@ function agregarDatos(datas) {
             
             // Si 'filaDatos' es un objeto, itera sobre sus valores
             if (filaDatos && typeof filaDatos === 'object') {
-                Object.values(filaDatos).forEach(valor => {
-                    const td = document.createElement('td');
-                    td.textContent = valor;
-                    tr.appendChild(td);
-                });
+                
+                if (option == 'fecha') {
+                    Object.keys(filaDatos).forEach(key => {
+                        if (key !== 'Fecha' && key !== 'Total' && key !== 'Precio') { // Omitimos la propiedad 'fecha'
+                            const td = document.createElement('td');
+                            td.textContent = filaDatos[key];
+                            tr.appendChild(td);
+                        }
+                    });
+
+                    // Agrega la celda para 'Subtotal'
+                    const tdPrecio = document.createElement('td');
+                    tdPrecio.textContent = `${filaDatos.Precio} C$`;
+                    tr.appendChild(tdPrecio);
+
+                    // Agrega la celda para 'Subtotal'
+                    const tdVenta = document.createElement('td');
+                    tdVenta.textContent = `${filaDatos.Total} C$`;
+                    tr.appendChild(tdVenta);
+                }
+                else if (option == 'quincenal') {
+                    Object.keys(filaDatos).forEach(key => {
+                        // Creamos una celda para cada propiedad, excepto 'Subtotal' y 'Precio' que se manejarán aparte
+                        if (key !== 'Subtotal' && key !== 'Precio') {
+                            const td = document.createElement('td');
+                            td.textContent = filaDatos[key];
+                            tr.appendChild(td);
+                        }
+                    });
+    
+                    // Agrega la celda para 'Precio'
+                    const tdPrecio = document.createElement('td');
+                    tdPrecio.textContent = `${filaDatos.Precio} C$`;
+                    tr.appendChild(tdPrecio);
+    
+                    // Agrega la celda para 'Subtotal'
+                    const tdSubtotal = document.createElement('td');
+                    tdSubtotal.textContent = `${filaDatos.Subtotal} C$`;
+                    tr.appendChild(tdSubtotal);
+                }
+                else if (option =='mensual') {
+                    Object.keys(filaDatos).forEach(key => {
+                        // Creamos una celda para cada propiedad, excepto 'Subtotal' y 'Precio' que se manejarán aparte
+                        if (key !== 'Ventas_Mes') {
+                            const td = document.createElement('td');
+                            td.textContent = filaDatos[key];
+                            tr.appendChild(td);
+                        }
+                    });
+
+                    // Agrega la celda para 'Subtotal'
+                    const tdVenta = document.createElement('td');
+                    tdVenta.textContent = `${filaDatos.Ventas_Mes} C$`;
+                    tr.appendChild(tdVenta);
+                }
+                else if (option =='semanal') {
+                    Object.keys(filaDatos).forEach(key => {
+                        // Creamos una celda para cada propiedad, excepto 'Subtotal' y 'Precio' que se manejarán aparte
+                        if (key !== 'Ventas_Semana') {
+                            const td = document.createElement('td');
+                            td.textContent = filaDatos[key];
+                            tr.appendChild(td);
+                        }
+                    });
+
+                    // Agrega la celda para 'Subtotal'
+                    const tdVenta = document.createElement('td');
+                    tdVenta.textContent = `${filaDatos.Ventas_Semana} C$`;
+                    tr.appendChild(tdVenta);
+                }
+                else {
+                    console.error('Opcion no disponible');
+                }
             }
-            
             tbody.appendChild(tr);
         });
     } else {
         console.error('La propiedad reportList no existe o no es un arreglo:', datas);
     }
 };
+
 
 
 
