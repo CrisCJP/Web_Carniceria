@@ -18,11 +18,10 @@
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.css" rel="stylesheet">
 
-
     <!-- ============================================================
     =ESTILOS PARA ESTA PAGINA
     ===============================================================-->
-    <link href="vendor/select2/select2.min.css" rel="stylesheet">
+    <link href="vendor/jquery-ui/jquery-ui.css" rel="stylesheet">
 
 </head>
 
@@ -52,7 +51,6 @@
                     <span>Dashboard</span></a>
             </li>
 
-
             <% if(user.idrol == 1) { %>
                 <!-- Nav Item - Admnistración Collapse Menu -->
                 <li class="nav-item">
@@ -64,7 +62,7 @@
                     <div id="collapseAdministracion" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                             <a class="collapse-item" href="usuarios.html">Usuarios</a>
-                            <!--<a class="collapse-item" href="negocio.html">Negocio</a>-->
+                            <a class="collapse-item" href="negocio.html">Negocio</a>
                             <a class="collapse-item" href="/back_rest">Copia de respaldo</a>
                         </div>
                     </div>
@@ -87,7 +85,7 @@
             </li>
 
             <!-- Nav Item - Venta Collapse Menu -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseVenta"
                     aria-expanded="true" aria-controls="collapseVenta">
                     <i class="fas fa-fw fa-tags"></i>
@@ -101,14 +99,8 @@
                 </div>
             </li>
 
-
-
-
-
-
-
             <!-- Nav Item - Compra Collapse Menu -->
-            <li class="nav-item">
+            <li class="nav-item active">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCompra"
                     aria-expanded="true" aria-controls="collapseCompra">
                     <i class="fas fa-fw fa-shopping-cart"></i>
@@ -121,9 +113,6 @@
                     </div>
                 </div>
             </li>
-
-
-
 
             <% if (user.idrol == 1) { %>
                 <!-- Nav Item - Reportes Collapse Menu -->
@@ -185,7 +174,7 @@
                                     Perfil
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a id="logout-link" class="dropdown-item" href="/login" data-toggle="modal" data-target="#logoutModal">
+                                <a class="dropdown-item" href="/login" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Salir
                                 </a>
@@ -200,50 +189,115 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <div class="row">
-                        <div class="col-sm-8">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="card shadow mb-4">
-                                        <div class="card-header py-3 bg-second-primary">
-                                            <h6 class="m-0 font-weight-bold text-white">Cliente</h6>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="form-row">
-                                                <div class="form-group col-sm-6">
-                                                    <input type="text" class="form-control form-control-sm" name="txtNombreCliente" id="txtNombreCliente" placeholder="Primer nombre" autocomplete="off">
-                                                </div>
-                                                <div class="form-group col-sm-6">
-                                                    <input type="text" class="form-control form-control-sm" name="txtApellidoCliente" id="txtApellidoCliente" placeholder="Primer apellido" autocomplete="off">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 bg-second-primary">
+                            <h6 class="m-0 font-weight-bold text-white">Historial de Compra</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-row align-items-end">
+                                <div class="form-group col-sm-3">
+                                    <label for="cboBuscarPor">Buscar por</label>
+                                    <select class="form-control form-control-sm" name="cboBuscarPor" id="cboBuscarPor">
+                                        <option value="fecha" selected>Fechas</option>
+                                        <option value="numero">Numero Compra</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-sm-3 busqueda-fecha">
+                                    <label for="txtFechaInicio">Fecha Inicio</label>
+                                    <input type="date" class="form-control form-control-sm" name="txtFechaInicio" id="txtFechaInicio">
+                                </div>
+                                <div class="form-group col-sm-3 busqueda-fecha">
+                                    <label for="txtFechaFin">Fecha Fin</label>
+                                    <input type="date" class="form-control form-control-sm" name="txtFechaFin" id="txtFechaFin">
+                                </div>
+                                <div class="form-group col-sm-3 busqueda-compra">
+                                    <label for="txtNumeroCompra">Numero Compra</label>
+                                    <input type="text" class="form-control form-control-sm" name="txtNumeroCompra" id="txtNumeroCompra" disabled>
+                                </div>
+                                <div class="form-group col-sm-3">
+                                   <button class="btn btn-success btn-block btn-sm" type="button" id="btnBuscar"><i class="fas fa-search"></i> Buscar</button>
                                 </div>
                             </div>
+
+                            <hr/>
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <div class="card shadow mb-4">
-                                        <div class="card-header py-3 bg-second-primary">
-                                            <h6 class="m-0 font-weight-bold text-white">Productos</h6>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="form-row">
-                                                <div class="form-group col-sm-6">
-                                                    <input type="text" class="form-control form-control-sm" name="cboBuscarProducto" id="cboBuscarProducto" placeholder="Ingrese el producto..." autocomplete="off">
-                                                    <br>
-                                                    <ul id="resultados"></ul>
-                                                </div>
-
-                                                <div class="form-group col-sm-6">
-                                                    <input type="number" class="form-control form-control-sm" name="txtCantidad_Peso" id="txtCantidad_Peso" placeholder="Cantidad en libras o unidades..." autocomplete="off" min="1">
-                                                </div>
-                                            </div>
+                                    <table class="table table-sm table-striped" id="tbcompra">
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha Registro</th>
+                                                <th>Numero Compra</th>
+                                                <th>Nombre Proveedor</th>
+                                                <th>Id Usuario</th>
+                                                <th>Total</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="table_body">
                                             
-                                            <div class="row">
-                                                <div class="col-sm-12">
-                                                    
-                                                        <table class="table table-striped table-sm" id="tbDetallesVenta">
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--  Modal-->
+                    <div class="modal fade" id="modalData" tabindex="-1" role="dialog"aria-hidden="true" data-backdrop="static">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h6>Detalle Compra</h6>
+                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="form-row">
+                                                    <div class="form-group col-sm-4">
+                                                        <label for="txtFechaRegistro">Fecha Registro</label>
+                                                        <input type="text" class="form-control form-control-sm" name="txtFechaRegistro" id="txtFechaRegistro" disabled>
+                                                    </div>
+                                                    <div class="form-group col-sm-4">
+                                                        <label for="txtNumCompra">Numero Compra</label>
+                                                        <input type="text" class="form-control form-control-sm" name="txtNumCompra" id="txtNumCompra" disabled>
+                                                    </div>
+                                                    <div class="form-group col-sm-4">
+                                                        <label for="txtUsuarioRegistro">Usuario Registro</label>
+                                                        <input type="text" class="form-control form-control-sm" name="txtUsuarioRegistro" id="txtUsuarioRegistro" disabled>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="form-group col-sm-4">
+                                                        <label for="txtDocumentoProveedor">No. Proveedor</label>
+                                                        <input type="text" class="form-control form-control-sm" name="txtDocumentoProveedor" id="txtDocumentoProveedor" disabled>
+                                                    </div>
+                                                    <div class="form-group col-sm-4">
+                                                        <label for="txtNombreProveedor">Nombre Proveedor</label>
+                                                        <input type="text" class="form-control form-control-sm" name="txtNombreProveedor" id="txtNombreProveedor" disabled>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="form-group col-sm-4">
+                                                        <label for="txtSubTotal">Sub Total</label>
+                                                        <input type="text" class="form-control form-control-sm" name="txtSubTotal" id="txtSubTotal" disabled>
+                                                    </div>
+                                                    <div class="form-group col-sm-4">
+                                                        <label for="txtEfectivo">Efectivo</label>
+                                                        <input type="text" class="form-control form-control-sm" name="txtEfectivo" id="txtEfectivo" disabled>
+                                                    </div>
+                                                    <div class="form-group col-sm-4">
+                                                        <label for="txtCambio">Cambio</label>
+                                                        <input type="text" class="form-control form-control-sm" name="txtCambio" id="txtCambio" disabled>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <table id="tbProductos" class="table table-sm table-striped">
                                                             <thead>
                                                                 <tr>
                                                                     <th>Producto</th>
@@ -252,90 +306,30 @@
                                                                     <th>Total</th>
                                                                 </tr>
                                                             </thead>
-                                                            <tbody>
-                                                                
+                                                            <tbody id="table_body_modal">
+
                                                             </tbody>
                                                         </table>
-                                                    
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </form>
                                 </div>
-                            </div>
-
-                        </div>
-                        <div class="col-sm-4">
-
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="card shadow mb-4">
-                                        <div class="card-header py-3 bg-second-primary">
-                                            <h6 class="m-0 font-weight-bold text-white">Detalle</h6>
-                                        </div>
-                                        <div class="card-body">
-                                            
-                                            <div class="input-group input-group-sm mb-3">
-                                                <div class="input-group-prepend">
-                                                  <span class="input-group-text" id="inputGroupSubTotal">Costo del producto seleccionado:</span>
-                                                </div>
-                                                <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupSubTotal" name="txtCosto" id="txtCosto" disabled>
-                                            </div>
-                                            <div class="input-group input-group-sm mb-3">
-                                                <div class="input-group-prepend">
-                                                  <span class="input-group-text" id="inputGroupIGV">El precio de los producto incluyen el iva</span>
-                                                </div>
-                                                <!--<input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupIGV" id="txtIGV" disabled>-->
-                                            </div>
-                                            <div class="input-group input-group-sm mb-3">
-                                                <div class="input-group-prepend">
-                                                  <span class="input-group-text" id="inputGroupTotal">Total</span>
-                                                </div>
-                                                <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupTotal" name="txtTotal" id="txtTotal" disabled>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="card shadow">
-                                        <div class="card-body">
-                                            <div class="form-group mb-0">
-                                                <button type="button" class="btn btn-success btn-sm btn-block" id="btnAgregarVenta">Agregar mas productos</button>
-                                                <button type="submit" class="btn btn-success btn-sm btn-block" id="btnTerminarVentar" disabled>Terminar Venta</button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="modal-footer">
+                                    <a class="btn btn-primary btn-sm" id="linkImprimir" >Imprimir</a>
+                                    <button class="btn btn-danger btn-sm" type="button" data-dismiss="modal">Cerrar</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-               
 
                 </div>
                 <!-- /.container-fluid -->
 
             </div>
             <!-- End of Main Content -->
-
-            <!-- Modal HTML -->
-            <div id="modalEfectivo" class="modal_efectivo">
-                <div class="modal-content_efectivo">
-                    <span class="close_efectivo">&times;</span>
-                    <p>Por favor, ingresa la cantidad de efectivo recibido en "Córdoba":</p>
-                    <div class="form-group col-sm-6">
-                        <input type="number" id="inputEfectivo" class="form-control form-control-sm" placeholder="Cantidad en efectivo" min="1">
-                    </div>
-                    
-                    <div class="form-group col-sm-6">
-                        <button id="submitEfectivo" class="btn btn-success btn-sm btn-block">Enviar</button>
-                    </div>
-                </div>
-            </div>
 
             <!-- Footer -->
             
@@ -357,20 +351,15 @@
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.js"></script>
 
-
-
     <!-- ============================================================
     =SCRIPTS PARA ESTA PAGINA
     ===============================================================-->
-    <script src="vendor/select2/select2.min.js"></script>
-    <script src="vendor/select2/es.min.js"></script>
-    <script src="ajax/ajax_findproductoforsale.js"></script>
-    <script src="ajax/ajax_newsale.js"></script>
-    <script src="ajax/ajax_modalcash_complements.js"></script>
-    <script src="ajax/ajax_finallynewsale.js"></script>
+
+    <script src="vendor/jquery-ui/jquery-ui.js"></script>
+
+    <script src="ajax/ajax_historypurchase.js"></script>
     <script src="ajax/jspdf.min.js"></script>
-    <script src="ajax/ajax_logout.js"></script>
-    
+
 </body>
 
 </html>

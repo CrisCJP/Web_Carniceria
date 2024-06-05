@@ -23,7 +23,7 @@ app.use(session({
     server: 'DESKTOP-DEUHLCS',
 */
 const config = {
-    server: 'DESKTOP-DEUHLCS',
+    server: 'DESKTOP-OP1FG8F',
     database: 'CarniceriaLupita',
     user: 'prueba',
     password: '1234',
@@ -102,6 +102,10 @@ app.get("/", function (req, res) {
 app.get("/compras", function (req, res) {
     res.render('compras', {user:user_temp});
 });
+
+app.get("/historial_compras", function (req, res){
+    res.render('historial_compras', {user:user_temp});
+})
 
 //Path to render 'login.ejs'
 app.get("/login", function (req, res) {
