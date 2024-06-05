@@ -203,6 +203,16 @@
                         </div>
                         <div class="card-body">
                             <div class="form-row align-items-end">
+                                <div class="form-group col-sm-3">
+                                    <label for="cboBuscarPor">Buscar por</label>
+                                    <select class="form-control form-control-sm" name="cboBuscarPor" id="cboBuscarPor">
+                                        <option value="fecha" selected>Rango de fechas</option>
+                                        <option value="quincenal">Quincenal</option>
+                                        <option value="mensual">Mensual</option>
+                                        <option value="semanal">Semanal</option>
+                                        <option value="anual">Anual</option>
+                                    </select>
+                                </div>
                                 
                                 <div class="form-group col-sm-3">
                                     <label for="txtFechaInicio">Fecha Inicio</label>
@@ -229,7 +239,7 @@
                                 <div class="col-sm-12">
                                     <table id="tbdata" class="table table-sm table-striped" cellspacing="0" style="width:100%">
                                             <thead>
-                                                <tr>
+                                                <!--<tr>
                                                     <th scope="col">Fecha Registro</th>
                                                     <th scope="col">Numero Venta</th>
                                                     <th scope="col">Documento Cliente</th>
@@ -241,7 +251,7 @@
                                                     <th scope="col">Cantidad</th>
                                                     <th scope="col">Precio</th>
                                                     <th scope="col">Total</th>
-                                                </tr>
+                                                </tr>-->
                                             </thead>
                                             <tbody id="table_body">
                                                 
