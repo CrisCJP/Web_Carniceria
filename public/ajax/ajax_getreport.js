@@ -3,6 +3,7 @@ function getReportforDate(initial_date, final_date, option_report) {
     formData.append('start_date', initial_date);
     formData.append('end_date', final_date);
     formData.append('option_report', option_report);
+    const btn_export = document.getElementById('btnExportar');
 
     var xhr = new XMLHttpRequest();
     xhr.open('post', '/getReportforDate', true);
@@ -17,21 +18,25 @@ function getReportforDate(initial_date, final_date, option_report) {
                     const array = ['Fecha', 'Numero de Venta', 'Producto', 'Cantidad', 'Precio', 'Total'];
                     actualizarEncabezados(array);
                     agregarDatos(answer, option_report);
+                    btn_export.disabled = false;
                 }
                 else if (option_report == 'quincenal') {
                     const array = ['Fecha', 'Numero de Venta', 'Mes', 'Quincena del mes', 'Producto', 'Cantidad', 'Precio', 'Total'];
                     actualizarEncabezados(array);
                     agregarDatos(answer, option_report);
+                    btn_export.disabled = false;
                 }
                 else if (option_report == 'mensual') {
                     const array = ['Año', 'Mes', 'Venta del mes'];
                     actualizarEncabezados(array);
                     agregarDatos(answer, option_report);
+                    btn_export.disabled = false;
                 }
                 else if (option_report == 'semanal') {
                     const array = ['Año', 'Mes', 'Semana del mes', 'Total'];
                     actualizarEncabezados(array);
                     agregarDatos(answer, option_report);
+                    btn_export.disabled = false;
                 }
                 else if (option_report == 'anual') {
                     const array = ['Fecha', 'Numero de Venta', 'Mes', 'Quincena del mes', 'Producto', 'Precio', 'Cantidad', 'Total'];
@@ -233,6 +238,10 @@ function agregarDatos(datas, option) {
                 }
             }
             tbody.appendChild(tr);
+        
+        });
+        document.getElementById('btnExportar').addEventListener('click', function(event) {
+            exportToExcel(datas.reportList, option)
         });
     } else {
         console.error('La propiedad reportList no existe o no es un arreglo:', datas);
@@ -248,8 +257,12 @@ function removeDateProperty(reportList) {
 };
 
 function exportToExcel(reportList, fileName) {
+    let dataWithoutDate;
     // Eliminar la propiedad Fecha de cada objeto en reportList
-    const dataWithoutDate = removeDateProperty(reportList);
+    if (fileName == 'fecha')
+        dataWithoutDate = removeDateProperty(reportList);
+    else 
+        dataWithoutDate = reportList;
 
     // Crear un nuevo libro de trabajo y una hoja de cálculo
     const workbook = XLSX.utils.book_new();

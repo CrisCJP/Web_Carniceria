@@ -23,7 +23,7 @@ app.use(session({
     server: 'DESKTOP-DEUHLCS',
 */
 const config = {
-    server: 'DESKTOP-OP1FG8F',
+    server: 'DESKTOP-DEUHLCS',
     database: 'CarniceriaLupita',
     user: 'prueba',
     password: '1234',
