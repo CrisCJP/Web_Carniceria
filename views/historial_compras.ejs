@@ -85,7 +85,7 @@
             </li>
 
             <!-- Nav Item - Venta Collapse Menu -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseVenta"
                     aria-expanded="true" aria-controls="collapseVenta">
                     <i class="fas fa-fw fa-tags"></i>
@@ -99,12 +99,8 @@
                 </div>
             </li>
 
-
-
-
-
             <!-- Nav Item - Compra Collapse Menu -->
-            <li class="nav-item">
+            <li class="nav-item active">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCompra"
                     aria-expanded="true" aria-controls="collapseCompra">
                     <i class="fas fa-fw fa-shopping-cart"></i>
@@ -117,9 +113,6 @@
                     </div>
                 </div>
             </li>
-
-
-
 
             <% if (user.idrol == 1) { %>
                 <!-- Nav Item - Reportes Collapse Menu -->
@@ -198,7 +191,7 @@
 
                     <div class="card shadow mb-4">
                         <div class="card-header py-3 bg-second-primary">
-                            <h6 class="m-0 font-weight-bold text-white">Historial de Venta</h6>
+                            <h6 class="m-0 font-weight-bold text-white">Historial de Compra</h6>
                         </div>
                         <div class="card-body">
                             <div class="form-row align-items-end">
@@ -206,7 +199,7 @@
                                     <label for="cboBuscarPor">Buscar por</label>
                                     <select class="form-control form-control-sm" name="cboBuscarPor" id="cboBuscarPor">
                                         <option value="fecha" selected>Fechas</option>
-                                        <option value="numero">Numero Venta</option>
+                                        <option value="numero">Numero Compra</option>
                                     </select>
                                 </div>
                                 <div class="form-group col-sm-3 busqueda-fecha">
@@ -217,9 +210,9 @@
                                     <label for="txtFechaFin">Fecha Fin</label>
                                     <input type="date" class="form-control form-control-sm" name="txtFechaFin" id="txtFechaFin">
                                 </div>
-                                <div class="form-group col-sm-3 busqueda-venta">
-                                    <label for="txtNumeroVenta">Numero Venta</label>
-                                    <input type="text" class="form-control form-control-sm" name="txtNumeroVenta" id="txtNumeroVenta" disabled>
+                                <div class="form-group col-sm-3 busqueda-compra">
+                                    <label for="txtNumeroCompra">Numero Compra</label>
+                                    <input type="text" class="form-control form-control-sm" name="txtNumeroCompra" id="txtNumeroCompra" disabled>
                                 </div>
                                 <div class="form-group col-sm-3">
                                    <button class="btn btn-success btn-block btn-sm" type="button" id="btnBuscar"><i class="fas fa-search"></i> Buscar</button>
@@ -229,12 +222,12 @@
                             <hr/>
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <table class="table table-sm table-striped" id="tbventa">
+                                    <table class="table table-sm table-striped" id="tbcompra">
                                         <thead>
                                             <tr>
                                                 <th>Fecha Registro</th>
-                                                <th>Numero Venta</th>
-                                                <th>Nombre Cliente</th>
+                                                <th>Numero Compra</th>
+                                                <th>Nombre Proveedor</th>
                                                 <th>Id Usuario</th>
                                                 <th>Total</th>
                                                 <th></th>
@@ -255,7 +248,7 @@
                         <div class="modal-dialog modal-lg" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h6>Detalle Venta</h6>
+                                    <h6>Detalle Compra</h6>
                                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">×</span>
                                     </button>
@@ -270,8 +263,8 @@
                                                         <input type="text" class="form-control form-control-sm" name="txtFechaRegistro" id="txtFechaRegistro" disabled>
                                                     </div>
                                                     <div class="form-group col-sm-4">
-                                                        <label for="txtNumVenta">Numero Venta</label>
-                                                        <input type="text" class="form-control form-control-sm" name="txtNumVenta" id="txtNumVenta" disabled>
+                                                        <label for="txtNumCompra">Numero Compra</label>
+                                                        <input type="text" class="form-control form-control-sm" name="txtNumCompra" id="txtNumCompra" disabled>
                                                     </div>
                                                     <div class="form-group col-sm-4">
                                                         <label for="txtUsuarioRegistro">Usuario Registro</label>
@@ -280,12 +273,12 @@
                                                 </div>
                                                 <div class="form-row">
                                                     <div class="form-group col-sm-4">
-                                                        <label for="txtDocumentoCliente">No. Cliente</label>
-                                                        <input type="text" class="form-control form-control-sm" name="txtDocumentoCliente" id="txtDocumentoCliente" disabled>
+                                                        <label for="txtDocumentoProveedor">No. Proveedor</label>
+                                                        <input type="text" class="form-control form-control-sm" name="txtDocumentoProveedor" id="txtDocumentoProveedor" disabled>
                                                     </div>
                                                     <div class="form-group col-sm-4">
-                                                        <label for="txtNombreCliente">Nombre Cliente</label>
-                                                        <input type="text" class="form-control form-control-sm" name="txtNombreCliente" id="txtNombreCliente" disabled>
+                                                        <label for="txtNombreProveedor">Nombre Proveedor</label>
+                                                        <input type="text" class="form-control form-control-sm" name="txtNombreProveedor" id="txtNombreProveedor" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="form-row">
@@ -364,7 +357,7 @@
 
     <script src="vendor/jquery-ui/jquery-ui.js"></script>
 
-    <script src="ajax/ajax_historyinvoice.js"></script>
+    <script src="ajax/ajax_historypurchase.js"></script>
     <script src="ajax/jspdf.min.js"></script>
 
 </body>

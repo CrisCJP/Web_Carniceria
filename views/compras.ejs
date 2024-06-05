@@ -120,7 +120,7 @@
                 <div id="collapseCompra" class="collapse" aria-labelledby="headingInventario" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="/compras">Nueva Compra</a>
-                        <a class="collapse-item" href="/compras">Historial Compra</a>
+                        <a class="collapse-item" href="/historial_compras">Historial Compra</a>
                     </div>
                 </div>
             </li>
@@ -287,34 +287,13 @@
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3 bg-second-primary">
                                     <h6 class="m-0 font-weight-bold text-white">Detalle</h6>
-                                </div>
+                                </div>  
                                 <div class="card-body">
-                                    <div class="input-group input-group-sm mb-3">
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text" for="cboTipoDocumentoCompra">Tipo</label>
-                                        </div>
-                                        <select class="custom-select" id="cboTipoDocumentoCompra">
-                                            <option value="1">Orden de Compra</option>
-                                            <option value="2">Factura</option>
-                                        </select>
-                                    </div>
-                                    <div class="input-group input-group-sm mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="inputGroupSubTotalCompra">Sub Total</span>
-                                        </div>
-                                        <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupSubTotalCompra" id="txtSubTotalCompra" disabled>
-                                    </div>
-                                    <div class="input-group input-group-sm mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="inputGroupIGVCompra">IGV(18%)</span>
-                                        </div>
-                                        <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupIGVCompra" id="txtIGVCompra" disabled>
-                                    </div>
                                     <div class="input-group input-group-sm mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="inputGroupTotalCompra">Total</span>
                                         </div>
-                                        <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupTotalCompra" id="txtTotalCompra" disabled>
+                                        <input type="text" class="form-control text-left" aria-label="Small" aria-describedby="inputGroupTotalCompra" id="txtTotalCompra" disabled>
                                     </div>
                                 </div>
                             </div>
@@ -390,6 +369,7 @@
     </script>
 
     <script>
+        
         // Función para verificar campos vacíos
         function verificarCampos() {
             // Obtener valores de los campos de entrada
@@ -586,7 +566,7 @@
                     celdas[1].innerHTML = producto;
                     celdas[2].innerHTML = parseFloat(celdas[2].innerText) + parseFloat(cantidad);
                     celdas[3].innerHTML = 'C$'+parseFloat(precio);
-                    celdas[4].innerHTML = 'C$'+(parseFloat(celdas[2].innerText)*precio);
+                    celdas[4].innerHTML = 'C$'+((parseFloat(celdas[2].innerText)*precio).toFixed(2));
                       
                 } else {
                     console.error("Fila no encontrada en el índice especificado.");
@@ -636,6 +616,22 @@
 
             return datosTabla
         }
+        //funcion para conseguir el total
+        function ElTotal(datosTabla, columnaIndex) {
+            var suma = 0.0;
+            var keys = ['checkbox', 'producto', 'cantidad', 'precio', 'total'];
+            var key = keys[columnaIndex];
+            
+            for (var i = 0; i < datosTabla.length; i++) {
+                var valor = datosTabla[i][key];
+                if (!isNaN(valor)) {
+                    suma += valor;
+                }
+            }
+            
+            return suma;
+        }
+
         function limpiarCadenaNameProv(cadena) {
             // Buscar el índice del primer guion
             var guionIndex = cadena.indexOf('-');
@@ -725,6 +721,10 @@
                             inptProducto.value = '';
                             inptPrecio.value = '';
                             inputCantidad.value = '';
+
+                            var datosTabla = leerTabla();
+                            var total = ElTotal(datosTabla, 4);
+                            document.getElementById('txtTotalCompra').value = 'C$'+total.toFixed(2);
                         }
                     }
                 /*}else{
