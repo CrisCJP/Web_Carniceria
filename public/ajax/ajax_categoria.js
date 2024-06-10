@@ -77,7 +77,10 @@ function inventarioCategoria(idtabla) {
 function eliminarNoNumeros(texto) {
     return texto.replace(/\D/g, '');
 }
+
+
 document.addEventListener("DOMContentLoaded", function() {
+    
     inventarioCategoria("tbdata");
     document.getElementById("btnGuardarCambiosCategoria").addEventListener('click', function() {
         var descripcionCategoria = document.getElementById("modificarDescripcionCategoria").value.trim();

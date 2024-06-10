@@ -17,6 +17,28 @@ function actualizarProducto(idproducto, stock, precio){
     xhr.send(formData);
 }
 
+function AgregarNuevoProducto(nombreProducto, PrecioVenta, UnidadMedida, Existencia, NombreCategoria, NombreProveedor){
+    var formData = new FormData();
+
+    formData.append('nombreProducto', nombreProducto);
+    formData.append('PrecioVenta', PrecioVenta);
+    formData.append('UnidadMedida', UnidadMedida);
+    formData.append('Existencia', Existencia);
+    formData.append('NombreCategoria', NombreCategoria);
+    formData.append('NombreProveedor', NombreProveedor);
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('post', '/nuevoproducto', true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+
+        } else {
+            console.log("Error al actualizar");
+        }
+    };
+    xhr.send(formData);
+}
+
 function elimValid(id, idErro){
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(id).classList.remove('is-valid');
@@ -273,12 +295,18 @@ function obtenerCodigo(cadena) {
         return null;
     }
 }
+
+
+
+
 document.addEventListener("DOMContentLoaded", function() {
     // Al cargar el DOM, se ejecutará este código
     invent();
 
+
     MenusDeOpciones('datalistMarca','/optmarca');
     MenusDeOpciones('datalistCategoria','/optcategoria');
+    MenusDeOpciones('datalistMedida', '/optmedidas')
 
     validCamp('modificarNombre', 'errorProducto');
     validCamp('modificarStock', 'errorStock');
@@ -286,6 +314,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     validCampCOpt('modificarMarca', 'errorMarca', 'datalistMarca');
     validCampCOpt('modificarCategoria', 'errorCategoria', 'datalistCategoria');
+
+
     
      //btnGuardarCambios
      document.getElementById('btnGuardarCambios').addEventListener('click', function() {
@@ -310,4 +340,60 @@ document.addEventListener("DOMContentLoaded", function() {
             alert('los campos como marca y categoria deben coincidir con su lista de opciones')
         }
      })
+
+     validCampCOpt('modificarMedida', 'errorMedida', 'datalistMedida');
+     validCampCOpt('modificarCategorias', 'errorCategorias', 'datalistCategoria');
+     validCampCOpt('modificarProv', 'errorProv', 'datalistMarca');
+
+     document.getElementById("btnAgregaNuevoProducto").addEventListener('click', function(){
+        var nombreProducto = document.getElementById("modificarNombreProducto").value;
+        var precioVenta2 = document.getElementById("modificarPrecioVenta").value.trim();
+        var unidadMedida = document.getElementById("modificarMedida").value.trim();
+        var existencia = parseFloat(document.getElementById("modificarExistenciaInicial").value.trim());
+        var nombreCategoria = document.getElementById("modificarCategorias").value.trim();
+        var nombreProveedor = document.getElementById("modificarProv").value.trim();
+
+        // Validar si los campos están vacíos
+        if (nombreProducto === '') {
+            alert('El campo Nombre Producto no puede estar vacío.');
+        } else if (precioVenta2 === '' || parseFloat(precioVenta2)<=0) {
+            alert('El campo Precio de Venta no puede estar vacío ni ser menor que 0.');
+        } else if (unidadMedida === '') {
+            alert('El campo Unidad de Medida no puede estar vacío.');
+        } else if (isNaN(existencia)) {
+            alert('El campo Existencia Inicial debe ser un número válido.');
+        } else if (existencia <= 0) {
+            alert('El campo Existencia Inicial debe ser mayor que cero.');
+        } else if (nombreCategoria === '') {
+            alert('El campo Nombre de Categoría no puede estar vacío.');
+        } else if (nombreProveedor === '') {
+            alert('El campo Nombre de Proveedor no puede estar vacío.');
+        } else {
+            // Los campos están completos y son válidos
+            // Aquí puedes continuar con tu lógica de negocio
+
+            console.log('Todos los campos obtenidos correctamente:');
+            console.log('Nombre Producto:', nombreProducto);
+            console.log('Precio de Venta:', precioVenta2);
+            console.log('Unidad de Medida:', unidadMedida);
+            console.log('Existencia Inicial:', existencia);
+            console.log('Nombre de Categoría:', nombreCategoria);
+            console.log('Nombre de Proveedor:', nombreProveedor);
+            // Verificar si el precio de venta es un número válido
+            if (isNaN(precioVenta2)) {
+                alert('El precio de venta debe ser un número válido.');
+                console.log(precioVenta2)
+                return;
+            }
+
+            AgregarNuevoProducto(nombreProducto, precioVenta2, unidadMedida, existencia, nombreCategoria, nombreProveedor);
+            $('#modalModificarProducto2').modal('hide');
+        }
+    
+
+        
+    
+        // Lógica para enviar la solicitud al servidor aquí
+        //
+    });
 })

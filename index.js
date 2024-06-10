@@ -82,6 +82,7 @@ const { findProductforSales } = require('./model/finderofproductsforsale_model')
 const { getHistoryInvoicePreview } = require('./model/gethistoryinvoice_model');
 
 const { backupDatabase } = require('./model/backrest_model');
+const { uptime } = require('process');
 
 //Analyze data
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -322,6 +323,21 @@ app.post('/formodal', upload.none(), function(req, res){
 });
 
 
+app.post('/nuevoproducto', upload.none(), function(req,res){
+    const{nombreProducto, PrecioVenta, UnidadMedida, Existencia, NombreCategoria, NombreProveedor}= req.body
+    sql.connect(config).then(pool => {
+        return pool.request()
+        .input('NombreProducto', sql.VarChar, nombreProducto)
+        .input('PrecioVenta', sql.Money, PrecioVenta)
+        .input('NombreUnidadMedida', sql.VarChar, UnidadMedida)
+        .input('Existencia', sql.Decimal, Existencia)
+        .input('NombreCategoria', sql.VarChar, NombreCategoria)
+        .input('NombreProveedor', sql.VarChar, NombreProveedor)
+        .execute('InsertarNuevoProducto')
+    })
+})
+
+
 app.post('/historialcompra', upload.none(), function(req, res){
     
     sql.connect(config).then(pool =>{
@@ -389,6 +405,24 @@ app.post('/optcategoria', upload.none(),function(req,res){
             }
 
             res.send({consult:Categoria});
+        })
+    })
+})
+
+app.post('/optmedidas', upload.none(),function(req,res){
+    sql.connect(config).then(pool =>{
+        return pool.request()
+        .query('select IdUnidadDeMedida,UnidadMedida from UnidadDeMedida')
+        .then(result =>{
+            let Id = new Array(result.recordset.length);
+            let Medida = new Array(result.recordset.length);
+
+            for(let i = 0; i < result.recordset.length; i++){
+                Id[i] = result.recordset[i].IdUnidadDeMedida;
+                Medida[i] = result.recordset[i].UnidadMedida;
+            }
+
+            res.send({id:Id, consult:Medida});
         })
     })
 })
@@ -504,12 +538,13 @@ app.post('/option2',upload.none(),function(req,res){
 })
 
 app.post('/comprar', upload.none(), function(req,res){
-    const { idUsuario, idproducto, cantidad, precio, txtDocumentoId } = req.body;
+    const { idUsuario, idproducto, cantidad, precio, FechaVencimiento, txtDocumentoId } = req.body;
 
     const idUsuarios = JSON.parse(idUsuario);
     const idproductos = JSON.parse(idproducto);
     const cantidades = JSON.parse(cantidad);
     const precios = JSON.parse(precio);
+    const fechavencimiento = JSON.parse(FechaVencimiento);
     const txtDocumentoIds = JSON.parse(txtDocumentoId);
 
     const FechaActual = new Date();
@@ -518,6 +553,7 @@ app.post('/comprar', upload.none(), function(req,res){
         var CLidproducto = new sql.Table('CLidproducto');
         var CLcantidad = new sql.Table('CLcantidad');
         var CLprecio = new sql.Table('CLprecio');
+        var CLvencimiento = new sql.Table('CLfechavencimiento');
 
         CLcantidad.columns.add('UniqueId', sql.Int);
         CLcantidad.columns.add('Cantidad', sql.Decimal(10,2));
@@ -528,10 +564,14 @@ app.post('/comprar', upload.none(), function(req,res){
         CLprecio.columns.add('UniqueId', sql.Int);
         CLprecio.columns.add('Precio', sql.Money);
 
+        CLvencimiento.columns.add('UniqueId', sql.Int);
+        CLvencimiento.columns.add('fechavencimiento', sql.Date);
+
         for(let i=0; i<idproductos.length; i++){
             CLcantidad.rows.add(i, parseFloat(cantidades[i]));
             CLidproducto.rows.add(i, idproductos[i]);
             CLprecio.rows.add(i, parseFloat( precios[i]));
+            CLvencimiento.rows.add(i, fechavencimiento[i]);
         }
 
         return pool.request()
@@ -548,6 +588,7 @@ app.post('/comprar', upload.none(), function(req,res){
                 .input('CLcantidad', sql.TVP, CLcantidad)
                 .input('CLidproducto', sql.TVP, CLidproducto)
                 .input('CLprecio', sql.TVP, CLprecio)
+                .input('CLfechavencimiento', sql.TVP, CLvencimiento)
                 .execute('Comprar')
             })
         })

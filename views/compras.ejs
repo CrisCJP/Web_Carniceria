@@ -287,7 +287,7 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="form-row">
-                                        <div class="form-group col-sm-6">
+                                        <div class="form-group col-sm-4">
                                             <label for="cboBuscarProductoCompra" style="display: inline-block; margin-right: 5px;">Producto:</label>
                                             <input class="form-control form-control-sm" list="datalistOptions" id="cboBuscarProductoCompra" placeholder="Buscar producto...">
                                             <datalist id="datalistOptions">
@@ -297,9 +297,14 @@
                                             </datalist>
                                         </div>
                                         
-                                        <div class="form-group col-sm-6">
+                                        <div class="form-group col-sm-4">
                                             <label for="cantidadAcomprar" style="display: inline-block; margin-right: 5px;" id="LabelCantidadAComprar">Cantidad:</label>
                                             <input type="number" class="form-control form-control-sm" id="cantidadAcomprar" placeholder="0.0" step="0.5">
+                                            
+                                        </div>
+                                        <div class="form-group col-sm-4">
+                                            <label for="FechaVencimiento" style="display: inline-block; margin-right: 5px;" id="LabelFechaVencimiento">Vencimiento:</label>
+                                            <input type="date" class="form-control form-control-sm" id="FechaVencimiento" placeholder="0.0" step="0.5">
                                             
                                         </div>
                                     </div>
@@ -312,6 +317,7 @@
                                                         <th>Producto</th>
                                                         <th>Cantidad</th>
                                                         <th>Precio</th>
+                                                        <th>Vencimiento</th>
                                                         <th>Total</th>
                                                     </tr>
                                                 </thead>
@@ -595,11 +601,11 @@
             return -1; // Valor no encontrado
         }
 
-        function agregarFila(producto, cantidad, precio) {
+        function agregarFila(producto, cantidad, precio, fechavencimiento) {
             if(obtenerFilaConValor("tbProductoCompra", 1, producto)!==-1){
                 var tabla = document.getElementById("tbProductoCompra");
                 var fila = tabla.getElementsByTagName('tbody')[0].getElementsByTagName('tr')[obtenerFilaConValor("tbProductoCompra", 1, producto)];
-
+                //esta funcion busca si ya existe un producto de ese nombre en la tabla y le modifica algunas cosas
                 if (fila) {
                     var celdas = fila.getElementsByTagName('td');
 
@@ -607,7 +613,8 @@
                     celdas[1].innerHTML = producto;
                     celdas[2].innerHTML = parseFloat(celdas[2].innerText) + parseFloat(cantidad);
                     celdas[3].innerHTML = 'C$'+parseFloat(precio);
-                    celdas[4].innerHTML = 'C$'+((parseFloat(celdas[2].innerText)*precio).toFixed(2));
+                    celdas[4].innerHTML = fechavencimiento;
+                    celdas[5].innerHTML = 'C$'+((parseFloat(celdas[2].innerText)*precio).toFixed(2));
                       
                 } else {
                     console.error("Fila no encontrada en el índice especificado.");
@@ -624,6 +631,7 @@
                 var celda2 = nuevaFila.insertCell(2);
                 var celda3 = nuevaFila.insertCell(3);
                 var celda4 = nuevaFila.insertCell(4);
+                var celda5 = nuevaFila.insertCell(5);
 
                 // Calcular el total
                 var total = cantidad * precio;
@@ -633,7 +641,8 @@
                 celda1.innerHTML = producto;
                 celda2.innerHTML = cantidad;
                 celda3.innerHTML = 'C$'+precio;
-                celda4.innerHTML = 'C$'+total.toFixed(2);
+                celda4.innerHTML = fechavencimiento;
+                celda5.innerHTML = 'C$'+total.toFixed(2);
             }
         }
         
@@ -650,7 +659,8 @@
                     producto: celdas[1].innerText,
                     cantidad: parseFloat(celdas[2].innerText.replace('C$','').trim()),
                     precio: parseFloat(celdas[3].innerText.replace('C$','').trim()),
-                    total: parseFloat(celdas[4].innerText.replace('C$','').trim())
+                    fechavencimiento: celdas[4].innerText,
+                    total: parseFloat(celdas[5].innerText.replace('C$','').trim())
                 };
                 datosTabla.push(filaDatos);
             }
@@ -660,7 +670,7 @@
         //funcion para conseguir el total
         function ElTotal(datosTabla, columnaIndex) {
             var suma = 0.0;
-            var keys = ['checkbox', 'producto', 'cantidad', 'precio', 'total'];
+            var keys = ['checkbox', 'producto', 'cantidad', 'precio', 'vencimiento', 'total'];
             var key = keys[columnaIndex];
             
             for (var i = 0; i < datosTabla.length; i++) {
@@ -689,6 +699,7 @@
             var productos = datosTable.map(function(item) { return item.producto; });
             var cantidades = datosTable.map(function(item) { return item.cantidad; }); 
             var precios = datosTable.map(function(item) { return item.precio; });
+            var fechavencimiento = datosTable.map(function(item){ return item.fechavencimiento})
 
             var idproducto = new Array(productos.length);
             
@@ -702,6 +713,7 @@
             console.log(idproducto);
             console.log(cantidades);
             console.log(precios);
+            console.log(fechavencimiento);
             console.log(idproveedor);
 
             console.log(idproducto.length)
@@ -710,6 +722,7 @@
             formData.append('idproducto', JSON.stringify(idproducto));
             formData.append('cantidad', JSON.stringify(cantidades));
             formData.append('precio', JSON.stringify(precios));
+            formData.append('FechaVencimiento', JSON.stringify(fechavencimiento));
             formData.append('txtDocumentoId', JSON.stringify(idproveedor));
 
             var xhr = new XMLHttpRequest();
@@ -754,14 +767,16 @@
                             var inptProducto = document.getElementById("cboBuscarProductoCompra");
                             var inptPrecio = document.getElementById("precioProducto");
                             var inputCantidad = document.getElementById("cantidadAcomprar");
+                            var inputFechaVencimiento = document.getElementById("FechaVencimiento");
 
                             boton.disabled= false;
 
-                            agregarFila(inptProducto.value, inputCantidad.value, inptPrecio.value);
+                            agregarFila(inptProducto.value, inputCantidad.value, inptPrecio.value, inputFechaVencimiento.value);
 
                             inptProducto.value = '';
                             inptPrecio.value = '';
                             inputCantidad.value = '';
+                            inputFechaVencimiento.value = '';
 
                             var datosTabla = leerTabla();
                             var total = ElTotal(datosTabla, 4);
@@ -803,6 +818,7 @@
                 var inptProducto = document.getElementById("cboBuscarProductoCompra");
                 var inptPrecio = document.getElementById("precioProducto");
                 var inputCantidad = document.getElementById("cantidadAcomprar");
+                var inputFechaVencimiento = document.getElementById("FechaVencimiento");
                 
                 vaciarFilas('tbProductoCompra');
 
@@ -811,6 +827,7 @@
                 inptProducto.value = '';
                 inptPrecio.value = '';
                 inputCantidad.value = '';
+                inputFechaVencimiento = '';
                 inptProveedor.disabled = false;
                 //inptPrecio.disabled = true;
                 //inputCantidad.disabled = true;
