@@ -73,20 +73,22 @@
                 </li>
             <% } %>
 
-            <!-- Nav Item - Inventario Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseInventario"
-                    aria-expanded="true" aria-controls="collapseInventario">
-                    <i class="fas fa-fw fa-clipboard-list"></i>
-                    <span>Inventario</span>
-                </a>
-                <div id="collapseInventario" class="collapse" aria-labelledby="headingInventario" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="categorias.html">Categorias</a>
-                        <a class="collapse-item" href="productos.html">Productos</a>
+            <% if(user.idrol == 1) { %>
+                <!-- Nav Item - Inventario Collapse Menu -->
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseInventario"
+                        aria-expanded="true" aria-controls="collapseInventario">
+                        <i class="fas fa-fw fa-clipboard-list"></i>
+                        <span>Inventario</span>
+                    </a>
+                    <div id="collapseInventario" class="collapse" aria-labelledby="headingInventario" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <a class="collapse-item" href="/categorias">Categorias</a>
+                            <a class="collapse-item" href="/productos">Productos</a>
+                        </div>
                     </div>
-                </div>
-            </li>
+                </li>
+                <% } %>
 
             <!-- Nav Item - Venta Collapse Menu -->
            <li class="nav-item">
@@ -120,7 +122,13 @@
             </li>
 
 
-
+<!-- Nav Item - Recordatorios -->
+<li class="nav-item">
+    <a class="nav-link" href="/notificaciones">
+        <i class="fas fa-fw fa-bell"></i>
+        <span>Recordatorios</span>
+    </a>
+</li>
 
 
 
@@ -165,6 +173,43 @@
                     <ul class="navbar-nav ml-auto">
 
                         <div class="topbar-divider d-none d-sm-block"></div>
+
+
+
+                        <div class="container">
+                            
+                            <!-- Nav Item - Notifications -->
+                            <li class="nav-item dropdown no-arrow mx-1">
+                                <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-bell fa-fw"></i>
+                                    <!-- Counter - Alerts -->
+                                    <span class="badge badge-danger badge-counter">1</span>
+                                </a>
+                                <!-- Dropdown - Notifications -->
+                                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="notificationsDropdown" style="max-height: 400px; overflow-y: auto;">
+                                    <h6 class="dropdown-header">
+                                        Centro de Notificaciones
+                                    </h6>
+                                    <!-- Notificaciones se añadirán dinámicamente aquí -->
+                                      <!-- Example Notifications -->
+                                            <a class="dropdown-item d-flex align-items-center" href="#">
+                                                <div class="mr-3">
+                                                    <div class="icon-circle bg-primary">
+                                                        <i class="fas fa-file-alt text-white"></i>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="small text-gray-500">Diciembre 12, 2024</div>
+                                                    <span class="font-weight-bold">¡Un nuevo informe mensual está listo para descargar!</span>
+                                                </div>
+                                            </a>
+                                    <div id="notification-container"></div>
+                                    <a class="dropdown-item text-center small text-gray-500" href="#">Ver todas las notificaciones</a>
+                                </div>
+                            </li>
+                    
+                        </div>
+
 
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">

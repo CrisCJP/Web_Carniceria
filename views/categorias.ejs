@@ -26,6 +26,17 @@
     <link rel="stylesheet" href="vendor/datatables/extensiones/css/responsive.dataTables.min.css">
     <link rel="stylesheet" href="vendor/datatables/extensiones/css/buttons.dataTables.min.css">
 
+    <style>
+    .table-container::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 4px;
+    }
+    
+    .table-container::-webkit-scrollbar-track {
+        background-color: #f1f1f1;
+        border-radius: 4px;
+    }
+    </style>
 
 </head>
 
@@ -55,6 +66,7 @@
                     <span>Dashboard</span></a>
             </li>
 
+            <% if(user.idrol == 1) { %>
             <!-- Nav Item - Admnistración Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdministracion"
@@ -70,6 +82,7 @@
                     </div>
                 </div>
             </li>
+            <% } %>
 
             <!-- Nav Item - Inventario Collapse Menu -->
             <li class="nav-item active">
@@ -80,8 +93,8 @@
                 </a>
                 <div id="collapseInventario" class="collapse" aria-labelledby="headingInventario" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="categorias.html">Categorias</a>
-                        <a class="collapse-item" href="productos.html">Productos</a>
+                        <a class="collapse-item" href="/categorias">Categorias</a>
+                        <a class="collapse-item" href="/productos">Productos</a>
                     </div>
                 </div>
             </li>
@@ -120,9 +133,17 @@
             </li>
 
 
+<!-- Nav Item - Recordatorios -->
+<li class="nav-item">
+    <a class="nav-link" href="/notificaciones">
+        <i class="fas fa-fw fa-bell"></i>
+        <span>Recordatorios</span>
+    </a>
+</li>
 
 
 
+            <% if(user.idrol == 1) { %>
              <!-- Nav Item - Reportes Collapse Menu -->
              <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReportes"
@@ -136,6 +157,7 @@
                     </div>
                 </div>
             </li>
+            <% } %>
 
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -165,11 +187,50 @@
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 
+
+                        <div class="container">
+                           
+                    
+                            <!-- Nav Item - Notifications -->
+                            <li class="nav-item dropdown no-arrow mx-1">
+                                <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-bell fa-fw"></i>
+                                    <!-- Counter - Alerts -->
+                                    <span class="badge badge-danger badge-counter">1</span>
+                                </a>
+                                <!-- Dropdown - Notifications -->
+                                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="notificationsDropdown" style="max-height: 400px; overflow-y: auto;">
+                                    <h6 class="dropdown-header">
+                                        Centro de Notificaciones
+                                    </h6>
+                                    <!-- Notificaciones se añadirán dinámicamente aquí -->
+                                      <!-- Example Notifications -->
+                                            <a class="dropdown-item d-flex align-items-center" href="#">
+                                                <div class="mr-3">
+                                                    <div class="icon-circle bg-primary">
+                                                        <i class="fas fa-file-alt text-white"></i>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="small text-gray-500">Diciembre 12, 2024</div>
+                                                    <span class="font-weight-bold">¡Un nuevo informe mensual está listo para descargar!</span>
+                                                </div>
+                                            </a>
+                                    <div id="notification-container"></div>
+                                    <a class="dropdown-item text-center small text-gray-500" href="#">Ver todas las notificaciones</a>
+                                </div>
+                            </li>
+                    
+                        </div>
+
+
+
+
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.Nombre %> <%= user.Apellido %></span>
                                 <img class="img-profile rounded-circle"
                                     src="https://images.unsplash.com/photo-1519648023493-d82b5f8d7b8a?w=300">
                             </a>
@@ -193,64 +254,77 @@
                 </nav>
                 <!-- End of Topbar -->
 
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
-                            <!-- DataTales Example -->
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3 bg-second-primary">
-                                    <h6 class="m-0 font-weight-bold text-white">Lista de Categorias</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-sm-3">
-                                            <button class="btn btn-success" data-toggle="modal" data-target="#modalData"><i class="fas fa-plus-circle"></i> Nueva Categoria</button>
-                                        </div>
-                                    </div>
-                                    <hr/>
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                                <table class="table table-bordered" id="tbdata" cellspacing="0" style="width:100%">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Id</th>
-                                                            <th>Descripcion</th>
-                                                            <th>Estado</th>
-                                                            <th>Acciones</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>1</td>
-                                                            <td>Descripcion 1</td>
-                                                            <td><span class="badge badge-info">Activo</span></td>
-                                                            <td>
-                                                                <button class="btn btn-primary btn-sm">
-                                                                    <i class="fas fa-pencil-alt"></i>
-                                                                </button>
-                                                                <button class="btn btn-danger btn-sm">
-                                                                    <i class="fas fa-trash-alt"></i>
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>2</td>
-                                                            <td>Descripcion 2</td>
-                                                            <td><span class="badge badge-danger">No Activo</span></td>
-                                                            <td>
-                                                                <button class="btn btn-primary btn-sm">
-                                                                    <i class="fas fa-pencil-alt"></i>
-                                                                </button>
-                                                                <button class="btn btn-danger btn-sm">
-                                                                    <i class="fas fa-trash-alt"></i>
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+ <!-- Begin Page Content -->
+<div class="container-fluid">
+    <!-- DataTables Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-second-primary">
+            <h6 class="m-0 font-weight-bold text-white">Lista de Categorias</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    <button class="btn btn-success" data-toggle="modal" data-target="#modalData">
+                        <i class="fas fa-plus-circle"></i> Nueva Categoria
+                    </button>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div style="max-height: 400px; overflow-y: auto;">
+
+                    <div class="table-container">
+                        <table class="table table-bordered" id="tbdata" cellspacing="0" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Descripcion</th>
+                                    <!--<th>Estado</th> -->
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbbodytbdata">
+                                <!-- aquí se agregan las filas de forma dinámica -->
+                                <tr>
+                                    <td>1</td>
+                                    <td>Descripción 1</td>
+                                    <td>Activo</td>
+                                    <td>Acciones</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Descripción 2</td>
+                                    <td>Activo</td>
+                                    <td>Acciones</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Descripción 3</td>
+                                    <td>Activo</td>
+                                    <td>Acciones</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Descripción 4</td>
+                                    <td>Activo</td>
+                                    <td>Acciones</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Descripción 5</td>
+                                    <td>Activo</td>
+                                    <td>Acciones</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
                     <!--  Modal-->
                     <div class="modal fade" id="modalData" tabindex="-1" role="dialog"aria-hidden="true" data-backdrop="static">
@@ -291,6 +365,43 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Modal para Modificar Categoria -->
+<div class="modal fade" id="modalModificarCategoria" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 id="modalModificarCategoriaTitulo">Modificar Categoria</h6>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input type="hidden" value="0" id="modificarCategoriaId">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-row">
+                                <div class="form-group col-sm-12">
+                                    <label for="modificarDescripcionCategoria">Descripción(*)</label>
+                                    <input type="text" class="form-control form-control-sm" id="modificarDescripcionCategoria" name="descripcion">
+                                    <div class="error-message" id="errorDescripcionCategoria"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-sm" type="button" id="btnGuardarCambiosCategoria">Guardar Cambios</button>
+                <button class="btn btn-danger btn-sm" type="button" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+                    
 
                 </div>
                 <!-- /.container-fluid -->
@@ -333,8 +444,11 @@
     <script src="vendor/datatables/extensiones/js/buttons.html5.min.js"></script>
     <script src="vendor/datatables/extensiones/js/buttons.print.min.js"></script>
 
-    <!-- SOLO ES DE EJEMPLO - IGNORAR -->
-    <script src="js/vistas/datatables-demo.js"></script>
+
+
+    <script src="ajax/ajax_categoria.js"></script>
+
+
 
 </body>
 
