@@ -260,6 +260,13 @@ function exportToExcel(reportList, fileName) {
     const workbook = XLSX.utils.book_new();
     const worksheet = XLSX.utils.json_to_sheet(dataWithoutDate);
 
+    // Proteger la hoja de cálculo
+    worksheet['!protect'] = {
+        // Opciones de protección aquí
+        password: '1234.',
+        // Por ejemplo, puedes establecer password: 'tu_contraseña'
+    };
+
     // Añadir la hoja de cálculo al libro de trabajo
     XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
 
@@ -270,8 +277,9 @@ function exportToExcel(reportList, fileName) {
     const excelBuffer = XLSX.write(workbook, options);
 
     // Guardar el archivo Excel
-    saveAsExcelFile(excelBuffer, fileName);
+    saveAsExcelFile(excelBuffer, 'reporte');
 };
+
 
 function saveAsExcelFile(buffer, fileName) {
     const data = new Blob([buffer], {type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8"});
