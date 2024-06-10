@@ -9,6 +9,7 @@ const app = express();
 const multer = require('multer');
 const upload = multer();
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const session = require('express-session');
 const crypto = require('crypto');
 const secret = crypto.randomBytes(64).toString('hex');
@@ -18,6 +19,8 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
 }));
+
+app.use(cors());
 
 /*const config = {
     server: 'DESKTOP-DEUHLCS',
@@ -63,6 +66,10 @@ const { setHistoryInvoiceforDate, setHistoryInvoiceforNoVenta } = require('./con
 const { set_salesHistorywithAll } = require('./controller/send_detailsofhistoryofthesale_controller');
 //Call the controller "send_reportfordate"
 const { setReport } = require('./controller/send_reportofordate_controller');
+//Call the controller "no_cache_controller"
+const { noCache } = require('./controller/no_cache_controller');
+
+const { set_user_data_forTable, executeProcedure_makeChanges_forUser, executeProcedure_insertNewUser } = require('./controller/send_user_datas_controller');
 
 
 
@@ -75,6 +82,7 @@ const { getSelledProducts } = require('./model/mostselledproducts_model');
 const { getDetailsDashboard, getCountProductCategories, getCountCategories } = require('./model/detailsdashboard_model');
 // 'adddetailinvoices_model'
 
+// "finalizeinvoices_model"
 const { finalizeInvoice } = require('./model/finalizeinvoice_model');
 
 const { findProductforSales } = require('./model/finderofproductsforsale_model');
@@ -112,6 +120,7 @@ app.get("/notificaciones", function(req, res){
     res.render('notificaciones', {user:user_temp});
 });
 
+
 app.get("/compras", function (req, res) {
     res.render('compras', {user:user_temp});
 });
@@ -121,7 +130,7 @@ app.get("/historial_compras", function (req, res){
 });
 
 //Path to render 'login.ejs'
-app.get("/login", function (req, res) {
+app.get("/login", noCache, (req, res) => {
     res.render('login');
 });
 
@@ -133,7 +142,7 @@ app.get("/index", upload.none(), async function (req, res) {
         detailsdashboard_temp = await getDetailsDashboard(user_temp.IdUsuario);
         countproducts_temp = await getCountProductCategories();
         countcategories_temp = await getCountCategories();
-        console.log (req.session.users);
+        
     }
     res.render('index', { user: user_temp, historyInvoice: historyInvoice_temp, selledProduct: mostselledproducts_temp, detailsDashboard: detailsdashboard_temp, countProduct: countproducts_temp, countCategories: countcategories_temp });
 });
@@ -182,14 +191,14 @@ app.get('/reporte_vencidos', function (req, res) {
     res.render('reporte_vencidos', { user: user_temp });
 })
 
+app.get('/usuarios', async (req, res) => {
+    res.render('usuarios', { user: user_temp });
+});
 
 //:::Middleware:::
 app.use(express.static("public"));
 
 //:::Methods:::POSTS::::::::::::::::::::::::::::::::::::
-
-
-
 
 
 //For login.ejs
@@ -209,8 +218,13 @@ app.post('/login_user', upload.none(), async (req, res) => {
 //For 'nueva_venta.ejs'
 app.post('/addDataforSale', upload.none(), async (req, res) => {
     const arraysale_temp = await getArrayforSale(req, res, user_temp.IdUsuario);
-    array_sale.push(...arraysale_temp);
-    await sendArrayDeytails(req, res, array_sale);
+    if (arraysale_temp == false) {
+        res.status(200).json({ message: false });
+    }
+    else {
+        array_sale.push(...arraysale_temp);
+        await sendArrayDeytails(req, res, array_sale);
+    }
 });
 
 // Update the quantity of the product for sale
@@ -275,6 +289,18 @@ app.post('/reporteproductovencido', upload.none(), function(req, res){
         })
     })
 })
+
+app.post('/set_user_data_forTable', upload.none(), async (req, res) => {
+    await set_user_data_forTable(req, res, user_temp);
+});
+
+app.post('/make_changes_foruser', upload.none(), async (req, res) => {
+    await executeProcedure_makeChanges_forUser(req, res);
+});
+
+app.post('/set_newUser', upload.none(), async (req, res) => {
+    await executeProcedure_insertNewUser(req, res);
+});
 
 app.post('/optmarca', upload.none(),function(req,res){
     sql.connect(config).then(pool =>{
@@ -451,6 +477,7 @@ app.post('/optmedidas', upload.none(),function(req,res){
     })
 })
 
+
 //
 app.post('/inventary',upload.none(),function(req,res){
     sql.connect(config).then(pool =>{
@@ -621,5 +648,5 @@ app.post('/comprar', upload.none(), function(req,res){
 
 //Port configuration :::::::::::::::::::::::::::::::::::::::::::::::::::::
 app.listen(3000, function () {
-    console.log('Example app listening on port http://localhost:3000');
+    console.log('App listening on port http://localhost:3000');
 });

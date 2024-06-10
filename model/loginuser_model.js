@@ -8,7 +8,7 @@ const getUserById = async (username, password) => {
         const result = await pool.request()
             .input('NameUse', sql.VarChar, username)
             .input('Password', sql.VarChar, password)
-            .query("select IdUsuario, Correo, Nombre, Apellido, idrol, convert(varchar(100), decryptbypassphrase('passwordCVB',Password_Encript)) as Contraseña_Desencryptada from Usuario where Correo LIKE @NameUse AND convert(varchar(100), decryptbypassphrase('passwordCVB',Password_Encript)) = @Password");
+            .query("select IdUsuario, Correo, Nombre, Apellido, idrol, convert(varchar(100), decryptbypassphrase('passwordCVB',Password_Encript)) as Contraseña_Desencryptada from Usuario where Correo LIKE @NameUse AND convert(varchar(100), decryptbypassphrase('passwordCVB',Password_Encript)) = @Password AND Estado = 'Activo'");
         return result.recordset[0];
     } finally {
         pool.close();

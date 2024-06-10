@@ -1,4 +1,4 @@
-const { getReport, getReport_quincenal, getReport_mensual, getReport_semanal } = require('../model/reportview_model');
+const { getReport, getReport_most_selled_products } = require('../model/reportview_model');
 
 const setReport = async (req, res, user) => {
     try {
@@ -9,14 +9,8 @@ const setReport = async (req, res, user) => {
         if (option_report == 'fecha')
             report_list = await getReport(user, start_date, end_date);
 
-        else if (option_report == 'quincenal')
-            report_list = await getReport_quincenal(date_temp.quincenal, date_temp.month, date_temp.year);
-
-        else if (option_report == 'mensual')
-            report_list = await getReport_mensual(date_temp.year);
-
-        else if (option_report =='semanal')
-            report_list = await getReport_semanal(date_temp.year);
+        else if (option_report == 'producto_mas_vendidos')
+            report_list = await getReport_most_selled_products();
 
         else
             console.error('Opcion no encontrada');

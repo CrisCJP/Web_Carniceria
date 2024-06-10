@@ -51,6 +51,7 @@ function setFinallyfornewSale (cash_amount, addition_costo) {
                 generateInvoicePDF(response.success, response.user);
                 clearTable('tbDetallesVenta');
                 
+                
                 input_firstname.disabled = false;
                 input_lastname.disabled = false;
                 btn_finish.disabled = true;
@@ -58,6 +59,7 @@ function setFinallyfornewSale (cash_amount, addition_costo) {
                 input_firstname.value = '';
                 input_lastname.value = '';
                 document.getElementById('txtTotal').value = '';
+            
             }
             else {
                 console.log("Hubo un error al finalizar la venta");
@@ -73,99 +75,129 @@ function setFinallyfornewSale (cash_amount, addition_costo) {
 };
 
 
-// Asegúrate de haber incluido el script jspdf.min.js en tu proyecto
-function generateInvoicePDF(invoiceData, userData) {
-    var doc = new jsPDF();
+function generateInvoicePDF(invoiceData1, userData) {
+    var doc = new jsPDF({
+        orientation: 'p',
+        unit: 'mm',
+        format: [48, 210] // Ancho de 48 mm y altura dinámica según el contenido
+    });
+
+    // Establecer una fuente monoespaciada
+    doc.setFont('Courier');
+
     var startY = 10;
-    var lineSpacing = 5;
-    var imageWidth = 30; // Ancho de la imagen en el PDF
-    var imageHeight = imageWidth * (958 / 963); // Altura de la imagen manteniendo la proporción de aspecto
+    var lineSpacing = 4; // Espaciado de línea ajustado para un mejor ajuste
+    let acum_article = 0.0;
 
-    // Carga la imagen de la carnicería
-    var img = new Image();
-    img.src = '../img/Logo_lupita.png'; // Asegúrate de reemplazar 'Logo_lupita.png' con el nombre real de tu imagen
-    img.onload = function() {
-        // Dibuja la imagen en el PDF a la derecha
-        doc.addImage(this, 'PNG', doc.internal.pageSize.width - imageWidth - 10, startY, imageWidth, imageHeight);
+    doc.setFontSize(8); // Tamaño de fuente ajustado
+    doc.setFont(undefined, 'bold');
+    doc.text('CARNICERIA LUPITA', 2, startY);
+    startY += lineSpacing * 2; // Espacio después del título
+    doc.text(' ', 2, startY);
+    startY += lineSpacing;
 
-        // Encabezado de la factura en negrita y tamaño 18
-        doc.setFontSize(18);
-        doc.setFont(undefined, 'bold');
-        doc.text('CARNICERÍA LUPITA', 10, startY + 10); // Alinea a la izquierda
-
-        // Restablece el tamaño de fuente para el resto del texto
-        doc.setFontSize(10);
-        doc.setFont(undefined, 'normal');
-        doc.text('Dirección: De la gasolinera, 1/2 cuadra al norte', 10, (startY += lineSpacing * 3));
-
-        // Datos del cliente y Control de venta alineados
-        startY += lineSpacing * 3; // Incrementa startY para 'Datos del Cliente'
-        doc.setFont(undefined, 'bold');
-        doc.text('Datos del Cliente:', 10, startY);
-        doc.setFont(undefined, 'normal'); // Resto de datos del cliente en texto normal
-        doc.text(`Nombre: ${invoiceData[0].nombreCliente} ${invoiceData[0].apellidoCliente}`, 10, (startY += lineSpacing));
-        doc.text(`Dirección: ${invoiceData[0].dir}`, 10, (startY += lineSpacing));
-        doc.text(`Teléfono: ${invoiceData[0].tel}`, 10, (startY += lineSpacing));
-
-        // Control de venta a la derecha alineado con 'Datos del Cliente'
-        var controlVentaX = 120; // Posición X para el control de venta
-        doc.setFont(undefined, 'bold');
-        startY -= lineSpacing * 3; // Ajusta la posición Y para alinear con 'Datos del Cliente'
-        doc.text('Control de venta:', controlVentaX, startY); // Alinea con 'Datos del Cliente'
-        doc.setFont(undefined, 'normal');
-        doc.text(`Número de venta: ${invoiceData[0].idfactura}`, controlVentaX, (startY += lineSpacing));
-        doc.text(`Fecha: ${invoiceData[0].fecha}`, controlVentaX, (startY += lineSpacing));
-        doc.text(`ID Usuario: ${userData.IdUsuario}`, controlVentaX, (startY += lineSpacing));
-        doc.text(`Usuario: ${userData.Nombre} ${userData.Apellido}`, controlVentaX, (startY += lineSpacing));
-
-        // Títulos de las columnas de la tabla en negrita
-        startY += lineSpacing * 3; // Asegúrate de incrementar startY solo una vez para todos los encabezados
-        doc.setFont(undefined, 'bold');
-        var columnTitles = ['Descripción', 'Cantidad/Peso', 'Precio U.', 'Costo'];
-        var columnPositions = [10, 70, 120, 170];
-        columnTitles.forEach(function(title, index) {
-            doc.text(title, columnPositions[index], startY);
-        });
-
-        // Líneas de la factura en texto normal
-        doc.setFont(undefined, 'normal');
-        invoiceData.forEach(function(item) {
-            startY += lineSpacing; // Incrementa startY antes de empezar a agregar los datos de cada línea
-            doc.text(item.nombreproducto, columnPositions[0], startY);
-            doc.text(item.cantidadopeso.toString(), columnPositions[1], startY);
-            doc.text(`${item.precioventa.toFixed(2)} C$`, columnPositions[2], startY);
-            doc.text(`${item.costo.toFixed(2)} C$`, columnPositions[3], startY);
-        });
-
-        // Totales
-        var total = invoiceData.reduce(function(acc, item) {
-            return acc + item.costo;
-        }, 0);
-        var cambio = (invoiceData[0].efectivo - total);
-        startY += lineSpacing * 2; // Incrementa startY para los totales
-
-        // Establece la fuente en negrita para 'Total:'
-        doc.setFont(undefined, 'bold');
-        doc.text('Total: ', 170, startY);
-        // Restablece la fuente a normal y agrega el total en negrita
-        doc.setFont(undefined, 'normal');
-        doc.text(total.toFixed(2) + ' C$', doc.getTextWidth('Total: ') + 172, startY);
-
-        
-        doc.setFont(undefined, 'bold');
-        doc.text('Efectivo: ', 170, startY += lineSpacing);
-        doc.setFont(undefined, 'normal');
-        doc.text(invoiceData[0].efectivo.toFixed(2) + ' C$', doc.getTextWidth('Efectivo: ') + 172, startY);
+    doc.setFont(undefined, 'normal');
+    doc.text('Direccion: De la gasolinera, 1/2 cuadra al norte', 2, startY);
+    doc.text('Concepcion - Masaya', 2, (startY += lineSpacing));
+    doc.text(' ', 2, (startY += lineSpacing));
 
 
-        doc.setFont(undefined, 'bold');
-        doc.text('Cambio: ', 170, startY += lineSpacing);
-        doc.setFont(undefined, 'normal');
-        doc.text(cambio.toFixed(2) + ' C$', doc.getTextWidth('Cambio: ') + 172, startY);
+    // Datos del cliente
+    startY += lineSpacing * 2;
+    // Control de venta debajo de los datos del cliente
+    doc.setFont(undefined, 'bold');
+    doc.text('Control de venta:', 2, startY);
+    doc.setFont(undefined, 'normal');
+    doc.text(`Numero de venta: ${invoiceData1[0].idfactura}`, 2, (startY += lineSpacing));
+    doc.text(`Fecha: ${invoiceData1[0].fecha}`, 2, (startY += lineSpacing));
+    doc.text(`Cajero: ${userData.IdUsuario}-${userData.Nombre} ${userData.Apellido}`, 2, (startY += lineSpacing));
+    
+    // Línea en blanco para más espacio
+    startY += lineSpacing;
+    doc.text(' ', 2, startY);
+    startY += lineSpacing;
+    
+    doc.setFont(undefined, 'bold');
+    doc.text('Datos del Cliente:', 2, startY);
+    doc.setFont(undefined, 'normal');
+    doc.text(`Nombre: ${invoiceData1[0].nombreCliente} ${invoiceData1[0].apellidoCliente}`, 2, (startY += lineSpacing));
+    doc.text(`Direccion: ${invoiceData1[0].dir}`, 2, (startY += lineSpacing));
+    doc.text(`Telefono: ${invoiceData1[0].tel}`, 2, (startY += lineSpacing));
 
-        // Abre el PDF en una nueva pestaña del navegador
-        window.open(doc.output('bloburl'), '_blank');
-    };
+    // Títulos de las columnas de la tabla
+    startY += lineSpacing * 2;
+    doc.text(' ', 2, startY);
+
+    /*doc.setFont(undefined, 'bold');
+    var columnTitles = ['Desc.', 'Cant.', 'P.U.', 'Total'];
+    var columnPositions = [2, 12, 22, 32];
+    columnTitles.forEach(function(title, index) {
+        doc.text(title, columnPositions[index], startY);
+    });*/
+
+    // Líneas de la factura
+    doc.setFont(undefined, 'normal');
+    invoiceData1.forEach(function(item, index) {
+        //var xPosition = columnPositions[index % columnPositions.length];
+        doc.text(`Articulo: ${item.idproducto}`, 2, (startY += lineSpacing));
+        doc.text(`Descrip.: ${item.nombreproducto}`, 2, (startY += lineSpacing));
+        doc.text(`Cantidad: ${item.cantidadopeso.toString()}`, 2, (startY += lineSpacing));
+        doc.text(`Precio.U: ${item.precioventa.toFixed(2)} C$`, 2, (startY += lineSpacing));
+        doc.text(`Costo: ${item.costo.toFixed(2)} C$`, 2, (startY += lineSpacing));
+        doc.text(']', 2, (startY += lineSpacing));
+        acum_article += parseFloat(item.cantidadopeso);
+    });
+    
+    doc.text(' ', 2, (startY += lineSpacing));
+    doc.text('Cantidad de articulos: ' + acum_article, 2, (startY += lineSpacing));
+    doc.text(' ', 2, (startY += lineSpacing));
+
+    // Totales
+    startY += lineSpacing * 2;
+    doc.setFont(undefined, 'bold');
+    doc.text('Total: ', 2, startY);
+    doc.setFont(undefined, 'normal');
+    doc.text(`${invoiceData1[0].total.toFixed(2)} C$`, 13, startY);
+
+    doc.setFont(undefined, 'bold');
+    doc.text('Paga con: ', 2, startY += lineSpacing);
+    doc.setFont(undefined, 'normal');
+    doc.text(`${invoiceData1[0].efectivo.toFixed(2)} C$`, 18, startY);
+
+    // Calcula el cambio restando el total del efectivo
+    const cambio = invoiceData1[0].efectivo - invoiceData1[0].total;
+
+    doc.setFont(undefined, 'bold');
+    doc.text('Cambio: ', 2, startY += lineSpacing);
+    doc.setFont(undefined, 'normal');
+    // Asegúrate de que el cambio no sea negativo antes de mostrarlo
+    doc.text(`${cambio > 0 ? cambio.toFixed(2) : '0.00'} C$`, 14, startY);
+
+    doc.text(' ', 2, startY += lineSpacing);
+    doc.text('Los productos ya incluyen el IVA 15%', 2, startY += lineSpacing);
+    doc.text(' ', 2, startY += lineSpacing);
+    console.log(invoiceData1);
+
+    // Genera los datos binarios del PDF y crea un blob
+    var pdfData = doc.output('blob');
+    var blob = new Blob([pdfData], { type: 'application/pdf' });
+    var url = URL.createObjectURL(blob);
+
+    // Agregar un parámetro único a la URL para evitar el caché
+    var uniqueUrl = url + '#t=' + new Date().getTime();
+
+    // Abre el PDF en una nueva pestaña
+    var newWindow = window.open(uniqueUrl, '_blank');
+    if (newWindow) {
+        newWindow.focus();
+    } else {
+        alert('Permita las ventanas emergentes para esta página para ver el PDF.');
+    }
+
+    // Revoca la URL del blob después de un corto período de tiempo
+    setTimeout(function() {
+        URL.revokeObjectURL(url);
+    }, 1000);
 };
 
 // Función para limpiar la tabla

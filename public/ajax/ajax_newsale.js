@@ -13,49 +13,56 @@ function sendDataDetail(firstname, lastname, productname, amountproduct) {
             console.log("Conectado");
 
             var answer = JSON.parse(xhr.responseText);
-            if (answer && typeof answer === 'object' && Object.keys(answer).length > 0) {
-                var table = document.getElementById('tbDetallesVenta');
-                var row = answer.list[answer.list.length - 1]; // Get the last product added
-                var newRow = table.insertRow(); // Create a new row for the latest product
-
-                // Agrega el nombre del producto
-                newRow.insertCell().textContent = row.nombreproducto;
-
-                // Create an editable cell for cantidadopeso
-                var amountCell = newRow.insertCell();
-                var input = document.createElement('input');
-                input.type = 'number';
-                input.min = '1';
-                input.value = row.cantidadopeso;
-                input.addEventListener('change', function() {
-                    if (this.value > 0) {
-                        var new_amount = parseFloat(this.value);
-                        var nuevaExistencia = row.existencia_defore - new_amount;
-                        var nuevoCosto = row.precioventa * new_amount;
-
-                        // Find the total cell in the current row and update its contents
-                        var totalCell = newRow.cells[3]; // Assuming the total cell is the fourth cell
-                        totalCell.textContent = nuevoCosto.toFixed(2) + 'C$'; // Format to two decimal places and add the currency
-
-
-                        updateAmount(row.idproducto, new_amount, nuevaExistencia, nuevoCosto); // Function to update the value
-                    } else {
-                        alert('Debes ingresar una cantidad mayor que 0');
-                        this.value = row.cantidadopeso;
-                    }
-                });
-                amountCell.appendChild(input);
-                // Add the sales price
-                newRow.insertCell().textContent = row.precioventa + ' C$';
-                // Add the total
-                newRow.insertCell().textContent = row.costo.toFixed(2) + ' C$';
-
-                document.getElementById('txtTotal').value = answer.total + ' C$';
-
+            if ('message' in answer) {
+                document.getElementById('btnTerminarVentar').disabled = true;
+                alert('No hay producto en existencia');
+                throw new Error ('Fatal Error (Falta de existencia)');
             }
-
-            document.getElementById('cboBuscarProducto').value = '';
-            document.getElementById('txtCantidad_Peso').value = '';
+            else {
+                if (answer && typeof answer === 'object' && Object.keys(answer).length > 0) {
+                    var table = document.getElementById('tbDetallesVenta');
+                    var row = answer.list[answer.list.length - 1]; // Get the last product added
+                    var newRow = table.insertRow(); // Create a new row for the latest product
+    
+                    // Agrega el nombre del producto
+                    newRow.insertCell().textContent = row.nombreproducto;
+    
+                    // Create an editable cell for cantidadopeso
+                    var amountCell = newRow.insertCell();
+                    var input = document.createElement('input');
+                    input.type = 'number';
+                    input.min = '1';
+                    input.value = row.cantidadopeso;
+                    input.addEventListener('change', function() {
+                        if (this.value > 0) {
+                            var new_amount = parseFloat(this.value);
+                            var nuevaExistencia = row.existencia_defore - new_amount;
+                            var nuevoCosto = row.precioventa * new_amount;
+    
+                            // Find the total cell in the current row and update its contents
+                            var totalCell = newRow.cells[3]; // Assuming the total cell is the fourth cell
+                            totalCell.textContent = nuevoCosto.toFixed(2) + 'C$'; // Format to two decimal places and add the currency
+    
+    
+                            updateAmount(row.idproducto, new_amount, nuevaExistencia, nuevoCosto); // Function to update the value
+                        } else {
+                            alert('Debes ingresar una cantidad mayor que 0');
+                            this.value = row.cantidadopeso;
+                        }
+                    });
+                    amountCell.appendChild(input);
+                    // Add the sales price
+                    newRow.insertCell().textContent = row.precioventa + ' C$';
+                    // Add the total
+                    newRow.insertCell().textContent = row.costo.toFixed(2) + ' C$';
+    
+                    document.getElementById('txtTotal').value = answer.total + ' C$';
+    
+                }
+    
+                document.getElementById('cboBuscarProducto').value = '';
+                document.getElementById('txtCantidad_Peso').value = '';
+            }
         }
         else {
             console.log(xhr.status);
