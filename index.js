@@ -178,6 +178,10 @@ app.get('/reporte_venta', async (req, res) => {
     res.render('reporte_venta', { user: user_temp });
 });
 
+app.get('/reporte_vencidos', function (req, res) {
+    res.render('reporte_vencidos', { user: user_temp });
+})
+
 
 //:::Middleware:::
 app.use(express.static("public"));
@@ -251,6 +255,26 @@ app.post('/getDetails_HistoryoftheSale', upload.none(), async (req,res) => {
 app.post('/getReportforDate', upload.none(), async (req, res) => {
     await setReport(req, res, user_temp.IdUsuario);
 });
+
+app.post('/reporteproductovencido', upload.none(), function(req, res){
+    sql.connect(config).then(pool=>{
+        return pool.request()
+        .query('select P.NombreProducto, D.FechaVencimiento, D.Cantidad_Peso from DetallesCompra D inner join Producto P on P.IdProducto = D.idproducto where D.FechaVencimiento is not null order by FechaVencimiento')
+        .then(result=>{
+            let NombreProduct = new Array(result.recordset.length);
+            let FechaVencimiento = new Array(result.recordset.length);
+            let Cantidad_Peso = new Array(result.recordset.length);
+
+            for(let i = 0; i < result.recordset.length; i++){
+                NombreProduct[i] = result.recordset[i].NombreProducto;
+                FechaVencimiento[i] = result.recordset[i].FechaVencimiento;
+                Cantidad_Peso[i] = result.recordset[i].Cantidad_Peso;
+            }
+            
+            res.send({nombreproduct:NombreProduct, fechavencimiento:FechaVencimiento, cantidad_peso:Cantidad_Peso});
+        })
+    })
+})
 
 app.post('/optmarca', upload.none(),function(req,res){
     sql.connect(config).then(pool =>{
