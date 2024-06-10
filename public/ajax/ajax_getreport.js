@@ -256,17 +256,31 @@ function exportToExcel(reportList, fileName) {
     else 
         dataWithoutDate = reportList;
 
+    // Calcular la suma total de la propiedad 'Total'
+    const totalSum = dataWithoutDate.reduce((sum, record) => sum + (record.Total || 0), 0);
+    console.log(totalSum); // Para verificar que la suma se calcula correctamente
+
     // Crear un nuevo libro de trabajo y una hoja de cálculo
     const workbook = XLSX.utils.book_new();
     const worksheet = XLSX.utils.json_to_sheet(dataWithoutDate);
 
+    // Asegurarse de que el rango de la hoja de cálculo incluya la nueva columna
+    const range = XLSX.utils.decode_range(worksheet['!ref']);
+    range.e.c += 1; // Aumentar el rango de columnas en 1 para la nueva columna
+    worksheet['!ref'] = XLSX.utils.encode_range(range);
+
+    // Añadir un encabezado para la nueva columna 'Total Sum'
+    worksheet[XLSX.utils.encode_cell({r: 0, c: range.e.c})] = {v: 'Total de las Ventas', t: 's'};
+
+    // Añadir la suma total en la segunda fila de la nueva columna
+    worksheet[XLSX.utils.encode_cell({r: 1, c: range.e.c})] = {v: totalSum, t: 'n'};
     // Proteger la hoja de cálculo
     worksheet['!protect'] = {
         password: '1234' // Contraseña sin el punto
     };
 
     // Ajustar el ancho de las columnas
-    autoWidth(worksheet);
+    autoWidth(worksheet); // Asegúrate de definir esta función
 
     // Añadir la hoja de cálculo al libro de trabajo
     XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
