@@ -21,7 +21,7 @@ const getCountProductCategories = async () => {
     try {
         pool = await sql.connect(config);
         const result = await pool.request()
-            .query('SELECT COUNT(IdProducto) as CountProducts FROM Producto');
+            .query('SELECT COUNT(IdProducto) as CountProducts FROM Producto WHERE Existencia > 0;');
         return result.recordset[0].CountProducts;
     } finally {
       pool.close();

@@ -25,7 +25,7 @@ const setHistoryInvoiceforNoVenta = async (req, res, iduser) => {
         if (!historyinvoice_fornoventa || typeof historyinvoice_fornoventa === undefined || historyinvoice_fornoventa === '')
             return res.status(404).json({ message: 'No se encontraron resultados' });
 
-        console.log(historyinvoice_fornoventa);
+        
 
         res.status(200).json({ historyinvoice_fornoventa: historyinvoice_fornoventa });
 

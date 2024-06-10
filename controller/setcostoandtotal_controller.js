@@ -2,7 +2,7 @@
 const setCostoandTotal = async (req, res, array) => {
     const { new_cash, new_total } = req.body;
     const idFactura = array[0].idfactura;
-    console.log(idFactura, new_cash, new_total);
+    
 
     return array.map (object => {
         object.idfactura = idFactura.toString();

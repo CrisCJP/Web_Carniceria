@@ -15,32 +15,18 @@ function getReportforDate(initial_date, final_date, option_report) {
             if (answer && typeof answer === 'object' && Object.keys(answer).length > 0) {
 
                 if (option_report == 'fecha') {
-                    const array = ['Fecha', 'Numero de Venta', 'Producto', 'Cantidad', 'Precio', 'Total'];
+                    const array = ['Fecha', 'Numero de Venta', 'Efectivo', 'Total de la Venta', 'Cambio'];
                     actualizarEncabezados(array);
                     agregarDatos(answer, option_report);
                     btn_export.disabled = false;
                 }
-                else if (option_report == 'quincenal') {
-                    const array = ['Fecha', 'Numero de Venta', 'Mes', 'Quincena del mes', 'Producto', 'Cantidad', 'Precio', 'Total'];
+                else if (option_report == 'producto_mas_vendidos') {
+                    const array = ['Producto', 'Categoria', 'Cantidad', 'Precio', 'Total'];
                     actualizarEncabezados(array);
                     agregarDatos(answer, option_report);
                     btn_export.disabled = false;
                 }
-                else if (option_report == 'mensual') {
-                    const array = ['Año', 'Mes', 'Venta del mes'];
-                    actualizarEncabezados(array);
-                    agregarDatos(answer, option_report);
-                    btn_export.disabled = false;
-                }
-                else if (option_report == 'semanal') {
-                    const array = ['Año', 'Mes', 'Semana del mes', 'Total'];
-                    actualizarEncabezados(array);
-                    agregarDatos(answer, option_report);
-                    btn_export.disabled = false;
-                }
-                else if (option_report == 'anual') {
-                    const array = ['Fecha', 'Numero de Venta', 'Mes', 'Quincena del mes', 'Producto', 'Precio', 'Cantidad', 'Total'];
-                }
+                
                 else {
                     console.error('Opcion no disponible');
                 }
@@ -81,16 +67,9 @@ document.addEventListener("DOMContentLoaded", function() {
         // Get the reference to the select element
         var select_element = document.getElementById('cboBuscarPor');
 
-
-        if (select_element.value != 'fecha') {
-            if (initial_date.trim() === '') {
-                alert ('Fecha de inicio, este campo no debe estar vacio');
-                event.preventDefault();
-            }
-            else {
-                console.log(select_element.value);
-                getReportforDate(initial_date, final_date, select_element.value);
-            }
+        if (select_element.value == 'producto_mas_vendidos') {
+            getReportforDate(initial_date, final_date, select_element.value);
+            document.getElementById('btnExportar').disabled = false;
         }
         else {
             if (initial_date.trim() === '' && final_date.trim() === '') {
@@ -102,12 +81,13 @@ document.addEventListener("DOMContentLoaded", function() {
                     alert ('Fecha de inicio debe ser menor a la fecha fin');
                     event.preventDefault();
                 }
-                else {
-                    console.log(select_element.value);
+                else { 
                     getReportforDate(initial_date, final_date, select_element.value);
+                    document.getElementById('btnExportar').disabled = false;
                 }
             }
         }
+        
     });
 });
 
@@ -128,9 +108,16 @@ document.addEventListener('DOMContentLoaded', function() {
         if (value_element == 'fecha') {
             initial_date.disabled = false;
             final_date.disabled = false;
+            initial_date.value = '';
+            final_date.value = '';
+        }
+        else if (value_element == 'producto_mas_vendidos') {
+            initial_date.disabled = true;
+            final_date.disabled = true;
+            initial_date.value = '';
+            final_date.value = '';
         }
         else {
-            final_date.disabled = true;
             initial_date.value = '';
             final_date.value = '';
         }
@@ -166,7 +153,7 @@ function agregarDatos(datas, option) {
                 
                 if (option == 'fecha') {
                     Object.keys(filaDatos).forEach(key => {
-                        if (key !== 'Fecha' && key !== 'Total' && key !== 'Precio') { // Omitimos la propiedad 'fecha'
+                        if (key !== 'Fecha' && key !== 'Total' && key !== 'Efectivo' && key !== 'Cambio') { // Omitimos la propiedad 'fecha'
                             const td = document.createElement('td');
                             td.textContent = filaDatos[key];
                             tr.appendChild(td);
@@ -174,19 +161,24 @@ function agregarDatos(datas, option) {
                     });
 
                     // Agrega la celda para 'Subtotal'
-                    const tdPrecio = document.createElement('td');
-                    tdPrecio.textContent = `${filaDatos.Precio} C$`;
-                    tr.appendChild(tdPrecio);
+                    const tdEfectivo = document.createElement('td');
+                    tdEfectivo.textContent = `${filaDatos.Efectivo} C$`;
+                    tr.appendChild(tdEfectivo);
 
                     // Agrega la celda para 'Subtotal'
                     const tdVenta = document.createElement('td');
                     tdVenta.textContent = `${filaDatos.Total} C$`;
                     tr.appendChild(tdVenta);
+
+                    // Agrega la celda para 'Subtotal'
+                    const tdCambio = document.createElement('td');
+                    tdCambio.textContent = `${filaDatos.Cambio} C$`;
+                    tr.appendChild(tdCambio);
                 }
-                else if (option == 'quincenal') {
+                else if (option == 'producto_mas_vendidos') {
                     Object.keys(filaDatos).forEach(key => {
                         // Creamos una celda para cada propiedad, excepto 'Subtotal' y 'Precio' que se manejarán aparte
-                        if (key !== 'Subtotal' && key !== 'Precio') {
+                        if (key !== 'Total' && key !== 'Precio') {
                             const td = document.createElement('td');
                             td.textContent = filaDatos[key];
                             tr.appendChild(td);
@@ -200,7 +192,7 @@ function agregarDatos(datas, option) {
     
                     // Agrega la celda para 'Subtotal'
                     const tdSubtotal = document.createElement('td');
-                    tdSubtotal.textContent = `${filaDatos.Subtotal} C$`;
+                    tdSubtotal.textContent = `${filaDatos.Total} C$`;
                     tr.appendChild(tdSubtotal);
                 }
                 else if (option =='mensual') {
