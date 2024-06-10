@@ -262,10 +262,11 @@ function exportToExcel(reportList, fileName) {
 
     // Proteger la hoja de cálculo
     worksheet['!protect'] = {
-        // Opciones de protección aquí
-        password: '1234.',
-        // Por ejemplo, puedes establecer password: 'tu_contraseña'
+        password: '1234' // Contraseña sin el punto
     };
+
+    // Ajustar el ancho de las columnas
+    autoWidth(worksheet);
 
     // Añadir la hoja de cálculo al libro de trabajo
     XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
@@ -277,11 +278,32 @@ function exportToExcel(reportList, fileName) {
     const excelBuffer = XLSX.write(workbook, options);
 
     // Guardar el archivo Excel
-    saveAsExcelFile(excelBuffer, 'reporte');
+    saveAsExcelFile(excelBuffer, fileName);
 };
 
 
 function saveAsExcelFile(buffer, fileName) {
     const data = new Blob([buffer], {type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8"});
     saveAs(data, fileName + '.xlsx');
+};
+
+function autoWidth(worksheet) {
+    const columnWidths = [];
+    const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+    data.forEach(row => {
+        row.forEach((cell, index) => {
+            // Asegúrate de que haya un valor para comparar
+            if (cell != null) {
+                // Convertir todo a cadena
+                const length = cell.toString().length;
+                // Si no existe un ancho máximo para esta columna o este valor es más largo, actualízalo
+                if (!columnWidths[index] || columnWidths[index] < length) {
+                    columnWidths[index] = length;
+                }
+            }
+        });
+    });
+
+    // Establecer el ancho de la columna en el objeto worksheet
+    worksheet['!cols'] = columnWidths.map(width => ({ wch: width }));
 };
