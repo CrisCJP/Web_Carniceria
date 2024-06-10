@@ -23,7 +23,7 @@ app.use(session({
     server: 'DESKTOP-DEUHLCS',
 */
 const config = {
-    server: 'DESKTOP-DEUHLCS',
+    server: 'DESKTOP-OP1FG8F',
     database: 'CarniceriaLupita',
     user: 'prueba',
     password: '1234',
@@ -99,13 +99,25 @@ app.get("/", function (req, res) {
     res.render("login");
 });
 
+app.get("/productos", function(req, res){
+    res.render('productos', {user:user_temp});
+});
+
+app.get("/categorias", function(req, res){
+    res.render('categorias', {user:user_temp});
+});
+
+app.get("/notificaciones", function(req, res){
+    res.render('notificaciones', {user:user_temp});
+});
+
 app.get("/compras", function (req, res) {
     res.render('compras', {user:user_temp});
 });
 
 app.get("/historial_compras", function (req, res){
     res.render('historial_compras', {user:user_temp});
-})
+});
 
 //Path to render 'login.ejs'
 app.get("/login", function (req, res) {
@@ -239,6 +251,147 @@ app.post('/getReportforDate', upload.none(), async (req, res) => {
     await setReport(req, res, user_temp.IdUsuario);
 });
 
+app.post('/optmarca', upload.none(),function(req,res){
+    sql.connect(config).then(pool =>{
+        return pool.request()
+        .query('select Nombre_Proveedor from Proveedor')
+        .then(result =>{
+            let Marca = new Array(result.recordset.length);
+
+            for(let i = 0; i < result.recordset.length; i++){
+                Marca[i] = result.recordset[i].Nombre_Proveedor;
+            }
+            
+            res.send({consult:Marca});
+        })
+    })
+})
+
+app.post('/formodal', upload.none(), function(req, res){
+    const { idcompra } = req.body;
+    sql.connect(config).then(pool => {
+        // Consulta 1
+        return pool.request()
+            .input('idcompra', sql.Int, idcompra)
+            .query('select C.FechaCompra, C.IdCompra, C.idUsuario, C.idProveedor, R.Nombre_Proveedor from Compras C inner join Proveedor R on R.IdProveedor = C.idProveedor where C.IdCompra = @idcompra group by C.IdCompra, C.idUsuario, C.FechaCompra, C.idProveedor, R.Nombre_Proveedor')
+            .then(result1 => {
+                console.log('Consulta 1 Result:', result1.recordset);
+                if (!result1.recordset.length) {
+                    return res.send({error: "No data found"});
+                }
+                let compraData = result1.recordset[0];
+
+                // Consulta 2
+                return pool.request()
+                    .input('idcompra', sql.Int, idcompra)
+                    .query('select sum(subtotal) as total from Compras C inner join DetallesCompra D on D.idcompra = C.IdCompra where C.idcompra = @idcompra')
+                    .then(result2 => {
+                        console.log('Consulta 2 Result:', result2.recordset);
+
+                        // Consulta 3
+                        return pool.request()
+                            .input('idcompra', sql.Int, idcompra)
+                            .query('select P.NombreProducto, V.Cantidad_Peso, V.Subtotal / NULLIF(V.Cantidad_Peso, 0) AS PrecioCompra, V.Subtotal from DetallesCompra V inner join Producto P on P.IdProducto = V.idproducto where V.idcompra = @idcompra')
+                            .then(result3 => {
+                                console.log('Consulta 3 Result:', result3.recordset);
+
+                                let NombreProducto = result3.recordset.map(row => row.NombreProducto);
+                                let Cantidad = result3.recordset.map(row => row.Cantidad_Peso);
+                                let PrecioCompra = result3.recordset.map(row => row.PrecioCompra);
+                                let Subtotal = result3.recordset.map(row => row.Subtotal);
+
+                                res.send({
+                                    fechacompra: compraData.FechaCompra,
+                                    idcompra: compraData.IdCompra,
+                                    idusuario: compraData.idUsuario,
+                                    idproveedor: compraData.idProveedor,
+                                    nombreproveedor: compraData.Nombre_Proveedor,
+                                    total: result2.recordset[0].total,
+                                    nombreproducto: NombreProducto,
+                                    cantidad: Cantidad,
+                                    preciocompra: PrecioCompra,
+                                    subtotal: Subtotal
+                                });
+                            });
+                    });
+            });
+    }).catch(err => {
+        console.error(err);
+        res.status(500).send("Error connecting to the database");
+    });
+});
+
+
+app.post('/historialcompra', upload.none(), function(req, res){
+    
+    sql.connect(config).then(pool =>{
+        return pool.request()
+        .query('select C.FechaCompra, C.idcompra, P.Nombre_Proveedor, C.idUsuario, sum(Subtotal) as total from DetallesCompra D inner join Compras C on D.idcompra = C.IdCompra inner join Proveedor P on P.IdProveedor = C.idProveedor group by C.IdCompra, C.idUsuario, C.FechaCompra, P.Nombre_Proveedor')
+        .then(result => {
+            
+            let FechaCompra = new Array(result.recordset.length);
+            let IdCompra = new Array(result.recordset.length);
+            let NombreProveedor = new Array(result.recordset.length);
+            let IdUsuario = new Array(result.recordset.length);
+            let Total = new Array(result.recordset.length);
+
+            for(let i = 0; i < result.recordset.length; i++){
+                FechaCompra[i] = result.recordset[i].FechaCompra;
+                IdCompra[i] = result.recordset[i].idcompra;
+                NombreProveedor[i] = result.recordset[i].Nombre_Proveedor;
+                IdUsuario[i] = result.recordset[i].idUsuario;
+                Total[i] = result.recordset[i].total;
+            }
+
+            res.send({fechacompra:FechaCompra, idcompra:IdCompra, nombreproveedor:NombreProveedor, idusuario:IdUsuario, total:Total });
+        
+        })
+    })
+})
+
+app.post('/categoriasinventario', upload.none(), function(req, res){
+    sql.connect(config).then(pool =>{
+        return pool.request()
+        .query('select IdCategoria, NombreCategoria from CategoriaProducto')
+        .then(result =>{
+            let Idcategoria = new Array(result.recordset.length);
+            let Categoria = new Array(result.recordset.length);
+
+            for(let i = 0; i < result.recordset.length; i++){
+                Idcategoria[i] = result.recordset[i].IdCategoria;
+                Categoria[i] = result.recordset[i].NombreCategoria;
+            }
+
+            res.send({idcategoria:Idcategoria,categoria:Categoria});
+        })
+    })
+})
+
+app.post('/updatecate', upload.none(), function(req, res){
+    const {categoria, idcategoria} = req.body;
+    sql.connect(config).then(pool =>{
+        return pool.request()
+        .input('idcategoria', sql.Int, idcategoria)
+        .input('categoria', sql.VarChar, categoria)
+        .query('update CategoriaProducto set NombreCategoria = @categoria where IdCategoria = @idcategoria')
+    })
+})
+
+app.post('/optcategoria', upload.none(),function(req,res){
+    sql.connect(config).then(pool =>{
+        return pool.request()
+        .query('select NombreCategoria from CategoriaProducto')
+        .then(result =>{
+            let Categoria = new Array(result.recordset.length);
+
+            for(let i = 0; i < result.recordset.length; i++){
+                Categoria[i] = result.recordset[i].NombreCategoria;
+            }
+
+            res.send({consult:Categoria});
+        })
+    })
+})
 
 //
 app.post('/inventary',upload.none(),function(req,res){
@@ -261,7 +414,18 @@ app.post('/inventary',upload.none(),function(req,res){
                 Precio[i] = result.recordset[i].Precio;
             }
 
-            res.send({id:Id, marca:Marca, categoria:Categoria, stock:Stock, precio:Precio});
+            return pool.request()
+            .query('select NombreProducto from Producto')
+            .then(result => {
+                let NombreProduct = new Array(result.recordset.length);
+
+                for(let i = 0; i < result.recordset.length; i++){
+                    NombreProduct[i] = result.recordset[i].NombreProducto;
+                }
+
+                res.send({id:Id, marca:Marca, categoria:Categoria, stock:Stock, precio:Precio, nombreproduct:NombreProduct});
+            })
+
         })
         .catch(err => {
             // Manejo de errores en la consulta SQL
@@ -274,6 +438,17 @@ app.post('/inventary',upload.none(),function(req,res){
         console.error('Error al conectar con la base de datos:', err);
         res.status(500).send('Error al conectar con la base de datos');
     });
+})
+
+app.post('/updateproduct',upload.none(),function(req,res){
+    const {idproducto, stock, precio} = req.body;
+    sql.connect(config).then(pool =>{
+        return pool.request()
+        .input('idproducto', sql.VarChar, idproducto)
+        .input('stock', sql.Decimal, stock)
+        .input('precio', sql.Decimal, precio)
+        .query('update Producto set Existencia = @stock, PrecioVenta = @precio where IdProducto = @idproducto')
+    })
 })
 
 app.post('/getmedida',upload.none(),function(req,res){
