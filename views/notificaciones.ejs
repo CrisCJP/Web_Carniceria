@@ -142,6 +142,7 @@
                 <div id="collapseReportes" class="collapse" aria-labelledby="headingInventario" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="/reporte_venta">Reporte de Ventas</a>
+                        <a class="collapse-item" href="/reporte_vencidos">Reporte de Vencidos</a>
                     </div>
                 </div>
             </li>
@@ -341,8 +342,11 @@
             // Limpiar la tabla
             tbody.innerHTML = '';
 
+            // Objeto para almacenar los identificadores de tiempo asociados a cada fila
+            const timeouts = {};
+
             // Volver a cargar los datos en la tabla
-            tableData.forEach(function(recordatorio) {
+            tableData.forEach(function(recordatorio, index) {
                 const fila = tbody.insertRow();
 
                 const celdaDescripcion = fila.insertCell(0);
@@ -356,6 +360,9 @@
                 botonEliminar.innerHTML = '<i class="fas fa-trash-alt"></i>';
                 botonEliminar.addEventListener('click', function() {
                     if (confirm('¿Desea eliminar este recordatorio?')) {
+                        // Cancelar el setTimeout asociado a esta fila
+                        clearTimeout(timeouts[index]);
+
                         // Eliminar la fila de la tabla
                         tbody.deleteRow(fila.rowIndex);
 
@@ -367,28 +374,49 @@
 
                 const celdaEliminar = fila.insertCell(2);
                 celdaEliminar.appendChild(botonEliminar);
+
+                // Calcular la fecha actual
+                const fechaActual = new Date();
+                console.log('Fecha actual:', fechaActual);
+
+                // Calcular la fecha límite tres días antes
+                const fechaLimite = new Date(recordatorio.fecha);
+                fechaLimite.setDate(fechaLimite.getDate() - 3);
+                console.log('Fecha límite:', fechaLimite);
+
+                // Calcular la diferencia de tiempo en milisegundos
+                const diferenciaTiempo = fechaLimite.getTime() - fechaActual.getTime();
+                console.log('Diferencia de tiempo en milisegundos:', diferenciaTiempo);
+
+                // Establecer el setTimeout con la diferencia de tiempo
+                timeouts[index] = setTimeout(function() {
+                    // Aquí puedes agregar la lógica para la notificación cuando se active el tiempo
+                    console.log('Notificación para la fila:', index);
+                }, diferenciaTiempo);
             });
         }
 
+
         document.addEventListener('DOMContentLoaded', function () {
-    actualizarTabla();
-    var formularioRecordatorio = document.getElementById('formularioRecordatorio');
+            actualizarTabla();
+            var formularioRecordatorio = document.getElementById('formularioRecordatorio');
 
-    cargarDatosEnTabla();
+            cargarDatosEnTabla();
 
-    formularioRecordatorio.addEventListener('submit', function (event) {
-        event.preventDefault();
-        sonido('audio')
-        var descripcion = document.getElementById('descripcion').value;
-        var fecha = document.getElementById('fecha').value;
+            formularioRecordatorio.addEventListener('submit', function (event) {
+                event.preventDefault();
+                var descripcion = document.getElementById('descripcion').value;
+                var fecha = document.getElementById('fecha').value;
 
-        agregarRecordatorioATabla(descripcion, fecha);
-        formularioRecordatorio.reset();
-    });
-});
+                agregarRecordatorioATabla(descripcion, fecha);
+                formularioRecordatorio.reset();
+            });
+        });
 
 // Función para agregar un nuevo recordatorio a la tabla
 function agregarRecordatorioATabla(descripcion, fecha) {
+    // Declarar un array global para almacenar los setTimeout asociados a las filas
+var timeouts = [];
     const tbody = document.getElementById('tablaRecordatorios').getElementsByTagName('tbody')[0];
     const fila = tbody.insertRow();
 
@@ -403,13 +431,62 @@ function agregarRecordatorioATabla(descripcion, fecha) {
     botonEliminar.innerHTML = '<i class="fas fa-trash-alt"></i>';
     botonEliminar.addEventListener('click', function() {
         if (confirm('¿Desea eliminar este recordatorio?')) {
-            tbody.deleteRow(fila.rowIndex - 1); // fila.rowIndex - 1 porque insertRow incrementa el index en 1
+            // Eliminar el setTimeout correspondiente
+            const index = tbody.rows.length - 1; // Obtener el índice de la fila
+            clearTimeout(timeouts[index]); // Eliminar el setTimeout asociado a la fila
+            tbody.deleteRow(index); // Eliminar la fila de la tabla
             guardarDatosEnAlmacenamientoLocal();
         }
     });
 
     const celdaEliminar = fila.insertCell(2);
     celdaEliminar.appendChild(botonEliminar);
+
+    // Calcular y establecer el setTimeout para la notificación
+    const index = tbody.rows.length - 1; // Obtener el índice de la fila
+    const fechaNotificacion = new Date(fecha);
+    fechaNotificacion.setHours(16, 28, 0, 0); // Establecer la hora a las 00:00:00
+    const diferenciaTiempo = fechaNotificacion.getTime() - Date.now(); // Calcular la diferencia de tiempo
+    timeouts[index] = setTimeout(function() {
+        // Aquí puedes agregar la lógica para la notificación cuando se active el tiempo
+        sonido('audio');
+
+        // Crear un elemento de notificación dinámico
+const nuevaNotificacion = document.createElement('a');
+nuevaNotificacion.className = 'dropdown-item d-flex align-items-center';
+nuevaNotificacion.href = '#';
+
+// Contenido de la notificación
+nuevaNotificacion.innerHTML = `
+    <div class="mr-3">
+        <div class="icon-circle bg-primary">
+            <i class="fas fa-file-alt text-white"></i>
+        </div>
+    </div>
+    <div>
+        <div class="small text-gray-500">${fecha}</div>
+        <span class="font-weight-bold">${descripcion}</span>
+    </div>
+`;
+
+// Agregar la notificación al contenedor de notificaciones
+const contenedorNotificaciones = document.getElementById('notification-container');
+contenedorNotificaciones.prepend(nuevaNotificacion);
+
+// Obtener el elemento del contador del badge
+const contadorBadge = document.querySelector('.badge.badge-danger.badge-counter');
+
+// Obtener el valor actual del contador
+let valorContador = parseInt(contadorBadge.textContent);
+
+// Incrementar el valor del contador
+valorContador++;
+
+// Actualizar el valor del contador en el badge
+contadorBadge.textContent = valorContador;
+
+        console.log('Notificación para la fila:', index);
+    }, diferenciaTiempo);
 
     guardarDatosEnAlmacenamientoLocal();
 }
