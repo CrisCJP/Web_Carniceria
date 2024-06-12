@@ -39,6 +39,7 @@ const getArrayforSale = async (req, res, iduser) => {
                 iddetalle: dateTimeDetail,
                 cantidadopeso: parseFloat(amount_product),
                 precioventa: datasProductSale.PrecioVenta,
+                UnidadMedida: datasProductSale.UnidadMedida,
                 existencia_defore: datasProductSale.Existencia,
                 existencia: parseFloat(datasProductSale.Existencia - amount_product),
                 costo: parseFloat(datasProductSale.PrecioVenta * amount_product),
