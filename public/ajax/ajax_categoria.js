@@ -14,6 +14,21 @@ function actualizarCategoria(categoria, idcategoria){
     xhr.send(formData);
 }
 
+function NuevaCategoria(categoria){
+    var formData = new FormData();
+    formData.append('categoria', categoria);
+    var xhr = new XMLHttpRequest();
+    xhr.open('post', '/addcategory', true);
+    xhr.send(formData);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+
+        } else {
+            console.log("Error al insertar");
+        }
+    };
+}
+
 function inventarioCategoria(idtabla) {
     var formData = new FormData();
     
@@ -97,6 +112,18 @@ document.addEventListener("DOMContentLoaded", function() {
                 inventarioCategoria("tbdata");
                 $('#modalModificarCategoria').modal('hide');
             }
+        }
+    });
+
+    document.getElementById("btnGuardar").addEventListener('click', function() {
+        var descripcionCategoria = document.getElementById("txtDescripcion").value.trim();
+    
+        if (descripcionCategoria === "") {
+            alert('No dejar el campo vacío');
+        } else {
+            NuevaCategoria(descripcionCategoria);
+            inventarioCategoria("tbdata");
+            $('#modalData').modal('hide');
         }
     });
     

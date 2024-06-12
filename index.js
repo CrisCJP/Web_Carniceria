@@ -433,6 +433,15 @@ app.post('/categoriasinventario', upload.none(), function(req, res){
     })
 })
 
+app.post('/addcategory', upload.none(), function(req, res){
+    const {categoria} = req.body;
+    sql.connect(config).then(pool =>{
+        return pool.request()
+        .input('categoria', sql.VarChar, categoria)
+        .query('INSERT INTO CategoriaProducto (NombreCategoria) VALUES (@categoria)')
+    })
+})
+
 app.post('/updatecate', upload.none(), function(req, res){
     const {categoria, idcategoria} = req.body;
     sql.connect(config).then(pool =>{
