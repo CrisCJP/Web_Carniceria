@@ -342,7 +342,7 @@ function generateInvoicePDF(invoiceData1, invoiceData2, userData) {
     doc.text(' ', 2, startY += lineSpacing);
     doc.text('Los productos ya incluyen el IVA 15%', 2, startY += lineSpacing);
     doc.text(' ', 2, startY += lineSpacing);
-    console.log(invoiceData1);
+    doc.text(' ', 2, startY += lineSpacing);
 
     // Genera los datos binarios del PDF y crea un blob
     var pdfData = doc.output('blob');

@@ -30,7 +30,7 @@ const getDatasProductSale = async (product_name) => {
 
         const result = await pool.request()
             .input('NombreProducto', sql.VarChar, `%${product_name}%`)
-            .query('SELECT IdProducto, Existencia, PrecioVenta FROM Producto WHERE NombreProducto LIKE @NombreProducto');
+            .query('SELECT * FROM get_view_for_productdata WHERE NombreProducto LIKE @NombreProducto');
 
         return result.recordset[0];
     } finally {

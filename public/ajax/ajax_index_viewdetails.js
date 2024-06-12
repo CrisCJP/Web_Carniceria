@@ -33,9 +33,8 @@ function getViewDetail_fromIndex(number_invoice) {
                     tbody.appendChild(fila);
                 });
 
-                document.getElementById('linkImprimir').addEventListener('click', function(event) {
+                document.getElementById('linkImprimir').addEventListener('click', function() {
                     generateInvoicePDF(answer.salesHistorywithData, answer.salesHistorywithProducts, answer.user);
-                    
                 });
             }
             else {
@@ -170,7 +169,7 @@ function generateInvoicePDF(invoiceData1, invoiceData2, userData) {
     doc.text(' ', 2, startY += lineSpacing);
     doc.text('Los productos ya incluyen el IVA 15%', 2, startY += lineSpacing);
     doc.text(' ', 2, startY += lineSpacing);
-    console.log(invoiceData1);
+    doc.text(' ', 2, startY += lineSpacing);
 
     // Genera los datos binarios del PDF y crea un blob
     var pdfData = doc.output('blob');

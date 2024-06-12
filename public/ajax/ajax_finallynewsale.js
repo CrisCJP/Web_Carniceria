@@ -59,9 +59,11 @@ function setFinallyfornewSale (cash_amount, addition_costo) {
                 input_firstname.value = '';
                 input_lastname.value = '';
                 document.getElementById('txtTotal').value = '';
+                document.getElementById('txtCosto').value = '';
             
             }
             else {
+                alert("Hubo un error al finalizar la venta");
                 console.log("Hubo un error al finalizar la venta");
             }
             
@@ -141,7 +143,7 @@ function generateInvoicePDF(invoiceData1, userData) {
         //var xPosition = columnPositions[index % columnPositions.length];
         doc.text(`Articulo: ${item.idproducto}`, 2, (startY += lineSpacing));
         doc.text(`Descrip.: ${item.nombreproducto}`, 2, (startY += lineSpacing));
-        doc.text(`Cantidad: ${item.cantidadopeso.toString()}`, 2, (startY += lineSpacing));
+        doc.text(`Cantidad: ${item.cantidadopeso.toString()} ${item.UnidadMedida}`, 2, (startY += lineSpacing));
         doc.text(`Precio.U: ${item.precioventa.toFixed(2)} C$`, 2, (startY += lineSpacing));
         doc.text(`Costo: ${item.costo.toFixed(2)} C$`, 2, (startY += lineSpacing));
         doc.text(']', 2, (startY += lineSpacing));
@@ -176,7 +178,8 @@ function generateInvoicePDF(invoiceData1, userData) {
     doc.text(' ', 2, startY += lineSpacing);
     doc.text('Los productos ya incluyen el IVA 15%', 2, startY += lineSpacing);
     doc.text(' ', 2, startY += lineSpacing);
-    console.log(invoiceData1);
+    doc.text(' ', 2, startY += lineSpacing);
+    
 
     // Genera los datos binarios del PDF y crea un blob
     var pdfData = doc.output('blob');

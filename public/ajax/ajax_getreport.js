@@ -1,8 +1,9 @@
-function getReportforDate(initial_date, final_date, option_report) {
+function getReportforDate(initial_date, final_date, option_report, option_product) {
     var formData = new FormData();
     formData.append('start_date', initial_date);
     formData.append('end_date', final_date);
     formData.append('option_report', option_report);
+    formData.append('option_product', option_product);
     const btn_export = document.getElementById('btnExportar');
 
     var xhr = new XMLHttpRequest();
@@ -21,10 +22,24 @@ function getReportforDate(initial_date, final_date, option_report) {
                     btn_export.disabled = false;
                 }
                 else if (option_report == 'producto_mas_vendidos') {
-                    const array = ['Producto', 'Categoria', 'Cantidad', 'Precio', 'Total'];
-                    actualizarEncabezados(array);
-                    agregarDatos(answer, option_report);
-                    btn_export.disabled = false;
+                    if (option_product == 'all_products') {
+                        const array = ['Producto', 'Categoria', 'Cantidad', 'Precio', 'Total'];
+                        actualizarEncabezados(array);
+                        agregarDatos(answer, option_report, option_product);
+                        btn_export.disabled = false;
+                    }
+                    else if (option_product == 'for_products_in_category') {
+                        const array = ['Categoria', 'Producto', 'Cantidad', 'Precio', 'Total'];
+                        actualizarEncabezados(array);
+                        agregarDatos(answer, option_report, option_product);
+                        btn_export.disabled = false;
+                    }
+                    else {
+                        const array = ['Categoria', 'Total de artículos', 'Total'];
+                        actualizarEncabezados(array);
+                        agregarDatos(answer, option_report, option_product);
+                        btn_export.disabled = false;
+                    }   
                 }
                 
                 else {
@@ -66,9 +81,11 @@ document.addEventListener("DOMContentLoaded", function() {
         var final_date = document.getElementById('txtFechaFin').value;
         // Get the reference to the select element
         var select_element = document.getElementById('cboBuscarPor');
+        var select_element_products = document.getElementById('cboBuscarPorProducto_Categoria');
 
         if (select_element.value == 'producto_mas_vendidos') {
-            getReportforDate(initial_date, final_date, select_element.value);
+            console.log(select_element_products.value);
+            getReportforDate(initial_date, final_date, select_element.value, select_element_products.value);
             document.getElementById('btnExportar').disabled = false;
         }
         else {
@@ -110,12 +127,14 @@ document.addEventListener('DOMContentLoaded', function() {
             final_date.disabled = false;
             initial_date.value = '';
             final_date.value = '';
+            document.getElementById('div_element_product').style.display = 'none';
         }
         else if (value_element == 'producto_mas_vendidos') {
             initial_date.disabled = true;
             final_date.disabled = true;
             initial_date.value = '';
             final_date.value = '';
+            document.getElementById('div_element_product').style.display = 'block';
         }
         else {
             initial_date.value = '';
@@ -139,7 +158,7 @@ function actualizarEncabezados(headers) {
 };
 
 // Función para agregar filas de datos a la tabla
-function agregarDatos(datas, option) {
+function agregarDatos(datas, option, option_product) {
     const tbody = document.querySelector('#tbdata tbody');
     tbody.innerHTML = ''; // Limpia las filas de datos existentes
     
@@ -184,16 +203,24 @@ function agregarDatos(datas, option) {
                             tr.appendChild(td);
                         }
                     });
-    
-                    // Agrega la celda para 'Precio'
-                    const tdPrecio = document.createElement('td');
-                    tdPrecio.textContent = `${filaDatos.Precio} C$`;
-                    tr.appendChild(tdPrecio);
-    
-                    // Agrega la celda para 'Subtotal'
-                    const tdSubtotal = document.createElement('td');
-                    tdSubtotal.textContent = `${filaDatos.Total} C$`;
-                    tr.appendChild(tdSubtotal);
+
+                    if (option_product == 'for_category') {
+                        // Agrega la celda para 'Subtotal'
+                        const tdSubtotal = document.createElement('td');
+                        tdSubtotal.textContent = `${filaDatos.Total} C$`;
+                        tr.appendChild(tdSubtotal);
+                    }
+                    else {
+                        // Agrega la celda para 'Precio'
+                        const tdPrecio = document.createElement('td');
+                        tdPrecio.textContent = `${filaDatos.Precio} C$`;
+                        tr.appendChild(tdPrecio);
+
+                        // Agrega la celda para 'Subtotal'
+                        const tdSubtotal = document.createElement('td');
+                        tdSubtotal.textContent = `${filaDatos.Total} C$`;
+                        tr.appendChild(tdSubtotal);
+                    }
                 }
                 else if (option =='mensual') {
                     Object.keys(filaDatos).forEach(key => {

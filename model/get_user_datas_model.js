@@ -1,12 +1,13 @@
 const { sql, config } = require('./connection_model');
 
-const get_user_datas = async (character) => {
+const get_user_datas = async (character, user) => {
     let pool;
     try {
-        pool = await sql.connect(config);
+        pool = await sql.connect(config, user);
         const result = await pool.request()
             .input('character', sql.VarChar, character + '%') // Agrega el carácter '%' para la búsqueda con LIKE
-            .query('SELECT * FROM view_user_data WHERE Nombre LIKE @character') // Utiliza la consulta con el parámetro
+            .input('ID', sql.Int, user.IdUsuario)
+            .query('SELECT * FROM view_user_data WHERE Nombre LIKE @character AND ID != @ID') // Utiliza la consulta con el parámetro
         return result.recordset;
     } catch (err) {
         console.error(err);
