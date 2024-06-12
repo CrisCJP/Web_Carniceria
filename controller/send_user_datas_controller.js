@@ -3,7 +3,7 @@ const { get_user_datas, make_changes_for_user, insert_new_user } = require('../m
 const set_user_data_forTable = async (req, res, user) => {
     try {
         const { character } = req.body;
-        const userdata_temp = await get_user_datas(character);
+        const userdata_temp = await get_user_datas(character, user);
 
         if(!userdata_temp)
             return res.status(404).json({ message_notfind: 'No se encontraron resultados' });
