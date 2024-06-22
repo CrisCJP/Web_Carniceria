@@ -613,9 +613,9 @@
                     celdas[0].innerHTML = '<input type="checkbox">';
                     celdas[1].innerHTML = producto;
                     celdas[2].innerHTML = parseFloat(celdas[2].innerText) + parseFloat(cantidad);
-                    celdas[3].innerHTML = 'C$'+parseFloat(precio);
+                    celdas[3].innerHTML = 'C$ '+ parseFloat(precio);
                     celdas[4].innerHTML = fechavencimiento;
-                    celdas[5].innerHTML = 'C$'+((parseFloat(celdas[2].innerText)*precio).toFixed(2));
+                    celdas[5].innerHTML = 'C$ '+ ((parseFloat(celdas[2].innerText)*precio).toFixed(2));
                       
                 } else {
                     console.error("Fila no encontrada en el índice especificado.");

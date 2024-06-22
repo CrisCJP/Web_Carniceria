@@ -144,8 +144,8 @@ function generateInvoicePDF(invoiceData1, userData) {
         doc.text(`Articulo: ${item.idproducto}`, 2, (startY += lineSpacing));
         doc.text(`Descrip.: ${item.nombreproducto}`, 2, (startY += lineSpacing));
         doc.text(`Cantidad: ${item.cantidadopeso.toString()} ${item.UnidadMedida}`, 2, (startY += lineSpacing));
-        doc.text(`Precio.U: ${item.precioventa.toFixed(2)} C$`, 2, (startY += lineSpacing));
-        doc.text(`Costo: ${item.costo.toFixed(2)} C$`, 2, (startY += lineSpacing));
+        doc.text(`Precio.U: C$ ${item.precioventa.toFixed(2)}`, 2, (startY += lineSpacing));
+        doc.text(`Costo: C$ ${item.costo.toFixed(2)}`, 2, (startY += lineSpacing));
         doc.text(']', 2, (startY += lineSpacing));
         acum_article += parseFloat(item.cantidadopeso);
     });
@@ -159,12 +159,12 @@ function generateInvoicePDF(invoiceData1, userData) {
     doc.setFont(undefined, 'bold');
     doc.text('Total: ', 2, startY);
     doc.setFont(undefined, 'normal');
-    doc.text(`${invoiceData1[0].total.toFixed(2)} C$`, 13, startY);
+    doc.text(`C$ ${invoiceData1[0].total.toFixed(2)}`, 13, startY);
 
     doc.setFont(undefined, 'bold');
     doc.text('Paga con: ', 2, startY += lineSpacing);
     doc.setFont(undefined, 'normal');
-    doc.text(`${invoiceData1[0].efectivo.toFixed(2)} C$`, 18, startY);
+    doc.text(`C$ ${invoiceData1[0].efectivo.toFixed(2)}`, 18, startY);
 
     // Calcula el cambio restando el total del efectivo
     const cambio = invoiceData1[0].efectivo - invoiceData1[0].total;
@@ -173,7 +173,7 @@ function generateInvoicePDF(invoiceData1, userData) {
     doc.text('Cambio: ', 2, startY += lineSpacing);
     doc.setFont(undefined, 'normal');
     // Asegúrate de que el cambio no sea negativo antes de mostrarlo
-    doc.text(`${cambio > 0 ? cambio.toFixed(2) : '0.00'} C$`, 14, startY);
+    doc.text(`C$ ${cambio > 0 ? cambio.toFixed(2) : '0.00'}`, 14, startY);
 
     doc.text(' ', 2, startY += lineSpacing);
     doc.text('Los productos ya incluyen el IVA 15%', 2, startY += lineSpacing);

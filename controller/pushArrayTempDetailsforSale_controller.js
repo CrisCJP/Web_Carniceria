@@ -6,7 +6,7 @@ const getArrayforSale = async (req, res, iduser) => {
         let arraysale_temp = [];
         var { first_name, last_name, product_name, amount_product } = req.body;
         if(first_name === '')
-            first_name = '-';
+            first_name = 'Cliente';
         if(last_name === '')
             last_name = '-';
 

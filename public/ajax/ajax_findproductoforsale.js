@@ -18,10 +18,10 @@ inputBusqueda.addEventListener('input', async () => {
         li.addEventListener('click', () => {
             inputBusqueda.value = producto.NombreProducto;
             if (producto.UnidadDeMedida == 1)
-                document.getElementById('txtCosto').value = producto.PrecioVenta + ' C$' + ' por unidad';
+                document.getElementById('txtCosto').value = 'C$ ' + producto.PrecioVenta + ' por unidad';
 
             else
-            document.getElementById('txtCosto').value = producto.PrecioVenta + ' C$' + ' por libra';
+            document.getElementById('txtCosto').value = 'C$ ' + producto.PrecioVenta + ' por libra';
             listaResultados.innerHTML = '';
         });
 

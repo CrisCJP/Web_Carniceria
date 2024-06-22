@@ -18,17 +18,17 @@ function getViewDetail_fromIndex(number_invoice) {
                 document.getElementById('txtUsuarioRegistro').value = answer.user.IdUsuario;
                 document.getElementById('txtDocumentoCliente').value = answer.salesHistorywithData[0].IdCliente;
                 document.getElementById('txtNombreCliente').value = answer.salesHistorywithData[0].Nombre_Cliente;
-                document.getElementById('txtSubTotal').value = answer.salesHistorywithData[0].Total + 'C$';
-                document.getElementById('txtEfectivo').value = answer.salesHistorywithData[0].Efectivo + 'C$';
-                document.getElementById('txtCambio').value = answer.salesHistorywithData[0].Cambio + 'C$';
+                document.getElementById('txtSubTotal').value = 'C$ ' + answer.salesHistorywithData[0].Total;
+                document.getElementById('txtEfectivo').value = 'C$ ' + answer.salesHistorywithData[0].Efectivo;
+                document.getElementById('txtCambio').value = 'C$ ' + answer.salesHistorywithData[0].Cambio;
 
                 answer.salesHistorywithProducts.forEach((element) => {
                     const fila = document.createElement('tr');
                     fila.innerHTML = `
                         <td>${element.Producto}</td>
                         <td>${element.Cantidad}</td>
-                        <td>${element.Precio} C$</td>
-                        <td>${element.Total} C$</td>
+                        <td>C$ ${element.Precio}</td>
+                        <td>C$ ${element.Total}</td>
                     `;
                     tbody.appendChild(fila);
                 });
@@ -154,17 +154,17 @@ function generateInvoicePDF(invoiceData1, invoiceData2, userData) {
     doc.setFont(undefined, 'bold');
     doc.text('Total: ', 2, startY);
     doc.setFont(undefined, 'normal');
-    doc.text(`${invoiceData1[0].Total.toFixed(2)} C$`, 13, startY);
+    doc.text(`C$ ${invoiceData1[0].Total.toFixed(2)}`, 13, startY);
 
     doc.setFont(undefined, 'bold');
     doc.text('Paga con: ', 2, startY += lineSpacing);
     doc.setFont(undefined, 'normal');
-    doc.text(`${invoiceData1[0].Efectivo.toFixed(2)} C$`, 18, startY);
+    doc.text(`C$ ${invoiceData1[0].Efectivo.toFixed(2)}`, 18, startY);
 
     doc.setFont(undefined, 'bold');
     doc.text('Cambio: ', 2, startY += lineSpacing);
     doc.setFont(undefined, 'normal');
-    doc.text(`${invoiceData1[0].Cambio.toFixed(2)} C$`, 14, startY);
+    doc.text(`C$ ${invoiceData1[0].Cambio.toFixed(2)}`, 14, startY);
 
     doc.text(' ', 2, startY += lineSpacing);
     doc.text('Los productos ya incluyen el IVA 15%', 2, startY += lineSpacing);

@@ -41,7 +41,7 @@ function sendDataDetail(firstname, lastname, productname, amountproduct) {
     
                             // Find the total cell in the current row and update its contents
                             var totalCell = newRow.cells[3]; // Assuming the total cell is the fourth cell
-                            totalCell.textContent = nuevoCosto.toFixed(2) + 'C$'; // Format to two decimal places and add the currency
+                            totalCell.textContent = 'C$ ' + nuevoCosto.toFixed(2); // Format to two decimal places and add the currency
     
     
                             updateAmount(row.idproducto, new_amount, nuevaExistencia, nuevoCosto); // Function to update the value
@@ -52,11 +52,11 @@ function sendDataDetail(firstname, lastname, productname, amountproduct) {
                     });
                     amountCell.appendChild(input);
                     // Add the sales price
-                    newRow.insertCell().textContent = row.precioventa + ' C$';
+                    newRow.insertCell().textContent = 'C$ ' + row.precioventa;
                     // Add the total
-                    newRow.insertCell().textContent = row.costo.toFixed(2) + ' C$';
+                    newRow.insertCell().textContent = 'C$ ' + row.costo.toFixed(2);
     
-                    document.getElementById('txtTotal').value = answer.total + ' C$';
+                    document.getElementById('txtTotal').value = 'C$ ' + answer.total.toFixed(2);
     
                 }
     
@@ -120,7 +120,7 @@ function updateAmount (idproduct, amount, existence, costo) {
 
             var answer = JSON.parse(xhr.responseText);
             if (answer && typeof answer === 'object' && Object.keys(answer).length > 0) {
-                document.getElementById('txtTotal').value = answer.total + ' C$';
+                document.getElementById('txtTotal').value = 'C$ ' + answer.total;
             }
             else {
                 console.log("Error al actualizar la cantidad");

@@ -181,17 +181,17 @@ function agregarDatos(datas, option, option_product) {
 
                     // Agrega la celda para 'Subtotal'
                     const tdEfectivo = document.createElement('td');
-                    tdEfectivo.textContent = `${filaDatos.Efectivo} C$`;
+                    tdEfectivo.textContent = `C$ ${filaDatos.Efectivo}`;
                     tr.appendChild(tdEfectivo);
 
                     // Agrega la celda para 'Subtotal'
                     const tdVenta = document.createElement('td');
-                    tdVenta.textContent = `${filaDatos.Total} C$`;
+                    tdVenta.textContent = `C$ ${filaDatos.Total}`;
                     tr.appendChild(tdVenta);
 
                     // Agrega la celda para 'Subtotal'
                     const tdCambio = document.createElement('td');
-                    tdCambio.textContent = `${filaDatos.Cambio} C$`;
+                    tdCambio.textContent = `C$ ${filaDatos.Cambio}`;
                     tr.appendChild(tdCambio);
                 }
                 else if (option == 'producto_mas_vendidos') {
@@ -207,18 +207,18 @@ function agregarDatos(datas, option, option_product) {
                     if (option_product == 'for_category') {
                         // Agrega la celda para 'Subtotal'
                         const tdSubtotal = document.createElement('td');
-                        tdSubtotal.textContent = `${filaDatos.Total} C$`;
+                        tdSubtotal.textContent = `C$ ${filaDatos.Total}`;
                         tr.appendChild(tdSubtotal);
                     }
                     else {
                         // Agrega la celda para 'Precio'
                         const tdPrecio = document.createElement('td');
-                        tdPrecio.textContent = `${filaDatos.Precio} C$`;
+                        tdPrecio.textContent = `C$ ${filaDatos.Precio}`;
                         tr.appendChild(tdPrecio);
 
                         // Agrega la celda para 'Subtotal'
                         const tdSubtotal = document.createElement('td');
-                        tdSubtotal.textContent = `${filaDatos.Total} C$`;
+                        tdSubtotal.textContent = `C$ ${filaDatos.Total}`;
                         tr.appendChild(tdSubtotal);
                     }
                 }
@@ -234,7 +234,7 @@ function agregarDatos(datas, option, option_product) {
 
                     // Agrega la celda para 'Subtotal'
                     const tdVenta = document.createElement('td');
-                    tdVenta.textContent = `${filaDatos.Ventas_Mes} C$`;
+                    tdVenta.textContent = `C$ ${filaDatos.Ventas_Mes}`;
                     tr.appendChild(tdVenta);
                 }
                 else if (option =='semanal') {
@@ -249,7 +249,7 @@ function agregarDatos(datas, option, option_product) {
 
                     // Agrega la celda para 'Subtotal'
                     const tdVenta = document.createElement('td');
-                    tdVenta.textContent = `${filaDatos.Ventas_Semana} C$`;
+                    tdVenta.textContent = `C$ ${filaDatos.Ventas_Semana}`;
                     tr.appendChild(tdVenta);
                 }
                 else {

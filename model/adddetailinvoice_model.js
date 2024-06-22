@@ -17,7 +17,6 @@ function modifyIdCustomer(idcustomer) {
     let lastId = idcustomer;
     let numericId = parseInt(lastId.replace('C', ''));
     idcustomer = `C${numericId + 1}`
-
     return idcustomer;
 };
 
