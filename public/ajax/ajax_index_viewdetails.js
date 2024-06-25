@@ -79,6 +79,7 @@ function generateInvoicePDF(invoiceData1, invoiceData2, userData) {
         format: [48, 210] // Ancho de 48 mm y altura dinámica según el contenido
     });
 
+    console.log(invoiceData1, invoiceData2);
     // Establecer una fuente monoespaciada
     doc.setFont('Courier');
 
