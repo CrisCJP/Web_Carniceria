@@ -56,6 +56,7 @@
                     </a>
                     <div id="collapseAdministracion" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
+                            <a class="collapse-item" href="/arqueo">Generar Arqueo</a>
                             <a class="collapse-item" href="/usuarios">Usuarios</a>
                             <!--<a class="collapse-item" href="negocio.html">Negocio</a>-->
                             <a class="collapse-item" href="/back_rest">Copia de respaldo</a>
@@ -135,6 +136,7 @@
                     <div id="collapseReportes" class="collapse" aria-labelledby="headingInventario" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                             <a class="collapse-item" href="/reporte_venta">Reporte de Ventas</a>
+                            <a class="collapse-item" href="/reporte_arqueo">Reporte de Arqueo</a>
                             <a class="collapse-item" href="/reporte_vencidos">Reporte de Vencidos</a>
                         </div>
                     </div>
@@ -475,7 +477,19 @@
 
             </div>
             <!-- End of Main Content -->
-
+            <!-- Modal HTML -->
+            <div id="modalEfectivo" class="modal_efectivo">
+                <div class="modal-content_efectivo">
+                    <p>Por favor, ingrese el monto inicial de la cajas en "Córdobas":</p>
+                    <div class="form-group col-sm-6">
+                        <input type="number" id="inputEfectivo" class="form-control form-control-sm" placeholder="Cantidad en efectivo" min="1">
+                    </div>
+                    
+                    <div class="form-group col-sm-6">
+                        <button id="submitEfectivo" class="btn btn-success btn-sm btn-block">Enviar</button>
+                    </div>
+                </div>
+            </div>
             
 
         </div>
@@ -498,10 +512,12 @@
     <!-- ============================================================
     =SCRIPTS PARA ESTA PAGINA
     ===============================================================-->
+    <script src="ajax/ajax_cajero_activity.js"></script>
     <script src="vendor/chart.js/Chart.min.js"></script>
     <script src="ajax/ajax_logout.js"></script>
     <script src="ajax/ajax_index_viewdetails.js"></script>
     <script src="ajax/jspdf.min.js"></script>
+    
 
     <!-- SOLO ES DE EJEMPLO - IGNORAR 
     <script src="js/vistas/chart-bar-demo.js"></script>

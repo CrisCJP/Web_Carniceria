@@ -60,6 +60,8 @@ function setFinallyfornewSale (cash_amount, addition_costo) {
                 input_lastname.value = '';
                 document.getElementById('txtTotal').value = '';
                 document.getElementById('txtCosto').value = '';
+
+                window.location.replace('/nueva_venta');
             
             }
             else {

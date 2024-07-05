@@ -55,21 +55,22 @@
                     <span>Dashboard</span></a>
             </li>
             <% if (user.idrol == 1) { %>
-            <!-- Nav Item - Admnistración Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdministracion"
-                    aria-expanded="true" aria-controls="collapseAdministracion">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>Admnistración</span>
-                </a>
-                <div id="collapseAdministracion" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="/usuarios">Usuarios</a>
-                        <!--<a class="collapse-item" href="negocio.html">Negocio</a>-->
-                        <a class="collapse-item" href="/back_rest">Copia de respaldo</a>
+                <!-- Nav Item - Admnistración Collapse Menu -->
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdministracion"
+                        aria-expanded="true" aria-controls="collapseAdministracion">
+                        <i class="fas fa-fw fa-cog"></i>
+                        <span>Admnistración</span>
+                    </a>
+                    <div id="collapseAdministracion" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <a class="collapse-item" href="/arqueo">Generar Arqueo</a>
+                            <a class="collapse-item" href="/usuarios">Usuarios</a>
+                            <!--<a class="collapse-item" href="negocio.html">Negocio</a>-->
+                            <a class="collapse-item" href="/back_rest">Copia de respaldo</a>
+                        </div>
                     </div>
-                </div>
-            </li>
+                </li>
             <% } %>
 
             <% if(user.idrol == 1) { %>
@@ -140,6 +141,7 @@
                 <div id="collapseReportes" class="collapse" aria-labelledby="headingInventario" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="/reporte_venta">Reporte de Ventas</a>
+                        <a class="collapse-item" href="/reporte_arqueo">Reporte de Arqueo</a>
                         <a class="collapse-item" href="/reporte_vencidos">Reporte de Vencidos</a>
                     </div>
                 </div>

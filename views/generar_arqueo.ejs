@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Mi Tienda - @ViewData["Title"]</title>
+    <title>SB Admin 2 - Dashboard</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -17,8 +17,13 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.css" rel="stylesheet">
-    <link href="vendor/toastr/toastr.min.css" rel="stylesheet">
-    <link href="vendor/sweetalert/sweetalert.css" rel="stylesheet">
+
+
+    <!-- ============================================================
+    =ESTILOS PARA ESTA PAGINA
+    ===============================================================-->
+    <link href="vendor/select2/select2.min.css" rel="stylesheet">
+
 </head>
 
 <body id="page-top">
@@ -30,7 +35,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/index">
                 <div class="sidebar-brand-icon">
                     <i> <img src="img/Logo_lupita.png" class="list__img" alt="null"> </i>
                 </div>
@@ -47,9 +52,10 @@
                     <span>Dashboard</span></a>
             </li>
 
+
             <% if(user.idrol == 1) { %>
                 <!-- Nav Item - Admnistración Collapse Menu -->
-                <li class="nav-item">
+                <li class="nav-item active">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdministracion"
                         aria-expanded="true" aria-controls="collapseAdministracion">
                         <i class="fas fa-fw fa-cog"></i>
@@ -85,19 +91,18 @@
 
             <!-- Nav Item - Venta Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseVenta">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseVenta"
+                    aria-expanded="true" aria-controls="collapseVenta">
                     <i class="fas fa-fw fa-tags"></i>
                     <span>Ventas</span>
                 </a>
-                <div id="collapseVenta" class="collapse" data-parent="#accordionSidebar">
+                <div id="collapseVenta" class="collapse" aria-labelledby="headingInventario" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="/nueva_venta">Nueva Venta</a>
                         <a class="collapse-item" href="/historial_venta">Historial Venta</a>
                     </div>
                 </div>
             </li>
-
-
 
 
             <!-- Nav Item - Compra Collapse Menu -->
@@ -115,6 +120,7 @@
                 </div>
             </li>
 
+
 <!-- Nav Item - Recordatorios -->
 <li class="nav-item">
     <a class="nav-link" href="/notificaciones">
@@ -122,7 +128,6 @@
         <span>Recordatorios</span>
     </a>
 </li>
-
 
             <% if (user.idrol == 1) { %>
                 <!-- Nav Item - Reportes Collapse Menu -->
@@ -140,7 +145,6 @@
                         </div>
                     </div>
                 </li>
-                
             <% } %>
 
             <!-- Divider -->
@@ -170,7 +174,6 @@
                     <ul class="navbar-nav ml-auto">
 
                         <div class="topbar-divider d-none d-sm-block"></div>
-
 
 
                         <div class="container">
@@ -209,11 +212,13 @@
                         </div>
 
 
+
+
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.Nombre %> <%= user.Apellido %></span>
                                 <img class="img-profile rounded-circle"
                                     src="https://images.unsplash.com/photo-1519648023493-d82b5f8d7b8a?w=300">
                             </a>
@@ -239,12 +244,160 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="card shadow mb-4">
+                                        <div class="card-header py-3 bg-second-primary">
+                                            <h6 class="m-0 font-weight-bold text-white">Arqueo</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-row">
+                                                <div class="form-group col-sm-6">
+                                                    <select class="form-control form-control-sm" name="cboBuscarPor" id="cboBuscarPor">
+                                                        <option value="2">C$ 0.25 Cordobas</option>
+                                                        <option value="3">C$ 0.5 Cordobas</option>
+                                                        <option value="4">C$ 1 Cordobas</option>
+                                                        <option value="5">C$ 5 Cordobas</option>
+                                                        <option value="6">C$ 10 Cordobas</option>
+                                                        <option value="7">C$ 20 Cordobas</option>
+                                                        <option value="8">C$ 50 Cordobas</option>
+                                                        <option value="9">C$ 100 Cordobas</option>
+                                                        <option value="10">C$ 200 Cordobas</option>
+                                                        <option value="11">C$ 500 Cordobas</option>
+                                                        <option value="12">C$ 1000 Cordobas</option>
+                                                        <option value="13">$ 1 Dolares</option>
+                                                        <option value="14">$ 2 Dolares</option>
+                                                        <option value="15">$ 5 Dolares</option>
+                                                        <option value="16">$ 10 Dolares</option>
+                                                        <option value="17">$ 20 Dolares</option>
+                                                        <option value="18">$ 50 Dolares</option>
+
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group col-sm-6">
+                                                    <input type="number" class="form-control form-control-sm" name="txtCantidad" id="txtCantidad" placeholder="Cantidad..." autocomplete="off" min="1">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                        <table class="table table-striped table-sm" id="tbDetallesDenominacion">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Denominación</th>
+                                                                    <th>Cantidad</th>
+                                                                    <th>Total</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                
+                                                            </tbody>
+                                                        </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-4">
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="card shadow mb-4">
+                                        <div class="card-header py-3 bg-second-primary">
+                                            <h6 class="m-0 font-weight-bold text-white">Detalle</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="inputGroupIngreso">Total de ingreso:</span>
+                                                </div>
+                                                <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupIngreso" name="txtIngreso" id="txtIngreso" disabled>
+                                            </div>
+
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="inputContado">Total Contado:</span>
+                                                </div>
+                                                <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputContado" name="txtContado" id="txtContado" disabled>
+                                            </div>
+                                            
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="inputGroupGanacia">Ganancias:</span>
+                                                </div>
+                                                <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupGanacia" name="txtGanancia" id="txtGanancia" disabled>
+                                            </div>
+
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="inputGroupSobrante">Sobrante:</span>
+                                                </div>
+                                                <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupSobrante" name="txtSobrante" id="txtSobrante" disabled>
+                                            </div>
+
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="inputGroupPerdida">Perdida:</span>
+                                                </div>
+                                                <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupPerdida" name="txtPerdida" id="txtPerdida" disabled>
+                                            </div>
+
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="inputGroupObservacion">Observación:</span>
+                                                </div>
+                                                <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupObservacion" name="txtObservacion" id="txtObservacion" disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="card shadow">
+                                        <div class="card-body">
+                                            <div class="form-group mb-0">
+                                                <button type="button" class="btn btn-success btn-sm btn-block" id="btnAgregar">Agregar</button>
+                                                <button type="submit" class="btn btn-success btn-sm btn-block" id="btnTerminar" disabled>Terminar Venta</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+               
 
                 </div>
                 <!-- /.container-fluid -->
 
             </div>
             <!-- End of Main Content -->
+
+            <!-- Modal HTML -->
+            <div id="modalEfectivo" class="modal_efectivo">
+                <div class="modal-content_efectivo">
+                    <span class="close_efectivo">&times;</span>
+                    <p>Por favor, ingresa la cantidad de efectivo recibido en "Córdoba":</p>
+                    <div class="form-group col-sm-6">
+                        <input type="number" id="inputEfectivo" class="form-control form-control-sm" placeholder="Cantidad en efectivo" min="1">
+                    </div>
+                    
+                    <div class="form-group col-sm-6">
+                        <button id="submitEfectivo" class="btn btn-success btn-sm btn-block">Enviar</button>
+                    </div>
+                </div>
+            </div>
 
             <!-- Footer -->
             
@@ -265,11 +418,18 @@
 
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.js"></script>
-    <script src="vendor/toastr/toastr.min.js"></script>
-    <script src="vendor/sweetalert/sweetalert.js"></script>
-    <script src="vendor/loadingoverlay/loadingoverlay.min.js"></script>
-    <script src="ajax/ajax_logout.js"></script>
 
+
+
+    <!-- ============================================================
+    =SCRIPTS PARA ESTA PAGINA
+    ===============================================================-->
+    <script src="vendor/select2/select2.min.js"></script>
+    <script src="vendor/select2/es.min.js"></script>
+    <script src="ajax/ajax_denominacion.js"></script>
+    <script src="ajax/jspdf.min.js"></script>
+    <script src="ajax/ajax_logout.js"></script>
+    
 </body>
 
 </html>
