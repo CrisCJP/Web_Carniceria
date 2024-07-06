@@ -71,7 +71,7 @@ const { noCache } = require('./controller/no_cache_controller');
 
 const { set_user_data_forTable, executeProcedure_makeChanges_forUser, executeProcedure_insertNewUser } = require('./controller/send_user_datas_controller');
 
-const { set_detailsarqueo, set_ArqueoData, send_reportArqueo, getter_Money } = require('./controller/send_detailsarqueo_controller');
+const { set_detailsarqueo, set_ArqueoData, send_reportArqueo, getter_Money, setter_dolarChange } = require('./controller/send_detailsarqueo_controller');
 
 const { send_cashgrowth, set_datachash } = require('./controller/send_boxesinformation_controller');
 
@@ -318,6 +318,9 @@ app.post('/getTypeMoney', upload.none(), async (req, res) => {
     await getter_Money(req, res);
 });
 
+app.post('/setChangedolar', upload.none(), async (req, res) => {
+    await setter_dolarChange(req, res);
+});
 
 app.post('/reporteproductovencido', upload.none(), function(req, res){
     sql.connect(config).then(pool=>{

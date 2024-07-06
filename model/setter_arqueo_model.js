@@ -104,6 +104,25 @@ const get_dolarChange = async () => {
     }
 };
 
+const insertDolarChange = async (cambio) => {
+    let pool;
+    try {
+        pool = await sql.connect(config);
+        const result = await pool.request()
+            .input('cambio', sql.Decimal(18, 2), cambio)
+            .query('INSERT INTO Cambio_Dolar (Cambio, Fecha) VALUES (@cambio, FORMAT(GETDATE(), \'yyyy-MM-dd\'));');
+        
+        return result.rowsAffected[0] > 0; // Retorna true si se insertó al menos una fila
+    } catch (err) {
+        console.error('Error al insertar la tasa de cambio del dólar:', err);
+        return false;
+    } finally {
+        if (pool) {
+            pool.close();
+        }
+    }
+};
+
 
 const get_arqueoReport = async (init, final) => {
     let pool;
@@ -122,4 +141,4 @@ const get_arqueoReport = async (init, final) => {
 };
 
 
-module.exports = { getDenomination, get_totalInvoices, get_infocash, createArqueo, get_dolarChange, get_arqueoReport };
+module.exports = { getDenomination, get_totalInvoices, get_infocash, createArqueo, get_dolarChange, get_arqueoReport, insertDolarChange };

@@ -32,8 +32,9 @@ function value_boxes() {
 
 submitEfectivo.onclick = function() {
     modal.style.display = 'block';
-    var efectivo = document.getElementById('inputEfectivo').value;
-    if (efectivo != null && efectivo != '' && efectivo > 0) {
+    var efec = document.getElementById('inputEfectivo').value;
+    let efectivo = parseFloat(efec);
+    if (efectivo != null && efectivo != '' && efectivo > 0 && !isNaN(efectivo)) {
         modal.style.display = 'none';
         add_datasforcash(efectivo);
     } else {

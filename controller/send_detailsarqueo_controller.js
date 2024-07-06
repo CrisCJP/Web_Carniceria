@@ -1,4 +1,4 @@
-const { getDenomination, get_totalInvoices, get_infocash, createArqueo, get_dolarChange, get_arqueoReport } = require('../model/setter_arqueo_model');
+const { getDenomination, get_totalInvoices, get_infocash, createArqueo, get_dolarChange, get_arqueoReport, insertDolarChange } = require('../model/setter_arqueo_model');
 
 const set_detailsarqueo = async(req, res, user) => {
     try {
@@ -68,5 +68,19 @@ const getter_Money = async(req, res) => {
     }
 };
 
+const setter_dolarChange = async(req, res) => {
+    try {
+        const { change } = req.body;
+        const temp_insertDolarChange = await insertDolarChange(change);
 
-module.exports = { set_detailsarqueo, set_ArqueoData, send_reportArqueo, getter_Money };
+        if (!temp_insertDolarChange) 
+            return res.status(404).json({ message: 'No se pudo insertar el cambio de moneda' });
+
+        res.status(200).json({ success: 'Cambio de moneda insertado exitosamente' });
+    } catch (err) {
+        res.status(404).json({ message: 'No se pudo actualizar el cambio de moneda' });
+    }
+};
+
+
+module.exports = { set_detailsarqueo, set_ArqueoData, send_reportArqueo, getter_Money, setter_dolarChange };
