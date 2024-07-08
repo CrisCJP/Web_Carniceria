@@ -63,6 +63,8 @@
                     </a>
                     <div id="collapseAdministracion" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
+                            <a class="collapse-item" href="/arqueo">Generar Arqueo</a>
+                            <a id="cambiar_valor_dolar" class="collapse-item" href="#">Cambiar valor del dolar</a>
                             <a class="collapse-item" href="/usuarios">Usuarios</a>
                             <!--<a class="collapse-item" href="negocio.html">Negocio</a>-->
                             <a class="collapse-item" href="/back_rest">Copia de respaldo</a>
@@ -125,13 +127,13 @@
             </li>
 
 
-<!-- Nav Item - Recordatorios -->
-<li class="nav-item">
-    <a class="nav-link" href="/notificaciones">
-        <i class="fas fa-fw fa-bell"></i>
-        <span>Recordatorios</span>
-    </a>
-</li>
+                <!-- Nav Item - Recordatorios -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/notificaciones">
+                        <i class="fas fa-fw fa-bell"></i>
+                        <span>Recordatorios</span>
+                    </a>
+                </li>
 
             <% if (user.idrol == 1) { %>
                 <!-- Nav Item - Reportes Collapse Menu -->
@@ -145,6 +147,7 @@
                         <div class="bg-white py-2 collapse-inner rounded">
                             <a class="collapse-item" href="/reporte_venta">Reporte de Ventas</a>
                             <a class="collapse-item" href="/reporte_compra">Reporte de Compras</a>
+                            <a class="collapse-item" href="/reporte_arqueo">Reporte de Arqueo</a>
                             <a class="collapse-item" href="/reporte_vencidos">Reporte de Vencidos</a>
                         </div>
                     </div>
@@ -375,20 +378,42 @@
             <div id="modalEfectivo" class="modal_efectivo">
                 <div class="modal-content_efectivo">
                     <span class="close_efectivo">&times;</span>
-                    <p>Por favor, ingresa la cantidad de efectivo recibido en "Córdoba":</p>
+                    <p>Por favor, ingresa la cantidad de efectivo recibido en "Córdobas" o "Dolares":</p>
                     <div class="form-group col-sm-6">
                         <input type="number" id="inputEfectivo" class="form-control form-control-sm" placeholder="Cantidad en efectivo" min="1">
+                    </div>
+
+                    <div class="form-group col-sm-6">
+                        <label for="cboMoney">Tipo de moneda:</label>
+                        <select class="form-control form-control-sm" name="cboMoney" id="cboMoney">
+                            <option value="1" selected>Córdobas</option>
+                            <option value="2">Dolares</option>
+                        </select>
                     </div>
                     
                     <div class="form-group col-sm-6">
                         <button id="submitEfectivo" class="btn btn-success btn-sm btn-block">Enviar</button>
                     </div>
+                    
                 </div>
             </div>
 
             <!-- Footer -->
             
             <!-- End of Footer -->
+            <div id="modalChangedolar" class="modal_efectivo">
+                <div class="modal-content_efectivo">
+                    <span class="close_changedolar">&times;</span>
+                    <p>Por favor, ingrese el nuevo valor del dolar:</p>
+                    <div class="form-group col-sm-6">
+                        <input type="number" id="inputChangedolar" class="form-control form-control-sm" placeholder="Valor del dolar" min="1">
+                    </div>
+                    
+                    <div class="form-group col-sm-6">
+                        <button id="submitChangedolar" class="btn btn-success btn-sm btn-block">Guardar</button>
+                    </div>
+                </div>
+            </div>
 
         </div>
         <!-- End of Content Wrapper -->
@@ -417,6 +442,7 @@
     <script src="ajax/ajax_newsale.js"></script>
     <script src="ajax/ajax_modalcash_complements.js"></script>
     <script src="ajax/ajax_finallynewsale.js"></script>
+    <script src="ajax/ajax_change_dolar.js"></script>
     <script src="ajax/jspdf.min.js"></script>
     <script src="ajax/ajax_logout.js"></script>
 

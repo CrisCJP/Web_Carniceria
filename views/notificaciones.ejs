@@ -66,6 +66,8 @@
                 </a>
                 <div id="collapseAdministracion" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="/arqueo">Generar Arqueo</a>
+                        <a id="cambiar_valor_dolar" class="collapse-item" href="#">Cambiar valor del dolar</a>
                         <a class="collapse-item" href="/usuarios">Usuarios</a>
                         <!--<a class="collapse-item" href="negocio.html">Negocio</a>-->
                         <a class="collapse-item" href="/back_rest">Copia de respaldo</a>
@@ -143,6 +145,7 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="/reporte_venta">Reporte de Ventas</a>
                         <a class="collapse-item" href="/reporte_compra">Reporte de Compras</a>
+                        <a class="collapse-item" href="/reporte_arqueo">Reporte de Arqueo</a>
                         <a class="collapse-item" href="/reporte_vencidos">Reporte de Vencidos</a>
                     </div>
                 </div>
@@ -296,6 +299,19 @@
             
             <!-- End of Footer -->
              <!-- Tabla para mostrar los recordatorios -->
+             <div id="modalChangedolar" class="modal_efectivo">
+                <div class="modal-content_efectivo">
+                    <span class="close_changedolar">&times;</span>
+                    <p>Por favor, ingrese el nuevo valor del dolar:</p>
+                    <div class="form-group col-sm-6">
+                        <input type="number" id="inputChangedolar" class="form-control form-control-sm" placeholder="Valor del dolar" min="1">
+                    </div>
+                    
+                    <div class="form-group col-sm-6">
+                        <button id="submitChangedolar" class="btn btn-success btn-sm btn-block">Guardar</button>
+                    </div>
+                </div>
+            </div>
 
 
         </div>
@@ -569,6 +585,7 @@
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.js"></script>
     <script src="ajax/ajax_logout.js"></script>
+    <script src="ajax/ajax_change_dolar.js"></script>
 
 
 

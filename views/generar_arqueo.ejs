@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SB Admin 2 - Dashboard</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.css" rel="stylesheet">
+
+
+    <!-- ============================================================
+    =ESTILOS PARA ESTA PAGINA
+    ===============================================================-->
+    <link href="vendor/select2/select2.min.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/index">
+                <div class="sidebar-brand-icon">
+                    <i> <img src="img/Logo_lupita.png" class="list__img" alt="null"> </i>
+                </div>
+                <div class="sidebar-brand-text mx-3"></div>
+            </a>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item">
+                <a class="nav-link" href="/index">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Dashboard</span></a>
+            </li>
+
+
+            <% if(user.idrol == 1) { %>
+                <!-- Nav Item - Admnistración Collapse Menu -->
+                <li class="nav-item active">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdministracion"
+                        aria-expanded="true" aria-controls="collapseAdministracion">
+                        <i class="fas fa-fw fa-cog"></i>
+                        <span>Admnistración</span>
+                    </a>
+                    <div id="collapseAdministracion" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <a class="collapse-item" href="/arqueo">Generar Arqueo</a>
+                            <a id="cambiar_valor_dolar" class="collapse-item" href="#">Cambiar valor del dolar</a>
+                            <a class="collapse-item" href="/usuarios">Usuarios</a>
+                            <!--<a class="collapse-item" href="negocio.html">Negocio</a>-->
+                            <a class="collapse-item" href="/back_rest">Copia de respaldo</a>
+                        </div>
+                    </div>
+                </li>
+            <% } %>
+
+            <% if(user.idrol == 1) { %>
+                <!-- Nav Item - Inventario Collapse Menu -->
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseInventario"
+                        aria-expanded="true" aria-controls="collapseInventario">
+                        <i class="fas fa-fw fa-clipboard-list"></i>
+                        <span>Inventario</span>
+                    </a>
+                    <div id="collapseInventario" class="collapse" aria-labelledby="headingInventario" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <a class="collapse-item" href="/categorias">Categorias</a>
+                            <a class="collapse-item" href="/productos">Productos</a>
+                        </div>
+                    </div>
+                </li>
+                <% } %>
+
+            <!-- Nav Item - Venta Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseVenta"
+                    aria-expanded="true" aria-controls="collapseVenta">
+                    <i class="fas fa-fw fa-tags"></i>
+                    <span>Ventas</span>
+                </a>
+                <div id="collapseVenta" class="collapse" aria-labelledby="headingInventario" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="/nueva_venta">Nueva Venta</a>
+                        <a class="collapse-item" href="/historial_venta">Historial Venta</a>
+                    </div>
+                </div>
+            </li>
+
+
+            <!-- Nav Item - Compra Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCompra"
+                    aria-expanded="true" aria-controls="collapseCompra">
+                    <i class="fas fa-fw fa-shopping-cart"></i>
+                    <span>Compras</span>
+                </a>
+                <div id="collapseCompra" class="collapse" aria-labelledby="headingInventario" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="/compras">Nueva Compra</a>
+                        <a class="collapse-item" href="/historial_compras">Historial Compra</a>
+                    </div>
+                </div>
+            </li>
+
+
+<!-- Nav Item - Recordatorios -->
+<li class="nav-item">
+    <a class="nav-link" href="/notificaciones">
+        <i class="fas fa-fw fa-bell"></i>
+        <span>Recordatorios</span>
+    </a>
+</li>
+
+            <% if (user.idrol == 1) { %>
+                <!-- Nav Item - Reportes Collapse Menu -->
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReportes"
+                        aria-expanded="true" aria-controls="collapseReportes">
+                        <i class="fas fa-fw fa-chart-area"></i>
+                        <span>Reportes</span>
+                    </a>
+                    <div id="collapseReportes" class="collapse" aria-labelledby="headingInventario" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <a class="collapse-item" href="/reporte_venta">Reporte de Ventas</a>
+                            <a class="collapse-item" href="/reporte_arqueo">Reporte de Arqueo</a>
+                            <a class="collapse-item" href="/reporte_vencidos">Reporte de Vencidos</a>
+                        </div>
+                    </div>
+                </li>
+            <% } %>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+
+                        <div class="topbar-divider d-none d-sm-block"></div>
+
+
+                        <div class="container">
+                            
+                    
+                            <!-- Nav Item - Notifications -->
+                            <li class="nav-item dropdown no-arrow mx-1">
+                                <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-bell fa-fw"></i>
+                                    <!-- Counter - Alerts -->
+                                    <span class="badge badge-danger badge-counter">1</span>
+                                </a>
+                                <!-- Dropdown - Notifications -->
+                                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="notificationsDropdown" style="max-height: 400px; overflow-y: auto;">
+                                    <h6 class="dropdown-header">
+                                        Centro de Notificaciones
+                                    </h6>
+                                    <!-- Notificaciones se añadirán dinámicamente aquí -->
+                                      <!-- Example Notifications -->
+                                            <a class="dropdown-item d-flex align-items-center" href="#">
+                                                <div class="mr-3">
+                                                    <div class="icon-circle bg-primary">
+                                                        <i class="fas fa-file-alt text-white"></i>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="small text-gray-500">Diciembre 12, 2024</div>
+                                                    <span class="font-weight-bold">¡Un nuevo informe mensual está listo para descargar!</span>
+                                                </div>
+                                            </a>
+                                    <div id="notification-container"></div>
+                                    <a class="dropdown-item text-center small text-gray-500" href="#">Ver todas las notificaciones</a>
+                                </div>
+                            </li>
+                    
+                        </div>
+
+
+
+
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.Nombre %> <%= user.Apellido %></span>
+                                <img class="img-profile rounded-circle"
+                                    src="https://images.unsplash.com/photo-1519648023493-d82b5f8d7b8a?w=300">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="userDropdown">
+                                <!--<a class="dropdown-item" href="perfil.html">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Perfil
+                                </a>-->
+                                <div class="dropdown-divider"></div>
+                                <a id="logout-link" class="dropdown-item" href="/login" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Salir
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="card shadow mb-4">
+                                        <div class="card-header py-3 bg-second-primary">
+                                            <h6 class="m-0 font-weight-bold text-white">Arqueo</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-row">
+                                                <div class="form-group col-sm-6">
+                                                    <select class="form-control form-control-sm" name="cboBuscarPor" id="cboBuscarPor">
+                                                        <option value="2">C$ 0.25 Cordobas</option>
+                                                        <option value="3">C$ 0.5 Cordobas</option>
+                                                        <option value="4">C$ 1 Cordobas</option>
+                                                        <option value="5">C$ 5 Cordobas</option>
+                                                        <option value="6">C$ 10 Cordobas</option>
+                                                        <option value="7">C$ 20 Cordobas</option>
+                                                        <option value="8">C$ 50 Cordobas</option>
+                                                        <option value="9">C$ 100 Cordobas</option>
+                                                        <option value="10">C$ 200 Cordobas</option>
+                                                        <option value="11">C$ 500 Cordobas</option>
+                                                        <option value="12">C$ 1000 Cordobas</option>
+                                                        <option value="13">$ 1 Dolares</option>
+                                                        <option value="14">$ 2 Dolares</option>
+                                                        <option value="15">$ 5 Dolares</option>
+                                                        <option value="16">$ 10 Dolares</option>
+                                                        <option value="17">$ 20 Dolares</option>
+                                                        <option value="18">$ 50 Dolares</option>
+
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group col-sm-6">
+                                                    <input type="number" class="form-control form-control-sm" name="txtCantidad" id="txtCantidad" placeholder="Cantidad..." autocomplete="off" min="1">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                        <table class="table table-striped table-sm" id="tbDetallesDenominacion">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Denominación</th>
+                                                                    <th>Cantidad</th>
+                                                                    <th>Total</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                
+                                                            </tbody>
+                                                        </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-4">
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="card shadow mb-4">
+                                        <div class="card-header py-3 bg-second-primary">
+                                            <h6 class="m-0 font-weight-bold text-white">Detalle</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="inputGroupIngreso">Total de ingreso:</span>
+                                                </div>
+                                                <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupIngreso" name="txtIngreso" id="txtIngreso" disabled>
+                                            </div>
+
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="inputContado">Total Contado:</span>
+                                                </div>
+                                                <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputContado" name="txtContado" id="txtContado" disabled>
+                                            </div>
+                                            
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="inputGroupGanacia">Ganancias:</span>
+                                                </div>
+                                                <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupGanacia" name="txtGanancia" id="txtGanancia" disabled>
+                                            </div>
+
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="inputGroupSobrante">Sobrante:</span>
+                                                </div>
+                                                <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupSobrante" name="txtSobrante" id="txtSobrante" disabled>
+                                            </div>
+
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="inputGroupPerdida">Perdida:</span>
+                                                </div>
+                                                <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupPerdida" name="txtPerdida" id="txtPerdida" disabled>
+                                            </div>
+
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="inputGroupObservacion">Observación:</span>
+                                                </div>
+                                                <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupObservacion" name="txtObservacion" id="txtObservacion" disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="card shadow">
+                                        <div class="card-body">
+                                            <div class="form-group mb-0">
+                                                <button type="button" class="btn btn-success btn-sm btn-block" id="btnAgregar">Agregar</button>
+                                                <button type="submit" class="btn btn-success btn-sm btn-block" id="btnTerminar" disabled>Terminar Venta</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+               
+
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Modal HTML -->
+            <div id="modalEfectivo" class="modal_efectivo">
+                <div class="modal-content_efectivo">
+                    <span class="close_efectivo">&times;</span>
+                    <p>Por favor, ingresa la cantidad de efectivo recibido en "Córdoba":</p>
+                    <div class="form-group col-sm-6">
+                        <input type="number" id="inputEfectivo" class="form-control form-control-sm" placeholder="Cantidad en efectivo" min="1">
+                    </div>
+                    
+                    <div class="form-group col-sm-6">
+                        <button id="submitEfectivo" class="btn btn-success btn-sm btn-block">Enviar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            
+            <!-- End of Footer -->
+            <div id="modalChangedolar" class="modal_efectivo">
+                <div class="modal-content_efectivo">
+                    <span class="close_changedolar">&times;</span>
+                    <p>Por favor, ingrese el nuevo valor del dolar:</p>
+                    <div class="form-group col-sm-6">
+                        <input type="number" id="inputChangedolar" class="form-control form-control-sm" placeholder="Valor del dolar" min="1">
+                    </div>
+                    
+                    <div class="form-group col-sm-6">
+                        <button id="submitChangedolar" class="btn btn-success btn-sm btn-block">Guardar</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.js"></script>
+
+
+
+    <!-- ============================================================
+    =SCRIPTS PARA ESTA PAGINA
+    ===============================================================-->
+    <script src="vendor/select2/select2.min.js"></script>
+    <script src="vendor/select2/es.min.js"></script>
+    <script src="ajax/ajax_denominacion.js"></script>
+    <script src="ajax/jspdf.min.js"></script>
+    <script src="ajax/ajax_change_dolar.js"></script>
+    <script src="ajax/ajax_logout.js"></script>
+    
+</body>
+
+</html>

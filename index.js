@@ -71,6 +71,10 @@ const { noCache } = require('./controller/no_cache_controller');
 
 const { set_user_data_forTable, executeProcedure_makeChanges_forUser, executeProcedure_insertNewUser } = require('./controller/send_user_datas_controller');
 
+const { set_detailsarqueo, set_ArqueoData, send_reportArqueo, getter_Money, setter_dolarChange } = require('./controller/send_detailsarqueo_controller');
+
+const { send_cashgrowth, set_datachash } = require('./controller/send_boxesinformation_controller');
+
 
 
 //CALL THE MODELS::::::::::::::::::::::::::::
@@ -93,8 +97,6 @@ const { backupDatabase } = require('./model/backrest_model');
 const { uptime } = require('process');
 
 //Analyze data
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json());
 app.use(express.urlencoded({ extended: false }));//Decode data
 app.use(bodyParser.json());
 
@@ -108,11 +110,14 @@ app.get("/", function (req, res) {
     res.render("login");
 });
 
-app.get("/productos", function(req, res){
-    res.render('productos', {user:user_temp});
+app.get("/productos", function(req, res) {
+    if(user_temp)
+        res.render('productos', {user:user_temp});
+    else
+        res.status(404).render('Inicia seción o hubo un problema de conexión');
 });
 
-app.get("/categorias", function(req, res){
+app.get("/categorias", function(req, res) {
     res.render('categorias', {user:user_temp});
 });
 
@@ -199,6 +204,14 @@ app.get('/usuarios', async (req, res) => {
     res.render('usuarios', { user: user_temp });
 });
 
+app.get('/arqueo', async (req, res) => {
+    res.render('generar_arqueo', { user: user_temp });
+});
+
+app.get('/reporte_arqueo', async (req, res) => {
+    res.render('reporte_arqueo', { user: user_temp });
+});
+
 //:::Middleware:::
 app.use(express.static("public"));
 
@@ -268,10 +281,49 @@ app.post('/getDetails_HistoryoftheSale', upload.none(), async (req,res) => {
     await set_salesHistorywithAll(req, res, user_temp);
 });
 
-
 // Send report view
 app.post('/getReportforDate', upload.none(), async (req, res) => {
     await setReport(req, res, user_temp.IdUsuario);
+});
+
+app.post('/set_user_data_forTable', upload.none(), async (req, res) => {
+    await set_user_data_forTable(req, res, user_temp);
+});
+
+app.post('/make_changes_foruser', upload.none(), async (req, res) => {
+    await executeProcedure_makeChanges_forUser(req, res);
+});
+
+app.post('/set_newUser', upload.none(), async (req, res) => {
+    await executeProcedure_insertNewUser(req, res);
+});
+
+app.post('/addArqueoDetails', upload.none(), async (req, res) => {
+    await set_detailsarqueo(req, res, user_temp);
+});
+
+app.post('/get_valuesboxes', upload.none(), async (req, res) => {
+    await send_cashgrowth(req, res, user_temp);
+});
+
+app.post('/add_datasforcash', upload.none(), async (req, res) => {
+    await set_datachash(req, res, user_temp);
+});
+
+app.post('/load_arqueo', upload.none(), async (req, res) => {
+    await set_ArqueoData(req, res);
+});
+
+app.post('/getReportArqueo', upload.none(), async (req, res) => {
+    await send_reportArqueo(req, res);
+});
+
+app.post('/getTypeMoney', upload.none(), async (req, res) => {
+    await getter_Money(req, res);
+});
+
+app.post('/setChangedolar', upload.none(), async (req, res) => {
+    await setter_dolarChange(req, res);
 });
 
 app.post('/reporteproductovencido', upload.none(), function(req, res){
@@ -293,18 +345,6 @@ app.post('/reporteproductovencido', upload.none(), function(req, res){
         })
     })
 })
-
-app.post('/set_user_data_forTable', upload.none(), async (req, res) => {
-    await set_user_data_forTable(req, res, user_temp);
-});
-
-app.post('/make_changes_foruser', upload.none(), async (req, res) => {
-    await executeProcedure_makeChanges_forUser(req, res);
-});
-
-app.post('/set_newUser', upload.none(), async (req, res) => {
-    await executeProcedure_insertNewUser(req, res);
-});
 
 app.post('/optmarca', upload.none(),function(req,res){
     sql.connect(config).then(pool =>{
@@ -507,7 +547,7 @@ app.post('/updatecate', upload.none(), function(req, res){
 })
 
 app.post('/optcategoria', upload.none(),function(req,res){
-    sql.connect(config).then(pool =>{
+    sql.connect(config).then( pool =>{
         return pool.request()
         .query('select NombreCategoria from CategoriaProducto')
         .then(result =>{
@@ -543,7 +583,7 @@ app.post('/optmedidas', upload.none(),function(req,res){
 
 //
 app.post('/inventary',upload.none(),function(req,res){
-    sql.connect(config).then(pool =>{
+    sql.connect(config).then( pool =>{
         return pool.request()
         .query('select * from Inventario')
         .then(result => {
@@ -615,7 +655,7 @@ app.post('/getmedida',upload.none(),function(req,res){
 })
 
 app.post('/option',upload.none(),function(req,res){
-    sql.connect(config).then(pool =>{
+    sql.connect(config).then( pool =>{
         
         return pool.request()
        .query('select IdProveedor, Nombre_Proveedor from Proveedor')

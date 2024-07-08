@@ -11384,3 +11384,18 @@ body.sidebar-toggled footer.sticky-footer {
   text-decoration: none;
   cursor: pointer;
 }
+
+.close_changedolar {
+  color: #aaa;
+  float: right;
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.close_changedolar:hover,
+.close_changedolar:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
