@@ -41,7 +41,7 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/index">
                 <div class="sidebar-brand-icon">
-                    <i> <img src="img/Logo_lupita.png" class="list__img" alt="null"> </i>
+                    <i> <img src="img/Logo_lupita.svg" class="list__img" alt="null"> </i>
                 </div>
                 <div class="sidebar-brand-text mx-3"></div>
             </a>
@@ -142,6 +142,7 @@
                 <div id="collapseReportes" class="collapse" aria-labelledby="headingInventario" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="/reporte_venta">Reporte de Ventas</a>
+                        <a class="collapse-item" href="/reporte_compra">Reporte de Compras</a>
                         <a class="collapse-item" href="/reporte_vencidos">Reporte de Vencidos</a>
                     </div>
                 </div>
@@ -413,145 +414,144 @@
             });
         });
 
-// Función para agregar un nuevo recordatorio a la tabla
-function agregarRecordatorioATabla(descripcion, fecha) {
-    // Declarar un array global para almacenar los setTimeout asociados a las filas
-var timeouts = [];
-    const tbody = document.getElementById('tablaRecordatorios').getElementsByTagName('tbody')[0];
-    const fila = tbody.insertRow();
-
-    const celdaDescripcion = fila.insertCell(0);
-    celdaDescripcion.textContent = descripcion;
-
-    const celdaFecha = fila.insertCell(1);
-    celdaFecha.textContent = fecha;
-
-    const botonEliminar = document.createElement('button');
-    botonEliminar.className = 'btn btn-danger btn-sm';
-    botonEliminar.innerHTML = '<i class="fas fa-trash-alt"></i>';
-    botonEliminar.addEventListener('click', function() {
-        if (confirm('¿Desea eliminar este recordatorio?')) {
-            // Eliminar el setTimeout correspondiente
-            const index = tbody.rows.length - 1; // Obtener el índice de la fila
-            clearTimeout(timeouts[index]); // Eliminar el setTimeout asociado a la fila
-            tbody.deleteRow(index); // Eliminar la fila de la tabla
-            guardarDatosEnAlmacenamientoLocal();
-        }
-    });
-
-    const celdaEliminar = fila.insertCell(2);
-    celdaEliminar.appendChild(botonEliminar);
-
-    // Calcular y establecer el setTimeout para la notificación
-    const index = tbody.rows.length - 1; // Obtener el índice de la fila
-    const fechaNotificacion = new Date(fecha);
-    fechaNotificacion.setHours(16, 28, 0, 0); // Establecer la hora a las 00:00:00
-    const diferenciaTiempo = fechaNotificacion.getTime() - Date.now(); // Calcular la diferencia de tiempo
-    timeouts[index] = setTimeout(function() {
-        // Aquí puedes agregar la lógica para la notificación cuando se active el tiempo
-        sonido('audio');
-
-        // Crear un elemento de notificación dinámico
-const nuevaNotificacion = document.createElement('a');
-nuevaNotificacion.className = 'dropdown-item d-flex align-items-center';
-nuevaNotificacion.href = '#';
-
-// Contenido de la notificación
-nuevaNotificacion.innerHTML = `
-    <div class="mr-3">
-        <div class="icon-circle bg-primary">
-            <i class="fas fa-file-alt text-white"></i>
-        </div>
-    </div>
-    <div>
-        <div class="small text-gray-500">${fecha}</div>
-        <span class="font-weight-bold">${descripcion}</span>
-    </div>
-`;
-
-// Agregar la notificación al contenedor de notificaciones
-const contenedorNotificaciones = document.getElementById('notification-container');
-contenedorNotificaciones.prepend(nuevaNotificacion);
-
-// Obtener el elemento del contador del badge
-const contadorBadge = document.querySelector('.badge.badge-danger.badge-counter');
-
-// Obtener el valor actual del contador
-let valorContador = parseInt(contadorBadge.textContent);
-
-// Incrementar el valor del contador
-valorContador++;
-
-// Actualizar el valor del contador en el badge
-contadorBadge.textContent = valorContador;
-
-        console.log('Notificación para la fila:', index);
-    }, diferenciaTiempo);
-
-    guardarDatosEnAlmacenamientoLocal();
-}
-
-function sonido(idsonido){
-    var audio = document.getElementById(idsonido);
-    audio.play();
-}
-// Función para cargar datos existentes en la tabla desde el almacenamiento local
-function cargarDatosEnTabla() {
-    const storedData = localStorage.getItem('tablaRecordatoriosData');
-    if (storedData) {
-        const tableData = JSON.parse(storedData);
-        const tbody = document.getElementById('tablaRecordatorios').getElementsByTagName('tbody')[0];
-
-        tbody.innerHTML = '';
-
-        tableData.forEach(function(recordatorio) {
+        // Función para agregar un nuevo recordatorio a la tabla
+        function agregarRecordatorioATabla(descripcion, fecha) {
+            // Declarar un array global para almacenar los setTimeout asociados a las filas
+            var timeouts = [];
+            const tbody = document.getElementById('tablaRecordatorios').getElementsByTagName('tbody')[0];
             const fila = tbody.insertRow();
 
             const celdaDescripcion = fila.insertCell(0);
-            celdaDescripcion.textContent = recordatorio.descripcion;
+            celdaDescripcion.textContent = descripcion;
 
             const celdaFecha = fila.insertCell(1);
-            celdaFecha.textContent = recordatorio.fecha;
+            celdaFecha.textContent = fecha;
 
             const botonEliminar = document.createElement('button');
             botonEliminar.className = 'btn btn-danger btn-sm';
             botonEliminar.innerHTML = '<i class="fas fa-trash-alt"></i>';
-
             botonEliminar.addEventListener('click', function() {
                 if (confirm('¿Desea eliminar este recordatorio?')) {
-                    tbody.deleteRow(fila.rowIndex - 1);
+                    // Eliminar el setTimeout correspondiente
+                    const index = tbody.rows.length - 1; // Obtener el índice de la fila
+                    clearTimeout(timeouts[index]); // Eliminar el setTimeout asociado a la fila
+                    tbody.deleteRow(index); // Eliminar la fila de la tabla
                     guardarDatosEnAlmacenamientoLocal();
                 }
             });
 
             const celdaEliminar = fila.insertCell(2);
             celdaEliminar.appendChild(botonEliminar);
-        });
-    } else {
-        console.log('No hay datos de la tabla almacenados en el almacenamiento local.');
-    }
-}
 
-function guardarDatosEnAlmacenamientoLocal() {
-    const table = document.getElementById('tablaRecordatorios');
-    const tbody = table.getElementsByTagName('tbody')[0];
-    const rows = tbody.getElementsByTagName('tr');
-    const tableData = [];
+            // Calcular y establecer el setTimeout para la notificación
+            const index = tbody.rows.length - 1; // Obtener el índice de la fila
+            const fechaNotificacion = new Date(fecha);
+            fechaNotificacion.setHours(16, 28, 0, 0); // Establecer la hora a las 00:00:00
+            const diferenciaTiempo = fechaNotificacion.getTime() - Date.now(); // Calcular la diferencia de tiempo
+            timeouts[index] = setTimeout(function() {
+                // Aquí puedes agregar la lógica para la notificación cuando se active el tiempo
+                sonido('audio');
 
-    for (let i = 0; i < rows.length; i++) {
-        const row = rows[i];
-        const rowData = {};
+                // Crear un elemento de notificación dinámico
+                const nuevaNotificacion = document.createElement('a');
+                nuevaNotificacion.className = 'dropdown-item d-flex align-items-center';
+                nuevaNotificacion.href = '#';
 
-        const cells = row.getElementsByTagName('td');
+                // Contenido de la notificación
+                nuevaNotificacion.innerHTML = `
+                    <div class="mr-3">
+                        <div class="icon-circle bg-primary">
+                            <i class="fas fa-file-alt text-white"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="small text-gray-500">${fecha}</div>
+                        <span class="font-weight-bold">${descripcion}</span>
+                    </div>
+                `;
 
-        rowData.descripcion = cells[0].innerText;
-        rowData.fecha = cells[1].innerText;
+                // Agregar la notificación al contenedor de notificaciones
+                const contenedorNotificaciones = document.getElementById('notification-container');
+                contenedorNotificaciones.prepend(nuevaNotificacion);
 
-        tableData.push(rowData);
-    }
+                // Obtener el elemento del contador del badge
+                const contadorBadge = document.querySelector('.badge.badge-danger.badge-counter');
 
-    localStorage.setItem('tablaRecordatoriosData', JSON.stringify(tableData));
-}
+                // Obtener el valor actual del contador
+                let valorContador = parseInt(contadorBadge.textContent);
+
+                // Incrementar el valor del contador
+                valorContador++;
+
+                // Actualizar el valor del contador en el badge
+                contadorBadge.textContent = valorContador;
+
+                console.log('Notificación para la fila:', index);
+            }, diferenciaTiempo);
+
+            guardarDatosEnAlmacenamientoLocal();
+        }
+
+        function sonido(idsonido){
+            var audio = document.getElementById(idsonido);
+            audio.play();
+        }
+        // Función para cargar datos existentes en la tabla desde el almacenamiento local
+        function cargarDatosEnTabla() {
+            const storedData = localStorage.getItem('tablaRecordatoriosData');
+            if (storedData) {
+                const tableData = JSON.parse(storedData);
+                const tbody = document.getElementById('tablaRecordatorios').getElementsByTagName('tbody')[0];
+
+                tbody.innerHTML = '';
+
+                tableData.forEach(function(recordatorio) {
+                    const fila = tbody.insertRow();
+
+                    const celdaDescripcion = fila.insertCell(0);
+                    celdaDescripcion.textContent = recordatorio.descripcion;
+
+                    const celdaFecha = fila.insertCell(1);
+                    celdaFecha.textContent = recordatorio.fecha;
+
+                    const botonEliminar = document.createElement('button');
+                    botonEliminar.className = 'btn btn-danger btn-sm';
+                    botonEliminar.innerHTML = '<i class="fas fa-trash-alt"></i>';
+
+                    botonEliminar.addEventListener('click', function() {
+                        if (confirm('¿Desea eliminar este recordatorio?')) {
+                            tbody.deleteRow(fila.rowIndex - 1);
+                            guardarDatosEnAlmacenamientoLocal();
+                        }
+                    });
+
+                    const celdaEliminar = fila.insertCell(2);
+                    celdaEliminar.appendChild(botonEliminar);
+                });
+            } else {
+                console.log('No hay datos de la tabla almacenados en el almacenamiento local.');
+            }
+        }
+
+        function guardarDatosEnAlmacenamientoLocal() {
+            const table = document.getElementById('tablaRecordatorios');
+            const tbody = table.getElementsByTagName('tbody')[0];
+            const rows = tbody.getElementsByTagName('tr');
+            const tableData = [];
+
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                const rowData = {};
+
+                const cells = row.getElementsByTagName('td');
+
+                rowData.descripcion = cells[0].innerText;
+                rowData.fecha = cells[1].innerText;
+
+                tableData.push(rowData);
+            }
+            localStorage.setItem('tablaRecordatoriosData', JSON.stringify(tableData));
+        }
 
 
     </script>
@@ -586,7 +586,7 @@ function guardarDatosEnAlmacenamientoLocal() {
     <script src="vendor/datatables/extensiones/js/buttons.print.min.js"></script>
 
 
-
+    <script src="ajax/ajax_notifiet.js"></script>
     
 
 

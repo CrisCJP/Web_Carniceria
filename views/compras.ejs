@@ -47,7 +47,7 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/index">
                 <div class="sidebar-brand-icon">
-                    <i> <img src="img/Logo_lupita.png" class="list__img" alt="null"> </i>
+                    <i> <img src="img/Logo_lupita.svg" class="list__img" alt="null"> </i>
                 </div>
                 <div class="sidebar-brand-text mx-3"></div>
             </a>
@@ -145,6 +145,7 @@
                     <div id="collapseReportes" class="collapse" aria-labelledby="headingInventario" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                             <a class="collapse-item" href="/reporte_venta">Reporte de Ventas</a>
+                            <a class="collapse-item" href="/reporte_compra">Reporte de Compras</a>
                             <a class="collapse-item" href="/reporte_vencidos">Reporte de Vencidos</a>
                         </div>
                     </div>
@@ -417,6 +418,7 @@
     </script>
 
     <script>
+
         
         // Función para verificar campos vacíos
         function verificarCampos() {
@@ -744,6 +746,7 @@
                     optionProduct();
                 }
             });
+            
         });
         document.addEventListener('DOMContentLoaded', (event) => {
             document.getElementById('cboBuscarProductoCompra').addEventListener(('input'),(event) => {
@@ -840,6 +843,7 @@
 
     <script src="ajax/ajax_opciones.js"></script>
     <script src="ajax/ajax_logout.js"></script>
+    <script src="ajax/ajax_notifiet.js"></script>
 
 </body>
 

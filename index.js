@@ -26,7 +26,7 @@ app.use(cors());
     server: 'DESKTOP-DEUHLCS',
 */
 const config = {
-    server: 'DESKTOP-DEUHLCS',
+    server: 'DESKTOP-OP1FG8F',
     database: 'CarniceriaLupita',
     user: 'prueba',
     password: '1234',
@@ -123,6 +123,10 @@ app.get("/notificaciones", function(req, res){
 
 app.get("/compras", function (req, res) {
     res.render('compras', {user:user_temp});
+});
+
+app.get("/reporte_compra", function (req, res) {
+    res.render('reporte_compra', {user:user_temp});
 });
 
 app.get("/historial_compras", function (req, res){
@@ -317,6 +321,56 @@ app.post('/optmarca', upload.none(),function(req,res){
         })
     })
 })
+
+// Función para convertir fechas de DD-MM-YYYY a YYYY-MM-DD
+function convertirFechaSQL(fecha) {
+    const partes = fecha.split('-');
+    return `${partes[2]}-${partes[1]}-${partes[0]}`;
+}
+
+app.post('/reportesdecompras', upload.none(), function(req, res) {
+    const { opt, inicio, fin } = req.body;
+    const OPT = parseInt(opt);
+    const INICIO = convertirFechaSQL(""+inicio);
+    const FIN = convertirFechaSQL(""+fin);
+
+    console.log(INICIO)
+    console.log(FIN)
+
+    sql.connect(config).then(pool => {
+        let query = '';
+
+        switch (OPT) {
+            case 1:
+                query = 'SELECT C.idcompra, C.FechaCompra, D.Subtotal FROM Compras C inner join DetallesCompra D on C.IdCompra = D.idcompra WHERE C.FechaCompra BETWEEN @inicio AND @fin';
+                break;
+            case 2:
+                query = 'select TotalCompras from Vista_ComprasTotales';
+                break;
+            case 3:
+                query = 'select Cliente, TotalComprasPorCliente from Vista_ComprasPorCliente';
+                break;
+            case 4:
+                query = 'select NombreProducto, TotalComprasPorProducto from Vista_ComprasPorProducto';
+                break;
+            case 5:
+                query = 'select IdCompra, Nombre_Proveedor, total, FechaCompra from Vista_ComprasPorProveedor';
+                break;
+            default:
+                return res.status(400).json({ message: 'Opción no válida' });
+        }
+
+        return pool.request()
+            .input('inicio', sql.VarChar, INICIO)
+            .input('fin', sql.VarChar, FIN)
+            .query(query);
+    }).then(result => {
+        res.json(result.recordset);
+    }).catch(err => {
+        console.error('Error:', err);
+        res.status(500).json({ message: 'Error en la consulta', error: err });
+    });
+});
 
 app.post('/formodal', upload.none(), function(req, res){
     const { idcompra } = req.body;
