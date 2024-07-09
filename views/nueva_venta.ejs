@@ -301,6 +301,7 @@
                                                                     <th>Producto</th>
                                                                     <th>Cantidad</th>
                                                                     <th>Precio</th>
+                                                                    <th>Descuento %</th>
                                                                     <th>Total</th>
                                                                 </tr>
                                                             </thead>
@@ -333,12 +334,21 @@
                                                 </div>
                                                 <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupSubTotal" name="txtCosto" id="txtCosto" disabled>
                                             </div>
+
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="inputGroupDescuento">Aplicar descuento '%' al producto:</span>
+                                                </div>
+                                                <input type="number" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupDescuento" name="txtDescuento" id="txtDescuento">
+                                            </div>
+
                                             <div class="input-group input-group-sm mb-3">
                                                 <div class="input-group-prepend">
                                                   <span class="input-group-text" id="inputGroupIGV">El precio de los producto incluyen el iva</span>
                                                 </div>
                                                 <!--<input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupIGV" id="txtIGV" disabled>-->
                                             </div>
+
                                             <div class="input-group input-group-sm mb-3">
                                                 <div class="input-group-prepend">
                                                   <span class="input-group-text" id="inputGroupTotal">Total</span>

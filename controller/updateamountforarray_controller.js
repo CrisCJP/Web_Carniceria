@@ -14,4 +14,19 @@ const getAmount = async (req, res, array) => {
     });
 };
 
-module.exports = { getAmount };
+const getDiscount = async (req, res, array) => {
+    const { id, discount, cost } = req.body;
+    
+    return array.map(array_temp => {
+        if (array_temp.idproducto === id) {
+            return { 
+               ...array_temp, 
+                costo: parseFloat(cost),
+                descuento: parseFloat(discount)
+            };
+        }
+        return array_temp;
+    });
+};
+
+module.exports = { getAmount, getDiscount };
