@@ -1,3 +1,21 @@
+let list_products = [];
+
+function checkAndAddProduct(row) {
+    // Check if the product already exists in the list_products array
+    var exists = list_products.some(product => product.idproducto === row.idproducto);
+    if (exists) {
+        // Log the repeated product and show an alert with the product name
+        alert('El producto ya existe en la lista: ' + row.nombreproducto);
+        document.getElementById('cboBuscarProducto').value = '';
+        document.getElementById('txtCantidad_Peso').value = '';
+        return false; // Indicate that the product already exists
+    } else {
+        // Add the product to the list_products array if it doesn't exist
+        list_products.push(row);
+        return true; // Indicate that the product was added successfully
+    }
+};
+
 //For button "Agregar Productos"
 function sendDataDetail(firstname, lastname, productname, amountproduct) {
     var formData = new FormData();
@@ -20,8 +38,15 @@ function sendDataDetail(firstname, lastname, productname, amountproduct) {
             }
             else {
                 if (answer && typeof answer === 'object' && Object.keys(answer).length > 0) {
+                    
                     var table = document.getElementById('tbDetallesVenta');
                     var row = answer.list[answer.list.length - 1]; // Get the last product added
+
+                    // Check if the product can be added
+                    if (!checkAndAddProduct(row)) {
+                        return; // Stop execution if the product already exists
+                    }
+
                     var newRow = table.insertRow(); // Create a new row for the latest product
     
                     // Agrega el nombre del producto
