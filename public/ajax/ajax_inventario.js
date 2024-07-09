@@ -349,7 +349,7 @@ document.addEventListener("DOMContentLoaded", function() {
         var nombreProducto = document.getElementById("modificarNombreProducto").value;
         var precioVenta2 = document.getElementById("modificarPrecioVenta").value.trim();
         var unidadMedida = document.getElementById("modificarMedida").value.trim();
-        var existencia = parseFloat(document.getElementById("modificarExistenciaInicial").value.trim());
+        var existencia = parseFloat(0.0);
         var nombreCategoria = document.getElementById("modificarCategorias").value.trim();
         var nombreProveedor = document.getElementById("modificarProv").value.trim();
 
@@ -362,8 +362,8 @@ document.addEventListener("DOMContentLoaded", function() {
             alert('El campo Unidad de Medida no puede estar vacío.');
         } else if (isNaN(existencia)) {
             alert('El campo Existencia Inicial debe ser un número válido.');
-        } else if (existencia <= 0) {
-            alert('El campo Existencia Inicial debe ser mayor que cero.');
+        } else if (existencia < 0) {
+            alert('El campo Existencia Inicial debe ser mayor o igual que cero.');
         } else if (nombreCategoria === '') {
             alert('El campo Nombre de Categoría no puede estar vacío.');
         } else if (nombreProveedor === '') {
@@ -396,4 +396,36 @@ document.addEventListener("DOMContentLoaded", function() {
         // Lógica para enviar la solicitud al servidor aquí
         //
     });
+})
+
+function verificarCoincidencia() {
+    // Obtener el valor ingresado por el usuario en el input dentro del modal
+    let modificarNombreProducto = document.getElementById('modalModificarProducto2').querySelector('#modificarNombreProducto').value.trim().toLowerCase();
+
+    // Obtener todas las filas de la tabla tbdata
+    let tableRows = document.querySelectorAll('#tbdata tbody tr');
+
+    // Verificar si hay alguna fila donde el segundo dato (columna 2) coincide con modificarNombreProducto
+    let existe = Array.from(tableRows).some(row => {
+        let nombreProducto = row.cells[1].textContent.trim().toLowerCase();
+        return nombreProducto === modificarNombreProducto;
+    });
+
+    // Retornar true si existe al menos una coincidencia, de lo contrario retornar false
+    return existe;
+}
+
+document.getElementById('modificarNombreProducto').addEventListener('input', function(){
+    // Obtener el botón con ID btnAgregaNuevoProducto dentro del modal
+    let btnAgregaNuevoProducto = document.getElementById('modalModificarProducto2').querySelector('#btnAgregaNuevoProducto');
+
+    if(verificarCoincidencia()){
+        alert('este producto ya existe')
+        
+        // Deshabilitar el botón
+        btnAgregaNuevoProducto.disabled = true;
+    }else{
+        // habilitar el botón
+        btnAgregaNuevoProducto.disabled = false;
+    }
 })

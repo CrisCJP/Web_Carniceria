@@ -130,6 +130,36 @@ document.addEventListener("DOMContentLoaded", function() {
 })
 
 
+function verificarCoincidencia() {
+    // Obtener el valor ingresado por el usuario en el input dentro del modal
+    let modificarNombreProducto = document.getElementById('modalData').querySelector('#txtDescripcion').value.trim().toLowerCase();
+
+    // Obtener todas las filas de la tabla tbdata
+    let tableRows = document.querySelectorAll('#tbdata tbody tr');
+
+    // Verificar si hay alguna fila donde el segundo dato (columna 2) coincide con modificarNombreProducto
+    let existe = Array.from(tableRows).some(row => {
+        let nombreProducto = row.cells[1].textContent.trim().toLowerCase();
+        return nombreProducto === modificarNombreProducto;
+    });
+
+    // Retornar true si existe al menos una coincidencia, de lo contrario retornar false
+    return existe;
+}
+
+document.getElementById('txtDescripcion').addEventListener('input', function(){
+    // Obtener el botón con ID btnAgregaNuevoProducto dentro del modal
+    let btnAgregaNuevoProducto = document.getElementById('modalData').querySelector('#btnGuardar');
+    if(verificarCoincidencia()){
+        alert('este producto ya existe')
+
+        // Deshabilitar el botón
+        btnAgregaNuevoProducto.disabled = true;
+    }else{
+        // habilitar el botón
+        btnAgregaNuevoProducto.disabled = false;
+    }
+})
 
 
 
