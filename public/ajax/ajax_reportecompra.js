@@ -75,23 +75,23 @@ function rellenarTabla(data) {
             case 1:
                 newRow.insertCell(0).innerHTML = row.idcompra;
                 newRow.insertCell(1).innerHTML = formatearFecha(row.FechaCompra);
-                newRow.insertCell(2).innerHTML = row.Subtotal;
+                newRow.insertCell(2).innerHTML = 'C$ '+row.Subtotal;
                 break;
             case 2:
-                newRow.insertCell(0).innerHTML = row.TotalCompras;
+                newRow.insertCell(0).innerHTML = 'C$ '+row.TotalCompras;
                 break;
             case 3:
                 newRow.insertCell(0).innerHTML = row.Cliente;
-                newRow.insertCell(1).innerHTML = row.TotalComprasPorCliente;
+                newRow.insertCell(1).innerHTML = 'C$ '+row.TotalComprasPorCliente;
                 break;
             case 4:
                 newRow.insertCell(0).innerHTML = row.NombreProducto;
-                newRow.insertCell(1).innerHTML = row.TotalComprasPorProducto;
+                newRow.insertCell(1).innerHTML = 'C$ '+row.TotalComprasPorProducto;
                 break;
             case 5:
                 newRow.insertCell(0).innerHTML = row.IdCompra;
                 newRow.insertCell(1).innerHTML = row.Nombre_Proveedor;
-                newRow.insertCell(2).innerHTML = row.total;
+                newRow.insertCell(2).innerHTML = 'C$ '+row.total;
                 newRow.insertCell(3).innerHTML = formatearFecha(row.FechaCompra);
                 break;
             default:
@@ -132,32 +132,32 @@ function actualizarEncabezados() {
 
     switch (selectedOption) {
         case "fecha":
-            headers = "<tr><th>ID Compra</th><th>Fecha Compra</th><th>Total</th></tr>";
+            headers = "<tr><th>ID Compra</th><th>Fecha Compra</th><th>Total (C$)</th></tr>";
             txtFechaInicio.disabled = false;
             txtFechaFin.disabled = false;
             break;
         case "compras_totales":
-            headers = "<tr><th>Total Compras</th></tr>";
+            headers = "<tr><th>Total Compras (C$)</th></tr>";
             txtFechaInicio.disabled = true;
             txtFechaFin.disabled = true;
             break;
         case "compras_por_cliente":
-            headers = "<tr><th>Nombre Usuario</th><th>Total de Venta por Usuario</th></tr>";
+            headers = "<tr><th>Nombre Usuario</th><th>Total de Compras (C$)</th></tr>";
             txtFechaInicio.disabled = true;
             txtFechaFin.disabled = true;
             break;
         case "compras_por_producto":
-            headers = "<tr><th>Nombre de Producto</th><th>Total Compra por Producto</th></tr>";
+            headers = "<tr><th>Nombre de Producto</th><th>Total de Compras (C$)</th></tr>";
             txtFechaInicio.disabled = true;
             txtFechaFin.disabled = true;
             break;
         case "compras_por_proveedor":
-            headers = "<tr><th>#Compra</th><th>Proveedor</th><th>Total</th><th>Fecha</th></tr>";
+            headers = "<tr><th>#Compra</th><th>Proveedor</th><th>Total (C$)</th><th>Fecha</th></tr>";
             txtFechaInicio.disabled = true;
             txtFechaFin.disabled = true;
             break;
         default:
-            headers = "<tr><th>ID Compra</th><th>Fecha Compra</th><th>Total</th></tr>";
+            headers = "<tr><th>ID Compra</th><th>Fecha Compra</th><th>Total (C$)</th></tr>";
             txtFechaInicio.disabled = false;
             txtFechaFin.disabled = false;
             break;
@@ -205,3 +205,37 @@ function exportTableToExcel(tableID, filename = ''){
     link.click();
     document.body.removeChild(link);
 }
+
+// Función para comparar fechas
+function compararFechas(fechaInicio, fechaFin) {
+    if (fechaInicio === '' || fechaFin === '') {
+        return false; // Si falta alguna fecha, no se puede comparar correctamente
+    }
+
+    let dateInicio = new Date(fechaInicio);
+    let dateFin = new Date(fechaFin);
+
+    return dateInicio < dateFin;
+}
+
+// Función para manejar los eventos de cambio en las fechas
+function manejarCambioFecha() {
+    let fechaInicio = document.getElementById("txtFechaInicio").value;
+    let fechaFin = document.getElementById("txtFechaFin").value;
+
+    if (fechaInicio === '' || fechaFin === '') {
+        document.getElementById('btnBuscar').disabled = true;
+        return;
+    }
+
+    if (compararFechas(fechaInicio, fechaFin)) {
+        document.getElementById('btnBuscar').disabled = false;
+    } else {
+        alert("La fecha inicial debe ser menor que la final");
+        document.getElementById('btnBuscar').disabled = true;
+    }
+}
+
+// Asignar los listeners de eventos a los inputs
+document.getElementById("txtFechaInicio").addEventListener('input', manejarCambioFecha);
+document.getElementById("txtFechaFin").addEventListener('input', manejarCambioFecha);

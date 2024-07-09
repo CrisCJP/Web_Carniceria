@@ -76,16 +76,18 @@
                 </a>
                 <div id="collapseAdministracion" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="/usuarios">Usuarios</a>
-                        <!--<a class="collapse-item" href="negocio.html">Negocio</a>-->
-                        <a class="collapse-item" href="/back_rest">Copia de respaldo</a>
+                        <a class="collapse-item" href="/arqueo">Generar Arqueo</a>
+                            <a id="cambiar_valor_dolar" class="collapse-item" href="#">Cambiar valor del dolar</a>
+                            <a class="collapse-item" href="/usuarios">Usuarios</a>
+                            <!--<a class="collapse-item" href="negocio.html">Negocio</a>-->
+                            <a class="collapse-item" href="/back_rest">Copia de respaldo</a>
                     </div>
                 </div>
             </li>
             <% } %>
 
             <!-- Nav Item - Inventario Collapse Menu -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseInventario"
                     aria-expanded="true" aria-controls="collapseInventario">
                     <i class="fas fa-fw fa-clipboard-list"></i>
@@ -145,7 +147,7 @@
 
             <% if(user.idrol == 1) { %>
              <!-- Nav Item - Reportes Collapse Menu -->
-             <li class="nav-item">
+             <li class="nav-item active">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReportes"
                     aria-expanded="true" aria-controls="collapseReportes">
                     <i class="fas fa-fw fa-chart-area"></i>
@@ -155,6 +157,7 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="/reporte_venta">Reporte de Ventas</a>
                         <a class="collapse-item" href="/reporte_compra">Reporte de Compras</a>
+                        <a class="collapse-item" href="/reporte_arqueo">Reporte de Arqueo</a>
                         <a class="collapse-item" href="/reporte_vencidos">Reporte de Vencidos</a>
                     </div>
                 </div>

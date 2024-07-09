@@ -26,7 +26,7 @@ app.use(cors());
     server: 'DESKTOP-DEUHLCS',
 */
 const config = {
-    server: 'DESKTOP-DEUHLCS',
+    server: 'DESKTOP-OP1FG8F',
     database: 'CarniceriaLupita',
     user: 'prueba',
     password: '1234',
