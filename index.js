@@ -26,7 +26,7 @@ app.use(cors());
     server: 'DESKTOP-DEUHLCS',
 */
 const config = {
-    server: 'DESKTOP-OP1FG8F',
+    server: 'DESKTOP-DEUHLCS',
     database: 'CarniceriaLupita',
     user: 'prueba',
     password: '1234',
@@ -234,12 +234,15 @@ app.post('/login_user', upload.none(), async (req, res) => {
 
 //For 'nueva_venta.ejs'
 app.post('/addDataforSale', upload.none(), async (req, res) => {
-    const arraysale_temp = await getArrayforSale(req, res, user_temp.IdUsuario);
-    if (arraysale_temp == false) {
+    const arraysale_temp = await getArrayforSale(req, res, user_temp.IdUsuario, array_sale);
+    if (arraysale_temp.success == false) {
         res.status(200).json({ message: false });
     }
+    else if (arraysale_temp.success == true) {
+        res.status(200).json({ list: arraysale_temp.data });
+    }
     else {
-        array_sale.push(...arraysale_temp);
+        array_sale.push(...arraysale_temp.data);
         await sendArrayDeytails(req, res, array_sale);
     }
 });

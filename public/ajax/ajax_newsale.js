@@ -145,7 +145,7 @@ function updateAmount (idproduct, amount, existence, costo) {
 
             var answer = JSON.parse(xhr.responseText);
             if (answer && typeof answer === 'object' && Object.keys(answer).length > 0) {
-                document.getElementById('txtTotal').value = 'C$ ' + answer.total;
+                document.getElementById('txtTotal').value = 'C$ ' + answer.total.toFixed(2);
             }
             else {
                 console.log("Error al actualizar la cantidad");

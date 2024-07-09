@@ -22,12 +22,17 @@ submitEfectivo.onclick = function() {
         modal.style.display = 'none';
       }
       else if (moneda == 2) {
-        getTypeMoney().then(value_money => {
-          get_sum_of_products((efectivo * value_money));
-          modal.style.display = 'none';
-        }).catch(error => {
-          alert(error);
-        });
+        if (efectivo <= 50) {
+          getTypeMoney().then(value_money => {
+            get_sum_of_products((efectivo * value_money));
+            modal.style.display = 'none';
+          }).catch(error => {
+            alert(error);
+          });
+        }
+        else {
+          alert('El efectivo debe ser menor o igual a 50 para la moneda Dolar');
+        }
       }
       
     } else {

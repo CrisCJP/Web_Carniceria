@@ -1,7 +1,7 @@
 const { getIdCustomer, getDatasProductSale } = require('../model/adddetailinvoice_model');
 const { getDateTimeId, getDateTimeDetail, getDate } = require('./getdateforsale_controller');
 
-const getArrayforSale = async (req, res, iduser) => {
+const getArrayforSale = async (req, res, iduser, array) => {
     try {
         let arraysale_temp = [];
         var { first_name, last_name, product_name, amount_product } = req.body;
@@ -18,9 +18,10 @@ const getArrayforSale = async (req, res, iduser) => {
         const cantidadSolicitada = parseFloat(amount_product);
 
         if (existencia <= cantidadSolicitada) {
-            return false;
+            return { success: false, data: arraysale_temp };
         }
         else {
+
             const dateTimeId = getDateTimeId();
             const dateTimeDetail = getDateTimeDetail();
             const date = getDate();
@@ -47,10 +48,34 @@ const getArrayforSale = async (req, res, iduser) => {
                 total: 0
             });
             
-            return arraysale_temp;
+
+            
+            if (!checkAndAddProduct(arraysale_temp, array)) {
+                return { success: true, data: arraysale_temp };
+            }
+            else {
+                return { success: null, data: arraysale_temp };
+            }
         }
     } catch (err) {
         console.error("Algo malo sucedio en el Array", err);
+    }
+};
+
+
+function checkAndAddProduct(row, list_products) {
+    // Check if the product already exists in the list_products array
+    var exists = list_products.some(product => product.idproducto === row[0].idproducto);
+    if (exists) {
+        // Log the repeated product and show an alert with the product name
+        /*alert('El producto ya existe en la lista: ' + row.nombreproducto);
+        document.getElementById('cboBuscarProducto').value = '';
+        document.getElementById('txtCantidad_Peso').value = '';*/
+        return false; // Indicate that the product already exists
+    } else {
+        // Add the product to the list_products array if it doesn't exist
+        //list_products.push(row);
+        return true; // Indicate that the product was added successfully
     }
 };
 
