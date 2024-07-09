@@ -151,6 +151,9 @@ function set_newUser(nombre, apellido, cedula, correo, contrasenia, rol, estado)
                 alert('El usuario se creo correctamente');
                 window.location.replace('/usuarios');
             }
+            else if ('message_notfind' in answer) {
+                alert('Los datos del usuario ya existen revise los campos de Nombre, Apellido, Cedula y Correo');
+            }
             else {
                 console.log("Algo salio mal al crear el usuario");
             }
@@ -183,7 +186,22 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if (nombre.trim() === '' || apellido.trim() === '' || cedula.trim() === '' || contrasenia.trim() === '' || correo.trim() === '' || estado.trim() === '' || rol.trim() === '')
             alert('Todos los campos son obligatorios');
+        else if (!validarCedulaNicaragua(cedula))
+            alert('La cédula ingresada no es válida');
+        else if (!validarCorreoElectronico(correo))
+            alert('El correo electrónico ingresado no es válido');
         else 
             set_newUser(nombre, apellido, cedula, correo, contrasenia, rol, estado);
     });
 });
+
+function validarCedulaNicaragua(cedula) {
+    // Expresión regular para validar la cédula de Nicaragua
+    var regex = /^\d{3}-\d{6}-\d{4}[A-Z]$/;
+    return regex.test(cedula);
+};
+
+function validarCorreoElectronico(correo) {
+    var regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return regexEmail.test(correo);
+};

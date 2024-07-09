@@ -35,6 +35,7 @@ function getViewDetail_fromIndex(number_invoice) {
 
                 document.getElementById('linkImprimir').addEventListener('click', function() {
                     generateInvoicePDF(answer.salesHistorywithData, answer.salesHistorywithProducts, answer.user);
+                    window.location.reload();
                 });
             }
             else {

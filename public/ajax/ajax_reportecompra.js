@@ -205,3 +205,37 @@ function exportTableToExcel(tableID, filename = ''){
     link.click();
     document.body.removeChild(link);
 }
+
+// Función para comparar fechas
+function compararFechas(fechaInicio, fechaFin) {
+    if (fechaInicio === '' || fechaFin === '') {
+        return false; // Si falta alguna fecha, no se puede comparar correctamente
+    }
+
+    let dateInicio = new Date(fechaInicio);
+    let dateFin = new Date(fechaFin);
+
+    return dateInicio < dateFin;
+}
+
+// Función para manejar los eventos de cambio en las fechas
+function manejarCambioFecha() {
+    let fechaInicio = document.getElementById("txtFechaInicio").value;
+    let fechaFin = document.getElementById("txtFechaFin").value;
+
+    if (fechaInicio === '' || fechaFin === '') {
+        document.getElementById('btnBuscar').disabled = true;
+        return;
+    }
+
+    if (compararFechas(fechaInicio, fechaFin)) {
+        document.getElementById('btnBuscar').disabled = false;
+    } else {
+        alert("La fecha inicial debe ser menor que la final");
+        document.getElementById('btnBuscar').disabled = true;
+    }
+}
+
+// Asignar los listeners de eventos a los inputs
+document.getElementById("txtFechaInicio").addEventListener('input', manejarCambioFecha);
+document.getElementById("txtFechaFin").addEventListener('input', manejarCambioFecha);
