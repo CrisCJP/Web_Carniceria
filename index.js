@@ -61,7 +61,7 @@ const { getArrayforSale } = require('./controller/pushArrayTempDetailsforSale_co
 // Call the controller "sendDetailsforSale_controller"
 const { sendArrayDeytails } = require('./controller/sendDetailsforSale_controller');
 // Call the controller "updateamountforarray_controller"
-const { getAmount } = require('./controller/updateamountforarray_controller');
+const { getAmount, getDiscount } = require('./controller/updateamountforarray_controller');
 // Call the controller "sendsumfornewsale_controller"
 const { getSumforNewSale } = require('./controller/sendsumfornewsale_controller');
 // Call the controller "setcostoandtotal_controller"
@@ -241,8 +241,15 @@ app.post('/login_user', upload.none(), async (req, res) => {
 //For 'nueva_venta.ejs'
 app.post('/addDataforSale', upload.none(), async (req, res) => {
     const arraysale_temp = await getArrayforSale(req, res, user_temp.IdUsuario, array_sale);
+    //console.log(arraysale_temp);
     if (arraysale_temp.success == false) {
-        res.status(200).json({ message: false });
+        if ('onerror' in arraysale_temp) {
+            //console.log("Esto no es valido index");
+            res.status(200).json({ message: false, onerror: 'Not valid' });
+        }
+        else {
+            res.status(200).json({ message: false });
+        }
     }
     else if (arraysale_temp.success == true) {
         res.status(200).json({ list: arraysale_temp.data });
@@ -257,6 +264,13 @@ app.post('/addDataforSale', upload.none(), async (req, res) => {
 app.post('/updateAmount', upload.none(), async (req, res) => {
     const updateAmount = await getAmount(req, res, array_sale);
     array_sale = updateAmount;
+    await sendArrayDeytails(req, res, array_sale);
+});
+
+// Update the discount
+app.post('/updateDiscount', upload.none(), async (req, res) => {
+    const updateDiscount = await getDiscount(req, res, array_sale);
+    array_sale = updateDiscount;
     await sendArrayDeytails(req, res, array_sale);
 });
 

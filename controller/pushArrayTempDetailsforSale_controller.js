@@ -4,7 +4,7 @@ const { getDateTimeId, getDateTimeDetail, getDate } = require('./getdateforsale_
 const getArrayforSale = async (req, res, iduser, array) => {
     try {
         let arraysale_temp = [];
-        var { first_name, last_name, product_name, amount_product } = req.body;
+        var { first_name, last_name, product_name, amount_product, discount } = req.body;
         if(first_name === '')
             first_name = 'Cliente';
         if(last_name === '')
@@ -16,11 +16,18 @@ const getArrayforSale = async (req, res, iduser, array) => {
         // Asegúrate de que ambos valores son numéricos
         const existencia = parseFloat(datasProductSale.Existencia);
         const cantidadSolicitada = parseFloat(amount_product);
+        const UnidadMedida = datasProductSale.UnidadMedida;
 
         if (existencia <= cantidadSolicitada) {
             return { success: false, data: arraysale_temp };
         }
         else {
+
+            if (UnidadMedida === 'Unidad'){
+                if (!esEnteroDesdeInput(cantidadSolicitada)) {
+                    return { success: false, data: arraysale_temp, onerror: `Esto no es valido para la unidad: ${cantidadSolicitada}`};
+                }
+            }
 
             const dateTimeId = getDateTimeId();
             const dateTimeDetail = getDateTimeDetail();
@@ -43,9 +50,10 @@ const getArrayforSale = async (req, res, iduser, array) => {
                 UnidadMedida: datasProductSale.UnidadMedida,
                 existencia_defore: datasProductSale.Existencia,
                 existencia: parseFloat(datasProductSale.Existencia - amount_product),
-                costo: parseFloat(datasProductSale.PrecioVenta * amount_product),
+                costo: parseFloat((datasProductSale.PrecioVenta * amount_product) * (1 - (discount / 100))),
                 nombreproducto: product_name,
-                total: 0
+                total: 0,
+                descuento: discount
             });
             
 
@@ -79,5 +87,10 @@ function checkAndAddProduct(row, list_products) {
     }
 };
 
+
+function esEnteroDesdeInput(value) {
+    const numero = parseFloat(value);
+    return Number.isInteger(numero);
+}
 
 module.exports = { getArrayforSale };
