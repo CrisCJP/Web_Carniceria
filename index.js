@@ -9,7 +9,6 @@ const fs = require('fs'); // Asegúrate de importar el módulo fs
 const { exec } = require('child_process'); // Importa exec desde child_process
 const cron = require('node-cron');
 
-
 //Objects for calling functions
 const app = express();
 const multer = require('multer');
@@ -217,6 +216,10 @@ app.get('/reporte_vencidos', function (req, res) {
 
 app.get('/usuarios', async (req, res) => {
     res.render('usuarios', { user: user_temp });
+});
+
+app.get('/proveedores', function (req, res)  {
+    res.render('proveedores', { user: user_temp });
 });
 
 app.get('/arqueo', async (req, res) => {
@@ -589,6 +592,122 @@ app.post('/historialcompra', upload.none(), function(req, res){
         })
     })
 })
+
+app.post('/proveedorestable', upload.none(), function(req, res){
+    sql.connect(config).then(pool =>{
+        return pool.request()
+        .query('select IdProveedor, Nombre_Proveedor, NombreCategoria from Proveedor P inner join CategoriaProducto C on P.idCategoria = C.IdCategoria')
+        .then(result =>{
+            let IdProveedor = new Array(result.recordset.length);
+            let Nombre_Proveedor = new Array(result.recordset.length);
+            let NombreCategoria = new Array(result.recordset.length);
+
+            for(let i = 0; i < result.recordset.length; i++){
+                IdProveedor[i] = result.recordset[i].IdProveedor;
+                Nombre_Proveedor[i] = result.recordset[i].Nombre_Proveedor;
+                NombreCategoria[i] = result.recordset[i].NombreCategoria;
+            }
+
+            res.send({idproveedor:IdProveedor, nombre_proveedor:Nombre_Proveedor, nombrecategoria:NombreCategoria});
+        })
+    })
+})
+
+app.post('/addproveedor', upload.none(), function(req, res){
+    const {nombreprov, categ} = req.body;
+    sql.connect(config).then(pool =>{
+        // Consulta para obtener el último IdProveedor insertado
+        return pool.request()
+        .query('select top 1 IdProveedor from Proveedor order by IdProveedor desc')
+        .then(result =>{
+            // Consulta para obtener el IdCategoria basado en el nombre de la categoría recibido
+            return pool.request()
+            .input('Category', sql.VarChar, categ)
+            .query('select IdCategoria from CategoriaProducto where NombreCategoria = @Category')
+            .then(result2 =>{
+                let newIdProveedor;
+
+                // Verificar si se obtuvo correctamente el IdCategoria
+                if (result2.recordset.length > 0) {
+                    // Obtén la parte numérica del último IdProveedor
+                    const currentId = result.recordset[0].IdProveedor.replace('R', '');
+
+                    // Verifica si la parte restante es numérica
+                    if (!isNaN(currentId)) {
+                        // Si es numérica, conviértela a entero
+                        const numericPart = parseInt(currentId, 10);
+
+                        // Incrementa el número
+                        const newNumericPart = numericPart + 1;
+
+                        // Formatea el número con ceros a la izquierda según la longitud original
+                        const newNumericPartStr = newNumericPart.toString().padStart(currentId.length, '0');
+
+                        // Crea el nuevo ID con el prefijo 'R'
+                        newIdProveedor = 'R' + newNumericPartStr;
+
+                        console.log('Nuevo ID Proveedor:', newIdProveedor);
+                    } else {
+                        console.error('El valor de IdProveedor no es numérico después de eliminar el prefijo "R".');
+                        throw new Error('Error al generar el nuevo ID del proveedor');
+                    }
+
+                    // Insertar el nuevo proveedor en la base de datos
+                    return pool.request()
+                    .input('IdProveedor', sql.VarChar, newIdProveedor)
+                    .input('NombreProv', sql.VarChar, nombreprov)
+                    .input('IdCateg', sql.Int, result2.recordset[0].IdCategoria)
+                    .query('INSERT INTO Proveedor (IdProveedor, Nombre_Proveedor, idCategoria) VALUES (@IdProveedor, @NombreProv, @IdCateg)')
+                    .then(() => {
+                        res.status(200).send('Proveedor agregado exitosamente');
+                    })
+                    .catch(err => {
+                        console.error('Error al insertar proveedor:', err);
+                        throw new Error('Error al insertar proveedor en la base de datos');
+                    });
+                } else {
+                    console.error('No se encontró el IdCategoria para la categoría especificada:', categ);
+                    throw new Error('Error al obtener IdCategoria');
+                }
+            })
+        })
+        .catch(err => {
+            console.error('Error en la consulta SQL:', err);
+            res.status(500).send('Error interno del servidor');
+        });
+    })
+    .catch(err => {
+        console.error('Error al conectar con la base de datos:', err);
+        res.status(500).send('Error interno del servidor');
+    });
+});
+
+
+app.post('/updateprov', upload.none(), function(req, res){
+    const {NombreProveedor, IdProveedor} = req.body;
+    console.log('Datos recibidos para actualizar:', {IdProveedor, NombreProveedor});
+
+    sql.connect(config).then(pool =>{
+        return pool.request()
+        .input('IdProveedor', sql.VarChar, IdProveedor)
+        .input('NombreProv', sql.VarChar, NombreProveedor)
+        .query('update Proveedor set Nombre_Proveedor = @NombreProv where IdProveedor = @IdProveedor')
+        .then(() => {
+            console.log('Proveedor actualizado exitosamente');
+            res.status(200).send('Proveedor actualizado exitosamente');
+        })
+        .catch(err => {
+            console.error('Error al actualizar proveedor:', err);
+            res.status(500).send('Error interno del servidor al actualizar proveedor');
+        });
+    })
+    .catch(err => {
+        console.error('Error al conectar con la base de datos:', err);
+        res.status(500).send('Error interno del servidor al conectar con la base de datos');
+    });
+});
+
+
 
 app.post('/categoriasinventario', upload.none(), function(req, res){
     sql.connect(config).then(pool =>{
