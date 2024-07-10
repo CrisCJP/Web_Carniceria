@@ -37,6 +37,7 @@ const finalizeInvoice = async function (list_products) {
             request.input('efectivo', sql.Money, product.efectivo);
             request.input('iddetalle', sql.VarChar, product.iddetalle);
             request.input('cantidadopeso', sql.Decimal, product.cantidadopeso);
+            request.input('costo', sql.Decimal, product.costo);
             // ... más parámetros según el procedimiento almacenado ...
 
             try {
