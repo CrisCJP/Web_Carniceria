@@ -106,6 +106,15 @@ const { uptime } = require('process');
 app.use(express.urlencoded({ extended: false }));//Decode data
 app.use(bodyParser.json());
 
+// Servir archivos estáticos desde la carpeta "manual"
+app.use('/manual', express.static(path.join(__dirname, 'manual'), {
+    setHeaders: (res, filePath) => {
+        if (path.extname(filePath) === '.pdf') {
+            res.setHeader('Content-Type', 'application/pdf');
+        }
+    }
+}));
+
 //Files statics
 app.set("view engine", "ejs");
 // Specify the directory containing EJS templates
