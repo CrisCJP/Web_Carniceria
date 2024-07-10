@@ -339,13 +339,16 @@ document.addEventListener("DOMContentLoaded", function() {
         }else{
             alert('los campos como marca y categoria deben coincidir con su lista de opciones')
         }
+        invent();
+        $('#modalModificarProducto').modal('hide');
+        
      })
 
      validCampCOpt('modificarMedida', 'errorMedida', 'datalistMedida');
      validCampCOpt('modificarCategorias', 'errorCategorias', 'datalistCategoria');
      validCampCOpt('modificarProv', 'errorProv', 'datalistMarca');
 
-     document.getElementById("btnAgregaNuevoProducto").addEventListener('click', function(){
+    document.getElementById("btnAgregaNuevoProducto").addEventListener('click', function(){
         var nombreProducto = document.getElementById("modificarNombreProducto").value;
         var precioVenta2 = document.getElementById("modificarPrecioVenta").value.trim();
         var unidadMedida = document.getElementById("modificarMedida").value.trim();

@@ -4,6 +4,12 @@ const express = require('express');
 //MSSQL server
 const sql = require('mssql');
 
+const path = require('path'); // Asegúrate de importar el módulo path
+const fs = require('fs'); // Asegúrate de importar el módulo fs
+const { exec } = require('child_process'); // Importa exec desde child_process
+const cron = require('node-cron');
+
+
 //Objects for calling functions
 const app = express();
 const multer = require('multer');
@@ -348,6 +354,55 @@ app.post('/reporteproductovencido', upload.none(), function(req, res){
         })
     })
 })
+// Verificación de la ruta del archivo de respaldo
+const backupPath = path.join(__dirname, 'backrest', 'CarniceriaLupita.bak'); // Ajusta la ruta aquí
+console.log(backupPath); // Verificar la ruta
+if (!fs.existsSync(backupPath)) {
+    console.error("El archivo de respaldo no existe en la ruta especificada: " + backupPath);
+    process.exit(1); // Termina el proceso si el archivo no existe
+}
+
+// Post para restaurar la base de datos
+app.post('/restaurarrespaldo', function(req, res) {
+    const killConnectionsQuery = `
+      USE master;
+      ALTER DATABASE [CarniceriaLupita] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+      RESTORE DATABASE [CarniceriaLupita]
+      FROM DISK = N'${backupPath}'
+      WITH REPLACE;
+      ALTER DATABASE [CarniceriaLupita] SET MULTI_USER;
+    `;
+
+    sql.connect(config).then(pool => {
+      return pool.request()
+        .query(killConnectionsQuery)
+        .then(result => {
+          res.send("Base de datos restaurada exitosamente");
+
+          // Espera un momento para asegurarse de que la respuesta se ha enviado
+          setTimeout(() => {
+            // Reinicia la aplicación
+            exec('npm restart', (err, stdout, stderr) => {
+              if (err) {
+                console.error(`Error al reiniciar la aplicación: ${err.message}`);
+                return;
+              }
+              console.log('Aplicación reiniciada exitosamente');
+              console.log(`stdout: ${stdout}`);
+              console.log(`stderr: ${stderr}`);
+            });
+          }, 1000); // Espera 1 segundo antes de reiniciar
+        })
+        .catch(err => {
+          console.error("Error al restaurar la base de datos:", err);
+          res.status(500).send("Error al restaurar la base de datos");
+        });
+    }).catch(err => {
+      console.error("Error al conectar a la base de datos:", err);
+      res.status(500).send("Error al conectar a la base de datos");
+    });
+});
+  
 
 app.post('/optmarca', upload.none(),function(req,res){
     sql.connect(config).then(pool =>{
@@ -751,6 +806,77 @@ app.post('/comprar', upload.none(), function(req,res){
         })
     })
 })
+
+
+
+
+
+
+
+// Ruta donde se guardará el respaldo
+const backupPath2 = 'C:/Repositorio git/Clonacion Proyecto/System_invoice/backrest/CarniceriaLupita.bak';
+
+// Tarea cron para ejecutar todos los días a las 18:20
+cron.schedule('30 18 * * *', async () => {
+    try {
+        // Verificar si el archivo de respaldo existe y eliminarlo si es necesario
+        if (fs.existsSync(backupPath2)) {
+            fs.unlinkSync(backupPath2);
+            console.log(`Archivo de respaldo existente eliminado: ${backupPath2}`);
+        }
+
+        // Conexión a la base de datos
+        await sql.connect(config);
+
+        // Query para realizar el respaldo
+        const result = await sql.query(`BACKUP DATABASE [CarniceriaLupita] TO DISK = '${backupPath2}'`);
+
+        // Cerrar la conexión
+        await sql.close();
+
+        // Verificar si el archivo de respaldo se creó correctamente
+        if (fs.existsSync(backupPath2)) {
+            console.log('Respaldo realizado con éxito.');
+        } else {
+            console.log('Error: No se encontró el archivo de respaldo.');
+        }
+
+    } catch (err) {
+        console.error('Error al realizar el respaldo:', err.message);
+    }
+}, {
+    scheduled: true,
+    timezone: 'America/Managua' // Cambia esto según tu zona horaria
+});
+
+/*
+// Función para ejecutar el respaldo de la base de datos
+function realizarRespaldo() {
+    // Comando para generar el respaldo
+    const comando = 'sqlcmd -S localhost\\SQLEXPRESS -Q "BACKUP DATABASE CarniceriaLupita TO DISK=\'C:\\Repositorio git\\Clonacion Proyecto\\System_invoice\\backrest\\CarniceriaLupita.bak\'"';
+
+    exec(comando, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error al ejecutar el respaldo: ${error.message}`);
+            return;
+        }
+        if (stderr) {
+            console.error(`Error estándar al ejecutar el respaldo: ${stderr}`);
+            return;
+        }
+        console.log(`Respaldo realizado correctamente: ${stdout}`);
+    });
+}
+
+// Programar tarea todos los días a las 18:30
+cron.schedule('15 18 * * *', () => {
+    console.log('Ejecutando tarea programada para respaldo a las 18:30');
+    realizarRespaldo();
+});
+*/
+
+
+
 
 //Port configuration :::::::::::::::::::::::::::::::::::::::::::::::::::::
 app.listen(3000, function () {
