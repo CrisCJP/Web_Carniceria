@@ -1,6 +1,5 @@
 const { sql, config } = require('./connection_model');
 
-
 const finalizeInvoice = async function (list_products) {
     let transaction;
     try {
@@ -13,18 +12,19 @@ const finalizeInvoice = async function (list_products) {
         await transaction.begin();
         console.log('Transacción iniciada.');
 
-        console.log('list_products contiene:', list_products);
+        // Verificar si la lista de productos está vacía
         if (list_products.length === 0) {
             console.log('list_products está vacío.');
+            return;
         }
 
         // Iterar sobre cada producto en list_products
         for (let product of list_products) {
             // Crear una nueva solicitud SQL dentro de la transacción
             let request = transaction.request();
-        
             console.log('Procesando producto:', product);
-            // Llamar al procedimiento almacenado para cada producto
+            
+            // Pasar parámetros al procedimiento almacenado
             request.input('idusuario', sql.Int, product.idVendedor);
             request.input('idcliente', sql.VarChar, product.idCliente);
             request.input('nombrecliente', sql.VarChar, product.nombreCliente);
@@ -37,10 +37,9 @@ const finalizeInvoice = async function (list_products) {
             request.input('efectivo', sql.Money, product.efectivo);
             request.input('iddetalle', sql.VarChar, product.iddetalle);
             request.input('cantidadopeso', sql.Decimal, product.cantidadopeso);
-            request.input('costo', sql.Decimal, product.costo);
-            // ... más parámetros según el procedimiento almacenado ...
-
+            
             try {
+                // Ejecutar el procedimiento almacenado
                 let result = await request.execute('Facturar');
                 console.log('Producto facturado:', result);
             } catch (error) {
@@ -75,6 +74,5 @@ const finalizeInvoice = async function (list_products) {
         }
     }
 }
-
 
 module.exports = { finalizeInvoice };

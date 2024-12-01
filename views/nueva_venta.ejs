@@ -63,8 +63,8 @@
                     </a>
                     <div id="collapseAdministracion" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
-                            <a class="collapse-item" href="/arqueo">Generar Arqueo</a>
-                            <a id="cambiar_valor_dolar" class="collapse-item" href="#">Cambiar valor del dolar</a>
+                            <!-- <a class="collapse-item" href="/arqueo">Generar Arqueo</a> -->
+                            <!-- <a id="cambiar_valor_dolar" class="collapse-item" href="#">Cambiar valor del dolar</a> -->
                             <a class="collapse-item" href="/usuarios">Usuarios</a>
                             <a class="collapse-item" href="/proveedores">Proveedores</a>
                             <!--<a class="collapse-item" href="negocio.html">Negocio</a>-->
@@ -149,7 +149,7 @@
                         <div class="bg-white py-2 collapse-inner rounded">
                             <a class="collapse-item" href="/reporte_venta">Reporte de Ventas</a>
                             <a class="collapse-item" href="/reporte_compra">Reporte de Compras</a>
-                            <a class="collapse-item" href="/reporte_arqueo">Reporte de Arqueo</a>
+                            <!-- <a class="collapse-item" href="/reporte_arqueo">Reporte de Arqueo</a> -->
                             <a class="collapse-item" href="/reporte_vencidos">Reporte de Vencidos</a>
                         </div>
                     </div>
@@ -353,9 +353,16 @@
                                             
                                             <div class="input-group input-group-sm mb-3">
                                                 <div class="input-group-prepend">
-                                                  <span class="input-group-text" id="inputGroupSubTotal">Costo del producto seleccionado:</span>
+                                                  <span class="input-group-text" id="inputGroupSubTotal">Costo del producto:</span>
                                                 </div>
                                                 <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupSubTotal" name="txtCosto" id="txtCosto" disabled>
+                                            </div>
+
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="inputGroupIGV">Existencia Actual: </span>
+                                                </div>
+                                                <input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupIGV" id="txtIGV" disabled>
                                             </div>
 
                                             <div class="input-group input-group-sm mb-3">
@@ -365,12 +372,6 @@
                                                 <input type="number" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupDescuento" name="txtDescuento" id="txtDescuento">
                                             </div>
 
-                                            <div class="input-group input-group-sm mb-3">
-                                                <div class="input-group-prepend">
-                                                  <span class="input-group-text" id="inputGroupIGV">El precio de los producto incluyen el iva</span>
-                                                </div>
-                                                <!--<input type="text" class="form-control text-right" aria-label="Small" aria-describedby="inputGroupIGV" id="txtIGV" disabled>-->
-                                            </div>
 
                                             <div class="input-group input-group-sm mb-3">
                                                 <div class="input-group-prepend">

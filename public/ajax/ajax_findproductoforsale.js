@@ -17,11 +17,15 @@ inputBusqueda.addEventListener('input', async () => {
 
         li.addEventListener('click', () => {
             inputBusqueda.value = producto.NombreProducto;
-            if (producto.UnidadDeMedida == 1)
+            if (producto.UnidadDeMedida == 1) {
                 document.getElementById('txtCosto').value = 'C$ ' + producto.PrecioVenta + ' por unidad';
-
-            else
-            document.getElementById('txtCosto').value = 'C$ ' + producto.PrecioVenta + ' por libra';
+                document.getElementById('txtIGV').value = producto.Existencia + ' unidades';
+            }
+            else {
+                document.getElementById('txtCosto').value = 'C$ ' + producto.PrecioVenta + ' por libra';
+                document.getElementById('txtIGV').value = producto.Existencia + ' libras';
+            }
+            
             listaResultados.innerHTML = '';
         });
 
@@ -31,6 +35,7 @@ inputBusqueda.addEventListener('input', async () => {
         listaResultados.innerHTML = '';
         listaResultados.style.display = 'none';
         document.getElementById('txtCosto').value = '';
+        document.getElementById('txtIGV').value = '';
     }
 });
 

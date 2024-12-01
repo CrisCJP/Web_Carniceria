@@ -53,7 +53,7 @@ function getViewDetail_fromIndex(number_invoice) {
 
 document.addEventListener("DOMContentLoaded", function(e) {
     // Supongamos que tienes una tabla con un ID específico (por ejemplo, "tablaVentas")
-    value_boxes();
+    //value_boxes();
     const tablaVentas = document.getElementById("tbventa");
 
     // Agrega un manejador de eventos al botón "Ver Detalle"

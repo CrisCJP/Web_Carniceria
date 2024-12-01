@@ -60,6 +60,7 @@ function setFinallyfornewSale (cash_amount, addition_costo) {
                 input_lastname.value = '';
                 document.getElementById('txtTotal').value = '';
                 document.getElementById('txtCosto').value = '';
+                document.getElementById('txtIGV').value = '';
 
                 window.location.replace('/nueva_venta');
             
@@ -192,12 +193,12 @@ function generateInvoicePDF(invoiceData1, userData) {
     var uniqueUrl = url + '#t=' + new Date().getTime();
 
     // Abre el PDF en una nueva pestaña
-    var newWindow = window.open(uniqueUrl, '_blank');
-    if (newWindow) {
-        newWindow.focus();
-    } else {
-        alert('Permita las ventanas emergentes para esta página para ver el PDF.');
-    }
+    // var newWindow = window.open(uniqueUrl, '_blank');
+    // if (newWindow) {
+    //     newWindow.focus();
+    // } else {
+    //     alert('Permita las ventanas emergentes para esta página para ver el PDF.');
+    // }
 
     // Revoca la URL del blob después de un corto período de tiempo
     setTimeout(function() {

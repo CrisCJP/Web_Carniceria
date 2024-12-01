@@ -148,6 +148,8 @@ function sendDataDetail(firstname, lastname, productname, amountproduct, discoun
                 document.getElementById('cboBuscarProducto').value = '';
                 document.getElementById('txtCantidad_Peso').value = '';
                 document.getElementById('txtDescuento').value = '';
+                document.getElementById('txtIGV').value = '';
+                document.getElementById('txtCosto').value = '';
             }
         }
         else {

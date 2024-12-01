@@ -31,7 +31,7 @@ app.use(cors());
     server: 'DESKTOP-DEUHLCS',
 */
 const config = {
-    server: 'DESKTOP-OP1FG8F',
+    server: 'DESKTOP-DEUHLCS',
     database: 'CarniceriaLupita',
     user: 'prueba',
     password: '1234',
@@ -55,28 +55,37 @@ let array_sale = [];
 //CALL THE CONTROLLERS:::::::::::::::::::::::
 // Call the controller "loginuser_controller"
 const { loginUser } = require('./controller/loginuser_controller');
+
 // Call the controller "pushArrayTempDetailsforSale_controller"
 const { getArrayforSale } = require('./controller/pushArrayTempDetailsforSale_controller');
+
 // Call the controller "sendDetailsforSale_controller"
 const { sendArrayDeytails } = require('./controller/sendDetailsforSale_controller');
+
 // Call the controller "updateamountforarray_controller"
 const { getAmount, getDiscount } = require('./controller/updateamountforarray_controller');
+
 // Call the controller "sendsumfornewsale_controller"
 const { getSumforNewSale } = require('./controller/sendsumfornewsale_controller');
+
 // Call the controller "setcostoandtotal_controller"
 const { setCostoandTotal } = require('./controller/setcostoandtotal_controller');
+
 //Call the controller "send_historyinvoice_controller"
 const { setHistoryInvoiceforDate, setHistoryInvoiceforNoVenta } = require('./controller/send_historyinvoice_controller');
+
 //Call the controller "send_detailsofhistoryofthesale_controller"
 const { set_salesHistorywithAll } = require('./controller/send_detailsofhistoryofthesale_controller');
+
 //Call the controller "send_reportfordate"
 const { setReport } = require('./controller/send_reportofordate_controller');
+
 //Call the controller "no_cache_controller"
 const { noCache } = require('./controller/no_cache_controller');
 
 const { set_user_data_forTable, executeProcedure_makeChanges_forUser, executeProcedure_insertNewUser } = require('./controller/send_user_datas_controller');
 
-const { set_detailsarqueo, set_ArqueoData, send_reportArqueo, getter_Money, setter_dolarChange } = require('./controller/send_detailsarqueo_controller');
+// const { set_detailsarqueo, set_ArqueoData, send_reportArqueo, getter_Money, setter_dolarChange } = require('./controller/send_detailsarqueo_controller');
 
 const { send_cashgrowth, set_datachash } = require('./controller/send_boxesinformation_controller');
 
@@ -105,7 +114,7 @@ const { uptime } = require('process');
 app.use(express.urlencoded({ extended: false }));//Decode data
 app.use(bodyParser.json());
 
-// Servir archivos estáticos desde la carpeta "manual"
+// Servidor archivos estáticos desde la carpeta "manual"
 app.use('/manual', express.static(path.join(__dirname, 'manual'), {
     setHeaders: (res, filePath) => {
         if (path.extname(filePath) === '.pdf') {
