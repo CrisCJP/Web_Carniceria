@@ -1,18 +1,23 @@
-const { getHistoryInvoicePreview, getHistoryInvoicePreview_forDate, getHistoryInvoicePreview_forNoVenta } = require('../model/gethistoryinvoice_model');
+const InvoiceService  = require('../model/gethistoryinvoice_model');
+
+// Crear una instancia de la clase
+const invoiceService = new InvoiceService();
 
 const setHistoryInvoiceforDate = async (req, res, iduser) => {
     try {
         const { start_date, end_date } = req.body;
 
-        const historyinvoice_fordate = await getHistoryInvoicePreview_forDate(iduser, start_date, end_date);
+        const historyInvoiceForDate = await invoiceService.getHistoryInvoicePreview_forDate(iduser, start_date, end_date);
 
-        if (!historyinvoice_fordate || historyinvoice_fordate === undefined || historyinvoice_fordate === '')
+        if (!historyInvoiceForDate || historyInvoiceForDate.length === 0) {
             return res.status(404).json({ message: 'No se encontraron resultados' });
+        }
         
-        res.status(200).json({ historyinvoice_fordate: historyinvoice_fordate });
+        res.status(200).json({ historyinvoice_fordate: historyInvoiceForDate });
 
     } catch (err) {
-        res.json({ message: err.message });
+        console.error("Error en setHistoryInvoiceforDate:", err);
+        res.status(500).json({ message: err.message });
     }
 };
 
@@ -20,17 +25,17 @@ const setHistoryInvoiceforNoVenta = async (req, res, iduser) => {
     try {
         const { sales_number } = req.body;
 
-        const historyinvoice_fornoventa = await getHistoryInvoicePreview_forNoVenta(iduser, sales_number);
+        const historyInvoiceForNoVenta = await invoiceService.getHistoryInvoicePreview_forNoVenta(iduser, sales_number);
 
-        if (!historyinvoice_fornoventa || typeof historyinvoice_fornoventa === undefined || historyinvoice_fornoventa === '')
+        if (!historyInvoiceForNoVenta || historyInvoiceForNoVenta.length === 0) {
             return res.status(404).json({ message: 'No se encontraron resultados' });
+        }
 
-        
-
-        res.status(200).json({ historyinvoice_fornoventa: historyinvoice_fornoventa });
+        res.status(200).json({ historyinvoice_fornoventa: historyInvoiceForNoVenta });
 
     } catch (err) {
-        res.json({ message: err.message });
+        console.error("Error en setHistoryInvoiceforNoVenta:", err);
+        res.status(500).json({ message: err.message });
     }
 };
 

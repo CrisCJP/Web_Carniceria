@@ -31,7 +31,7 @@ app.use(cors());
     server: 'DESKTOP-DEUHLCS',
 */
 const config = {
-    server: 'DESKTOP-DEUHLCS',
+    server: 'DESKTOP-5TKV4UB',
     database: 'CarniceriaLupita',
     user: 'prueba',
     password: '1234',
@@ -105,7 +105,12 @@ const { finalizeInvoice } = require('./model/finalizeinvoice_model');
 
 const { findProductforSales } = require('./model/finderofproductsforsale_model');
 
-const { getHistoryInvoicePreview } = require('./model/gethistoryinvoice_model');
+
+/////////////////////////////////////////////////////////////////////////////////////
+const InvoiceService = require('./model/gethistoryinvoice_model');
+// Instanciamos la clase para poder acceder a sus métodos
+const invoiceService = new InvoiceService();
+/////////////////////////////////////////////////////////////////////////////////////
 
 const { backupDatabase } = require('./model/backrest_model');
 const { uptime } = require('process');
@@ -174,7 +179,7 @@ app.get("/index", upload.none(), async function (req, res) {
         detailsdashboard_temp = await getDetailsDashboard(user_temp.IdUsuario);
         countproducts_temp = await getCountProductCategories();
         countcategories_temp = await getCountCategories();
-        
+
     }
     res.render('index', { user: user_temp, historyInvoice: historyInvoice_temp, selledProduct: mostselledproducts_temp, detailsDashboard: detailsdashboard_temp, countProduct: countproducts_temp, countCategories: countcategories_temp });
 });
@@ -203,11 +208,23 @@ app.get ('/search_productsale', async (req, res) => {
     res.json({ filteredProducts: filteredProducts, price: findproduct_temp.PrecioVenta, UnidadDeMedida: findproduct_temp.UnidadDeMedida });
 });
 
-//Path to render 'historial_venta.ejs'
+// //Path to render 'historial_venta.ejs'
+// app.get('/historial_venta', async (req, res) => {
+//     const historyinvoicepreview_temp = await InvoiceService(user_temp.IdUsuario);
+//     res.render('historial_venta', { user: user_temp, historyinvoicepreview: historyinvoicepreview_temp });
+//     array_sale = [];
+// });
+
+// Path para renderizar 'historial_venta.ejs'
 app.get('/historial_venta', async (req, res) => {
-    const historyinvoicepreview_temp = await getHistoryInvoicePreview(user_temp.IdUsuario);
-    res.render('historial_venta', { user: user_temp, historyinvoicepreview: historyinvoicepreview_temp });
-    array_sale = [];
+    try {
+        const historyInvoicePreview = await invoiceService.getHistoryInvoicePreview(user_temp.IdUsuario);
+        res.render('historial_venta', { user: user_temp, historyinvoicepreview: historyInvoicePreview });
+        array_sale = [];
+    } catch (error) {
+        console.error("Error al obtener el historial de ventas:", error);
+        res.status(500).send("Error interno del servidor");
+    }
 });
 
 //
