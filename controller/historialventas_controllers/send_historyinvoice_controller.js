@@ -1,4 +1,4 @@
-const InvoiceService  = require('../model/gethistoryinvoice_model');
+const InvoiceService  = require('../../model/historialventas_models/gethistoryinvoice_model');
 
 // Crear una instancia de la clase
 const invoiceService = new InvoiceService();

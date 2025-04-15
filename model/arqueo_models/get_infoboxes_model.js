@@ -1,5 +1,5 @@
-const { sql, config } = require('./connection_model');
-const { getDate } = require('../controller/getdateforsale_controller');
+const { sql, config } = require('../connection_model');
+const { getDate } = require('../../controller/venta_controllers/getdateforsale_controller');
 
 const get_infoBoxes = async (user) => {
     let pool;

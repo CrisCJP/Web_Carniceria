@@ -1,4 +1,4 @@
-const { getDenomination, get_totalInvoices, get_infocash, createArqueo, get_dolarChange, get_arqueoReport, insertDolarChange } = require('../model/setter_arqueo_model');
+const { getDenomination, get_totalInvoices, get_infocash, createArqueo, get_dolarChange, get_arqueoReport, insertDolarChange } = require('../../model/setter_arqueo_model');
 
 const set_detailsarqueo = async(req, res, user) => {
     try {

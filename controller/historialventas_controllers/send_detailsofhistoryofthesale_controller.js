@@ -1,4 +1,4 @@
-const { get_salesHistorywithData, get_salesHistorywithProducts } = require('../model/getdetails_hystoryofthesale_model');
+const { get_salesHistorywithData, get_salesHistorywithProducts } = require('../../model/historialventas_models/getdetails_hystoryofthesale_model');
 
 const set_salesHistorywithAll = async (req, res, user) => {
     try {

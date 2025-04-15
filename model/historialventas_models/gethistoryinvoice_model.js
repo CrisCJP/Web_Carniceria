@@ -1,4 +1,4 @@
-const { sql, config } = require('./connection_model');
+const { sql, config } = require('../connection_model');
 
 class InvoiceService {
     async getHistoryInvoicePreview(id_user) {

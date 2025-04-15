@@ -1,4 +1,4 @@
-const { get_infoBoxes, openCash } = require('../model/get_infoboxes_model');
+const { get_infoBoxes, openCash } = require('../../model/arqueo_models/get_infoboxes_model');
 
 const send_cashgrowth = async(req, res, user) => {
     try {

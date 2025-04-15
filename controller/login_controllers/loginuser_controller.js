@@ -1,6 +1,6 @@
-const { getUserById, getInvoicesByUserId } = require('../model/loginuser_model');
-const { getSelledProducts } = require('../model/mostselledproducts_model');
-const { getDetailsDashboard, getCountProductCategories, getCountCategories } = require('../model/detailsdashboard_model');
+const { getUserById, getInvoicesByUserId } = require('../../model/login_models/loginuser_model');
+const { getSelledProducts } = require('../../model/dashboard_models/mostselledproducts_model');
+const { getDetailsDashboard, getCountProductCategories, getCountCategories } = require('../../model/dashboard_models/detailsdashboard_model');
 
 const loginUser = async function (req, res) {
     try {

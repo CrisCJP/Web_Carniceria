@@ -1,4 +1,4 @@
-const { getReport, getReport_most_selled_products, get_product_but_sold_by_category, get_category_total_view } = require('../model/reportview_model');
+const { getReport, getReport_most_selled_products, get_product_but_sold_by_category, get_category_total_view } = require('../../model/reporteventas_models/reportview_model');
 
 const setReport = async (req, res, user) => {
     try {

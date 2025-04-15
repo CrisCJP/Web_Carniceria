@@ -1,4 +1,4 @@
-const { get_user_datas, make_changes_for_user, insert_new_user, valueFunctionsAsync } = require('../model/get_user_datas_model');
+const { get_user_datas, make_changes_for_user, insert_new_user, valueFunctionsAsync } = require('../../model/usuarios_models/get_user_datas_model');
 
 const set_user_data_forTable = async (req, res, user) => {
     try {

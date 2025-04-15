@@ -1,4 +1,4 @@
-const { sql, config } = require('./connection_model');
+const { sql, config } = require('../connection_model');
 
 const getReport = async (user, start_date, end_date) => {
     let pool;

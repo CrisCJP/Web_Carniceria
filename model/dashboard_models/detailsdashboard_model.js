@@ -1,5 +1,5 @@
 //library import
-const { sql, config } = require('./connection_model');
+const { sql, config } = require('../connection_model');
 
 // Function to obtain sales and income totals
 const getDetailsDashboard = async (idUsuario) => {

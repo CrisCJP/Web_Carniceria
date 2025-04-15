@@ -54,60 +54,60 @@ let array_sale = [];
 
 //CALL THE CONTROLLERS:::::::::::::::::::::::
 // Call the controller "loginuser_controller"
-const { loginUser } = require('./controller/loginuser_controller');
+const { loginUser } = require('./controller/login_controllers/loginuser_controller');
 
 // Call the controller "pushArrayTempDetailsforSale_controller"
-const { getArrayforSale } = require('./controller/pushArrayTempDetailsforSale_controller');
+const { getArrayforSale } = require('./controller/venta_controllers/pushArrayTempDetailsforSale_controller');
 
 // Call the controller "sendDetailsforSale_controller"
-const { sendArrayDeytails } = require('./controller/sendDetailsforSale_controller');
+const { sendArrayDeytails } = require('./controller/venta_controllers/sendDetailsforSale_controller');
 
 // Call the controller "updateamountforarray_controller"
-const { getAmount, getDiscount } = require('./controller/updateamountforarray_controller');
+const { getAmount, getDiscount } = require('./controller/venta_controllers/updateamountforarray_controller');
 
 // Call the controller "sendsumfornewsale_controller"
-const { getSumforNewSale } = require('./controller/sendsumfornewsale_controller');
+const { getSumforNewSale } = require('./controller/venta_controllers/sendsumfornewsale_controller');
 
 // Call the controller "setcostoandtotal_controller"
-const { setCostoandTotal } = require('./controller/setcostoandtotal_controller');
+const { setCostoandTotal } = require('./controller/venta_controllers/setcostoandtotal_controller');
 
 //Call the controller "send_historyinvoice_controller"
-const { setHistoryInvoiceforDate, setHistoryInvoiceforNoVenta } = require('./controller/send_historyinvoice_controller');
+const { setHistoryInvoiceforDate, setHistoryInvoiceforNoVenta } = require('./controller/historialventas_controllers/send_historyinvoice_controller');
 
 //Call the controller "send_detailsofhistoryofthesale_controller"
-const { set_salesHistorywithAll } = require('./controller/send_detailsofhistoryofthesale_controller');
+const { set_salesHistorywithAll } = require('./controller/historialventas_controllers/send_detailsofhistoryofthesale_controller');
 
 //Call the controller "send_reportfordate"
-const { setReport } = require('./controller/send_reportofordate_controller');
+const { setReport } = require('./controller/reporteventas_controllers/send_reportofordate_controller');
 
 //Call the controller "no_cache_controller"
 const { noCache } = require('./controller/no_cache_controller');
 
-const { set_user_data_forTable, executeProcedure_makeChanges_forUser, executeProcedure_insertNewUser } = require('./controller/send_user_datas_controller');
+const { set_user_data_forTable, executeProcedure_makeChanges_forUser, executeProcedure_insertNewUser } = require('./controller/usuarios_controllers/send_user_datas_controller');
 
 // const { set_detailsarqueo, set_ArqueoData, send_reportArqueo, getter_Money, setter_dolarChange } = require('./controller/send_detailsarqueo_controller');
 
-const { send_cashgrowth, set_datachash } = require('./controller/send_boxesinformation_controller');
+const { send_cashgrowth, set_datachash } = require('./controller/arqueo_controllers/send_boxesinformation_controller');
 
 
 
 //CALL THE MODELS::::::::::::::::::::::::::::
 // "loginuser_model"
-const { getUserById, getInvoicesByUserId } = require('./model/loginuser_model');
+const { getUserById, getInvoicesByUserId } = require('./model/login_models/loginuser_model');
 // "mostselledproducts_model"
-const { getSelledProducts } = require('./model/mostselledproducts_model');
+const { getSelledProducts } = require('./model/dashboard_models/mostselledproducts_model');
 // "detailsdashboard_model"
-const { getDetailsDashboard, getCountProductCategories, getCountCategories } = require('./model/detailsdashboard_model');
+const { getDetailsDashboard, getCountProductCategories, getCountCategories } = require('./model/dashboard_models/detailsdashboard_model');
 // 'adddetailinvoices_model'
 
 // "finalizeinvoices_model"
-const { finalizeInvoice } = require('./model/finalizeinvoice_model');
+const { finalizeInvoice } = require('./model/ventas_models/finalizeinvoice_model');
 
-const { findProductforSales } = require('./model/finderofproductsforsale_model');
+const { findProductforSales } = require('./model/ventas_models/finderofproductsforsale_model');
 
 
 /////////////////////////////////////////////////////////////////////////////////////
-const InvoiceService = require('./model/gethistoryinvoice_model');
+const InvoiceService = require('./model/historialventas_models/gethistoryinvoice_model');
 // Instanciamos la clase para poder acceder a sus métodos
 const invoiceService = new InvoiceService();
 /////////////////////////////////////////////////////////////////////////////////////

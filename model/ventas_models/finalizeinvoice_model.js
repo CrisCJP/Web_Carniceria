@@ -1,4 +1,4 @@
-const { sql, config } = require('./connection_model');
+const { sql, config } = require('../connection_model');
 
 const finalizeInvoice = async function (list_products) {
     let transaction;

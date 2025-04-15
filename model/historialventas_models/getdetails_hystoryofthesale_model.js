@@ -1,4 +1,4 @@
-const { sql, config } = require('./connection_model');
+const { sql, config } = require('../connection_model');
 
 const get_salesHistorywithData = async (no_venta) => {
     let pool;

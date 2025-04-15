@@ -1,4 +1,4 @@
-const { getIdCustomer, getDatasProductSale } = require('../model/adddetailinvoice_model');
+const { getIdCustomer, getDatasProductSale } = require('../../model/ventas_models/adddetailinvoice_model');
 const { getDateTimeId, getDateTimeDetail, getDate } = require('./getdateforsale_controller');
 
 const getArrayforSale = async (req, res, iduser, array) => {
