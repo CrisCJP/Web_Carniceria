@@ -4,8 +4,8 @@ const sql = require('mssql');
 const config = {
     server: 'DESKTOP-5TKV4UB',
     database: 'CarniceriaLupita',
-    user: 'prueba',
-    password: '1234',
+    user: 'user_prot',
+    password: '12345',
     port: 1433,
 
     options: {
