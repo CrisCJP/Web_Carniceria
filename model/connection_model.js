@@ -2,9 +2,9 @@ const sql = require('mssql');
 
 //Connect configuration
 const config = {
-    server: 'DESKTOP-5TKV4UB',
+    server: 'localhost',
     database: 'CarniceriaLupita',
-    user: 'user_prot',
+    user: 'user_db',
     password: '12345',
     port: 1433,
 

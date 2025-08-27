@@ -31,10 +31,10 @@ app.use(cors());
     server: 'DESKTOP-DEUHLCS',
 */
 const config = {
-    server: 'DESKTOP-5TKV4UB',
+    server: 'localhost',
     database: 'CarniceriaLupita',
-    user: 'prueba',
-    password: '1234',
+    user: 'user_db',
+    password: '12345',
     port: 1433,
 
     options: {
