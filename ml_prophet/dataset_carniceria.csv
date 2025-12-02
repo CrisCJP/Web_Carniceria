@@ -1,0 +1,525 @@
+Fecha,Nombre_modelo,Demanda_Unidades,Precio_Unitario
+2024-01-31,Queso,3,17.23
+2024-02-01,Chorizo Criollo,4,11.25
+2024-02-01,Lomo de Res,6,28.56
+2024-02-02,Lomo de Res,5,28.56
+2024-02-02,Queso,7,18.23
+2024-02-03,Chorizo Criollo,5,11.25
+2024-02-03,Costilla de Cerdo,5,14.25
+2024-02-03,Lomo de Res,4,28.56
+2024-02-05,Queso,6,19.23
+2024-02-06,Leche,3,12.24
+2024-02-06,Queso,3,17.23
+2024-02-06,Salchicha,4,11.23
+2024-02-07,Chorizo Criollo,6,11.25
+2024-02-07,Lomo de Res,3,28.56
+2024-02-07,Queso,2,17.23
+2024-02-09,Leche,6,12.24
+2024-02-09,Lomo de Res,5,28.56
+2024-02-09,Salchicha,4,11.23
+2024-02-10,Costilla de Cerdo,3,14.25
+2024-02-11,Queso,3,17.23
+2024-02-11,Salchicha,1,11.23
+2024-02-12,Queso,4,19.23
+2024-02-13,Leche,3,12.24
+2024-02-13,Salchicha,4,11.23
+2024-02-14,Leche,1,12.24
+2024-02-14,Queso,6,19.23
+2024-02-15,Chorizo Criollo,5,11.25
+2024-02-15,Leche,1,12.24
+2024-02-15,Queso,2,19.23
+2024-02-16,Chorizo Criollo,2,11.25
+2024-02-16,Queso,3,17.23
+2024-02-17,Chorizo Criollo,4,11.25
+2024-02-17,Queso,4,17.23
+2024-02-18,Chorizo Criollo,2,11.25
+2024-02-18,Salchicha,6,11.23
+2024-02-19,Chorizo Criollo,3,11.25
+2024-02-19,Pierna Especial de Pollo,1,18.56
+2024-02-19,Salchicha,2,11.23
+2024-02-20,Salchicha,8,11.229999999999999
+2024-02-21,Chorizo Criollo,4,11.25
+2024-02-21,Pierna Especial de Pollo,3,18.56
+2024-02-22,Leche,2,12.24
+2024-02-22,Pierna Especial de Pollo,4,18.56
+2024-02-23,Costilla de Cerdo,4,14.25
+2024-02-23,Queso,7,19.23
+2024-02-24,Chorizo Criollo,6,11.25
+2024-02-24,Leche,4,12.24
+2024-02-24,Queso,5,17.23
+2024-02-24,Salchicha,1,11.23
+2024-02-25,Costilla de Cerdo,1,14.25
+2024-02-25,Leche,6,12.24
+2024-02-25,Pierna Especial de Pollo,4,18.56
+2024-02-26,Queso,4,17.23
+2024-02-28,Costilla de Cerdo,2,14.25
+2024-02-28,Lomo de Res,6,28.56
+2024-02-29,Chorizo Criollo,2,11.25
+2024-02-29,Queso,5,19.23
+2024-03-03,Leche,2,12.24
+2024-03-04,Costilla de Cerdo,6,14.25
+2024-03-04,Leche,3,12.24
+2024-03-04,Salchicha,5,11.23
+2024-03-06,Chorizo Criollo,1,11.25
+2024-03-07,Chorizo Criollo,3,11.25
+2024-03-07,Queso,9,18.563333333333333
+2024-03-09,Pierna Especial de Pollo,6,18.56
+2024-03-10,Pierna Especial de Pollo,6,18.56
+2024-03-10,Salchicha,5,11.23
+2024-03-11,Pierna Especial de Pollo,2,18.56
+2024-03-11,Salchicha,3,11.23
+2024-03-12,Lomo de Res,6,28.56
+2024-03-12,Pierna Especial de Pollo,2,18.56
+2024-03-12,Queso,6,17.23
+2024-03-12,Salchicha,5,11.23
+2024-03-13,Costilla de Cerdo,1,14.25
+2024-03-13,Leche,3,12.24
+2024-03-13,Lomo de Res,5,28.56
+2024-03-13,Queso,11,17.23
+2024-03-13,Salchicha,5,11.23
+2024-03-14,Chorizo Criollo,3,11.25
+2024-03-14,Costilla de Cerdo,5,14.25
+2024-03-14,Leche,9,12.24
+2024-03-14,Pierna Especial de Pollo,5,18.56
+2024-03-15,Chorizo Criollo,6,11.25
+2024-03-15,Queso,7,17.23
+2024-03-15,Salchicha,4,11.23
+2024-03-16,Chorizo Criollo,5,11.25
+2024-03-16,Salchicha,6,11.23
+2024-03-17,Costilla de Cerdo,3,14.25
+2024-03-17,Queso,6,19.23
+2024-03-18,Salchicha,2,11.23
+2024-03-19,Queso,2,17.23
+2024-03-20,Chorizo Criollo,4,11.25
+2024-03-20,Queso,2,19.23
+2024-03-22,Lomo de Res,6,28.56
+2024-03-22,Queso,4,17.23
+2024-03-23,Leche,6,12.24
+2024-03-23,Queso,7,19.23
+2024-03-24,Pierna Especial de Pollo,5,18.56
+2024-03-25,Queso,2,19.23
+2024-03-26,Chorizo Criollo,6,11.25
+2024-03-26,Lomo de Res,4,28.56
+2024-03-26,Queso,5,17.23
+2024-03-28,Costilla de Cerdo,4,14.25
+2024-03-30,Chorizo Criollo,1,11.25
+2024-03-30,Leche,7,12.24
+2024-04-01,Leche,4,12.24
+2024-04-02,Pierna Especial de Pollo,3,18.56
+2024-04-02,Queso,6,19.23
+2024-04-03,Queso,4,17.23
+2024-04-04,Queso,5,17.23
+2024-04-05,Queso,2,17.23
+2024-04-06,Lomo de Res,3,28.56
+2024-04-08,Chorizo Criollo,1,11.25
+2024-04-08,Lomo de Res,1,28.56
+2024-04-08,Pierna Especial de Pollo,1,18.56
+2024-04-09,Costilla de Cerdo,3,14.25
+2024-04-09,Pierna Especial de Pollo,1,18.56
+2024-04-09,Salchicha,2,11.23
+2024-04-10,Leche,8,12.24
+2024-04-11,Costilla de Cerdo,6,14.25
+2024-04-12,Pierna Especial de Pollo,4,18.56
+2024-04-12,Queso,5,17.23
+2024-04-12,Salchicha,4,11.23
+2024-04-13,Chorizo Criollo,5,11.25
+2024-04-14,Queso,5,17.23
+2024-04-15,Queso,4,19.23
+2024-04-16,Leche,8,12.24
+2024-04-16,Queso,1,17.23
+2024-04-19,Queso,5,17.23
+2024-04-20,Queso,7,19.23
+2024-04-21,Queso,1,19.23
+2024-04-21,Salchicha,1,11.23
+2024-04-23,Lomo de Res,2,28.56
+2024-04-23,Queso,2,19.23
+2024-04-24,Salchicha,2,11.23
+2024-04-25,Chorizo Criollo,3,11.25
+2024-04-25,Leche,1,12.24
+2024-04-25,Pierna Especial de Pollo,6,18.56
+2024-04-25,Queso,1,19.23
+2024-04-26,Costilla de Cerdo,5,14.25
+2024-04-27,Costilla de Cerdo,5,14.25
+2024-04-28,Leche,4,12.24
+2024-04-28,Queso,6,19.23
+2024-04-29,Chorizo Criollo,6,11.25
+2024-04-29,Leche,10,12.24
+2024-04-29,Lomo de Res,6,28.56
+2024-04-29,Queso,5,19.23
+2024-04-29,Salchicha,7,11.23
+2024-04-30,Chorizo Criollo,4,11.25
+2024-04-30,Costilla de Cerdo,4,14.25
+2024-04-30,Lomo de Res,4,28.56
+2024-04-30,Pierna Especial de Pollo,6,18.56
+2024-05-01,Leche,2,12.24
+2024-05-02,Queso,10,17.23
+2024-05-03,Leche,7,12.24
+2024-05-04,Leche,4,12.24
+2024-05-04,Queso,11,18.23
+2024-05-05,Costilla de Cerdo,4,14.25
+2024-05-08,Chorizo Criollo,2,11.25
+2024-05-09,Lomo de Res,5,28.56
+2024-05-10,Chorizo Criollo,4,11.25
+2024-05-10,Costilla de Cerdo,4,14.25
+2024-05-10,Lomo de Res,1,28.56
+2024-05-10,Queso,2,18.23
+2024-05-10,Salchicha,2,11.23
+2024-05-11,Costilla de Cerdo,5,14.25
+2024-05-11,Queso,13,17.896666666666665
+2024-05-12,Salchicha,1,11.23
+2024-05-13,Lomo de Res,7,28.56
+2024-05-13,Queso,2,17.23
+2024-05-14,Pierna Especial de Pollo,1,18.56
+2024-05-15,Pierna Especial de Pollo,4,18.56
+2024-05-16,Salchicha,6,11.23
+2024-05-17,Chorizo Criollo,4,11.25
+2024-05-17,Queso,2,19.23
+2024-05-18,Lomo de Res,4,28.56
+2024-05-20,Chorizo Criollo,6,11.25
+2024-05-20,Costilla de Cerdo,4,14.25
+2024-05-20,Queso,1,19.23
+2024-05-21,Costilla de Cerdo,3,14.25
+2024-05-22,Leche,1,12.24
+2024-05-24,Pierna Especial de Pollo,4,18.56
+2024-05-25,Chorizo Criollo,6,11.25
+2024-05-25,Costilla de Cerdo,6,14.25
+2024-05-25,Salchicha,6,11.23
+2024-05-26,Queso,6,19.23
+2024-05-27,Pierna Especial de Pollo,3,18.56
+2024-05-28,Queso,2,17.23
+2024-05-30,Costilla de Cerdo,2,14.25
+2024-05-31,Pierna Especial de Pollo,3,18.56
+2024-05-31,Queso,3,17.23
+2024-06-01,Pierna Especial de Pollo,4,18.56
+2024-06-01,Salchicha,6,11.23
+2024-06-02,Leche,6,12.24
+2024-06-02,Lomo de Res,3,28.56
+2024-06-02,Queso,2,19.23
+2024-06-03,Pierna Especial de Pollo,5,18.56
+2024-06-04,Pierna Especial de Pollo,5,18.56
+2024-06-05,Pierna Especial de Pollo,2,18.56
+2024-06-05,Queso,2,19.23
+2024-06-06,Chorizo Criollo,6,11.25
+2024-06-06,Salchicha,5,11.23
+2024-06-07,Chorizo Criollo,5,11.25
+2024-06-07,Pierna Especial de Pollo,4,18.56
+2024-06-09,Chorizo Criollo,6,11.25
+2024-06-09,Queso,6,17.23
+2024-06-11,Queso,3,19.23
+2024-06-11,Salchicha,2,11.23
+2024-06-12,Costilla de Cerdo,12,14.25
+2024-06-12,Pierna Especial de Pollo,5,18.56
+2024-06-12,Queso,3,17.23
+2024-06-12,Salchicha,1,11.23
+2024-06-13,Queso,2,19.23
+2024-06-13,Salchicha,1,11.23
+2024-06-14,Leche,4,12.24
+2024-06-15,Chorizo Criollo,5,11.25
+2024-06-15,Costilla de Cerdo,3,14.25
+2024-06-15,Lomo de Res,3,28.56
+2024-06-15,Pierna Especial de Pollo,1,18.56
+2024-06-16,Chorizo Criollo,6,11.25
+2024-06-16,Leche,2,12.24
+2024-06-16,Lomo de Res,1,28.56
+2024-06-16,Queso,7,18.23
+2024-06-17,Chorizo Criollo,4,11.25
+2024-06-18,Queso,11,18.23
+2024-06-19,Chorizo Criollo,5,11.25
+2024-06-19,Queso,2,17.23
+2024-06-21,Queso,1,17.23
+2024-06-22,Chorizo Criollo,4,11.25
+2024-06-22,Queso,3,19.23
+2024-06-23,Leche,5,12.24
+2024-06-24,Leche,3,12.24
+2024-06-24,Lomo de Res,6,28.56
+2024-06-25,Leche,6,12.24
+2024-06-25,Queso,6,17.23
+2024-06-26,Queso,5,19.23
+2024-06-27,Pierna Especial de Pollo,5,18.56
+2024-06-27,Queso,6,19.23
+2024-06-27,Salchicha,1,11.23
+2024-06-28,Salchicha,12,11.23
+2024-06-29,Leche,3,12.24
+2024-06-29,Lomo de Res,2,28.56
+2024-06-29,Queso,6,19.23
+2024-06-29,Salchicha,5,11.23
+2024-06-30,Salchicha,4,11.23
+2024-07-01,Costilla de Cerdo,2,14.25
+2024-07-02,Queso,6,19.23
+2024-07-03,Leche,3,12.24
+2024-07-03,Queso,4,17.23
+2024-07-04,Queso,2,19.23
+2024-07-05,Leche,6,12.24
+2024-07-05,Queso,3,17.23
+2024-07-06,Pierna Especial de Pollo,9,18.56
+2024-07-06,Queso,5,19.23
+2024-07-07,Chorizo Criollo,6,11.25
+2024-07-08,Leche,6,12.24
+2024-07-08,Pierna Especial de Pollo,5,18.56
+2024-07-09,Leche,3,12.24
+2024-07-09,Pierna Especial de Pollo,2,18.56
+2024-07-11,Costilla de Cerdo,2,14.25
+2024-07-11,Leche,3,12.24
+2024-07-13,Lomo de Res,6,28.56
+2024-07-15,Lomo de Res,2,28.56
+2024-07-15,Salchicha,3,11.23
+2024-07-16,Queso,2,19.23
+2024-07-17,Pierna Especial de Pollo,1,18.56
+2024-07-17,Salchicha,2,11.23
+2024-07-18,Queso,3,19.23
+2024-07-19,Chorizo Criollo,6,11.25
+2024-07-19,Costilla de Cerdo,1,14.25
+2024-07-19,Pierna Especial de Pollo,6,18.56
+2024-07-19,Queso,4,17.23
+2024-07-19,Salchicha,2,11.23
+2024-07-20,Pierna Especial de Pollo,1,18.56
+2024-07-21,Costilla de Cerdo,3,14.25
+2024-07-21,Lomo de Res,3,28.56
+2024-07-21,Queso,2,19.23
+2024-07-22,Costilla de Cerdo,2,14.25
+2024-07-24,Lomo de Res,6,28.56
+2024-07-25,Pierna Especial de Pollo,6,18.56
+2024-07-26,Pierna Especial de Pollo,1,18.56
+2024-07-26,Salchicha,4,11.23
+2024-07-27,Lomo de Res,9,28.56
+2024-07-29,Queso,3,17.23
+2024-07-30,Chorizo Criollo,6,11.25
+2024-07-30,Leche,9,12.24
+2024-07-30,Lomo de Res,5,28.56
+2024-07-31,Chorizo Criollo,6,11.25
+2024-08-01,Chorizo Criollo,2,11.25
+2024-08-01,Queso,6,18.23
+2024-08-02,Lomo de Res,10,28.56
+2024-08-02,Pierna Especial de Pollo,5,18.56
+2024-08-02,Queso,5,19.23
+2024-08-03,Salchicha,6,11.23
+2024-08-04,Queso,2,17.23
+2024-08-05,Leche,5,12.24
+2024-08-05,Queso,4,17.23
+2024-08-05,Salchicha,4,11.23
+2024-08-06,Pierna Especial de Pollo,6,18.56
+2024-08-06,Queso,2,17.23
+2024-08-08,Pierna Especial de Pollo,1,18.56
+2024-08-09,Lomo de Res,6,28.56
+2024-08-09,Pierna Especial de Pollo,5,18.56
+2024-08-10,Pierna Especial de Pollo,3,18.56
+2024-08-11,Pierna Especial de Pollo,4,18.56
+2024-08-11,Queso,1,17.23
+2024-08-11,Salchicha,5,11.23
+2024-08-12,Chorizo Criollo,6,11.25
+2024-08-12,Costilla de Cerdo,2,14.25
+2024-08-12,Leche,1,12.24
+2024-08-13,Chorizo Criollo,6,11.25
+2024-08-13,Salchicha,1,11.23
+2024-08-14,Lomo de Res,2,28.56
+2024-08-15,Queso,1,17.23
+2024-08-16,Costilla de Cerdo,4,14.25
+2024-08-16,Lomo de Res,6,28.56
+2024-08-16,Queso,7,18.23
+2024-08-17,Costilla de Cerdo,5,14.25
+2024-08-20,Leche,6,12.24
+2024-08-20,Salchicha,6,11.23
+2024-08-21,Queso,6,19.23
+2024-08-23,Lomo de Res,6,28.56
+2024-08-26,Lomo de Res,4,28.56
+2024-08-27,Lomo de Res,3,28.56
+2024-08-29,Chorizo Criollo,6,11.25
+2024-08-29,Lomo de Res,5,28.56
+2024-08-29,Salchicha,3,11.23
+2024-08-30,Queso,3,17.23
+2024-08-31,Costilla de Cerdo,11,14.25
+2024-08-31,Queso,2,17.23
+2024-09-01,Costilla de Cerdo,1,14.25
+2024-09-01,Pierna Especial de Pollo,3,18.56
+2024-09-02,Pierna Especial de Pollo,4,18.56
+2024-09-05,Lomo de Res,4,28.56
+2024-09-05,Queso,1,19.23
+2024-09-06,Leche,2,12.24
+2024-09-06,Queso,5,19.23
+2024-09-07,Lomo de Res,5,28.56
+2024-09-07,Salchicha,5,11.23
+2024-09-08,Costilla de Cerdo,6,14.25
+2024-09-09,Pierna Especial de Pollo,6,18.56
+2024-09-11,Queso,5,19.23
+2024-09-12,Salchicha,3,11.23
+2024-09-15,Leche,5,12.24
+2024-09-16,Queso,6,17.23
+2024-09-17,Lomo de Res,5,28.56
+2024-09-17,Queso,5,17.23
+2024-09-18,Queso,1,17.23
+2024-09-20,Chorizo Criollo,4,11.25
+2024-09-21,Costilla de Cerdo,3,14.25
+2024-09-21,Lomo de Res,3,28.56
+2024-09-21,Salchicha,6,11.23
+2024-09-22,Costilla de Cerdo,5,14.25
+2024-09-22,Lomo de Res,2,28.56
+2024-09-22,Queso,3,17.23
+2024-09-22,Salchicha,1,11.23
+2024-09-23,Costilla de Cerdo,1,14.25
+2024-09-23,Leche,5,12.24
+2024-09-23,Queso,9,18.23
+2024-09-25,Leche,3,12.24
+2024-09-25,Queso,4,19.23
+2024-09-26,Costilla de Cerdo,11,14.25
+2024-09-26,Lomo de Res,3,28.56
+2024-09-26,Pierna Especial de Pollo,1,18.56
+2024-09-27,Chorizo Criollo,3,11.25
+2024-09-27,Costilla de Cerdo,4,14.25
+2024-09-27,Lomo de Res,5,28.56
+2024-09-27,Queso,10,18.23
+2024-09-28,Chorizo Criollo,6,11.25
+2024-09-28,Costilla de Cerdo,12,14.25
+2024-09-29,Lomo de Res,10,28.56
+2024-09-29,Pierna Especial de Pollo,5,18.56
+2024-09-29,Queso,4,17.23
+2024-09-30,Lomo de Res,5,28.56
+2024-09-30,Queso,2,19.23
+2024-09-30,Salchicha,1,11.23
+2024-10-01,Salchicha,3,11.23
+2024-10-02,Costilla de Cerdo,4,14.25
+2024-10-03,Lomo de Res,11,28.56
+2024-10-03,Pierna Especial de Pollo,3,18.56
+2024-10-03,Queso,1,17.23
+2024-10-04,Lomo de Res,5,28.56
+2024-10-05,Leche,4,12.24
+2024-10-06,Lomo de Res,1,28.56
+2024-10-06,Pierna Especial de Pollo,5,18.56
+2024-10-06,Queso,1,19.23
+2024-10-07,Chorizo Criollo,6,11.25
+2024-10-09,Costilla de Cerdo,1,14.25
+2024-10-09,Leche,2,12.24
+2024-10-09,Salchicha,2,11.23
+2024-10-11,Costilla de Cerdo,5,14.25
+2024-10-11,Lomo de Res,3,28.56
+2024-10-11,Queso,2,17.23
+2024-10-14,Pierna Especial de Pollo,2,18.56
+2024-10-15,Queso,1,17.23
+2024-10-15,Salchicha,2,11.23
+2024-10-16,Queso,1,17.23
+2024-10-17,Queso,1,17.23
+2024-10-18,Leche,4,12.24
+2024-10-18,Lomo de Res,3,28.56
+2024-10-19,Lomo de Res,3,28.56
+2024-10-19,Queso,1,19.23
+2024-10-19,Salchicha,3,11.23
+2024-10-20,Chorizo Criollo,4,11.25
+2024-10-20,Costilla de Cerdo,5,14.25
+2024-10-20,Queso,10,17.896666666666665
+2024-10-20,Salchicha,2,11.23
+2024-10-21,Costilla de Cerdo,6,14.25
+2024-10-21,Leche,1,12.24
+2024-10-22,Chorizo Criollo,6,11.25
+2024-10-23,Chorizo Criollo,2,11.25
+2024-10-23,Costilla de Cerdo,5,14.25
+2024-10-25,Leche,3,12.24
+2024-10-25,Queso,2,17.23
+2024-10-26,Leche,2,12.24
+2024-10-26,Salchicha,4,11.23
+2024-10-27,Costilla de Cerdo,8,14.25
+2024-10-27,Queso,3,18.23
+2024-10-28,Costilla de Cerdo,5,14.25
+2024-10-28,Queso,3,17.23
+2024-10-29,Chorizo Criollo,6,11.25
+2024-10-29,Pierna Especial de Pollo,11,18.56
+2024-10-29,Salchicha,2,11.23
+2024-10-30,Leche,2,12.24
+2024-10-30,Queso,6,17.23
+2024-11-01,Leche,3,12.24
+2024-11-03,Chorizo Criollo,5,11.25
+2024-11-03,Pierna Especial de Pollo,1,18.56
+2024-11-04,Chorizo Criollo,9,11.25
+2024-11-05,Costilla de Cerdo,4,14.25
+2024-11-05,Leche,6,12.24
+2024-11-06,Lomo de Res,4,28.56
+2024-11-08,Costilla de Cerdo,3,14.25
+2024-11-09,Leche,3,12.24
+2024-11-10,Lomo de Res,3,28.56
+2024-11-11,Lomo de Res,6,28.56
+2024-11-12,Costilla de Cerdo,1,14.25
+2024-11-12,Leche,6,12.24
+2024-11-12,Queso,6,17.23
+2024-11-13,Pierna Especial de Pollo,4,18.56
+2024-11-13,Queso,5,19.23
+2024-11-14,Chorizo Criollo,5,11.25
+2024-11-15,Lomo de Res,2,28.56
+2024-11-17,Queso,6,19.23
+2024-11-18,Lomo de Res,4,28.56
+2024-11-18,Pierna Especial de Pollo,2,18.56
+2024-11-18,Queso,1,17.23
+2024-11-18,Salchicha,1,11.23
+2024-11-19,Costilla de Cerdo,2,14.25
+2024-11-20,Pierna Especial de Pollo,3,18.56
+2024-11-20,Queso,1,17.23
+2024-11-21,Leche,6,12.24
+2024-11-21,Lomo de Res,1,28.56
+2024-11-21,Salchicha,11,11.23
+2024-11-22,Leche,4,12.24
+2024-11-23,Chorizo Criollo,1,11.25
+2024-11-23,Leche,3,12.24
+2024-11-25,Pierna Especial de Pollo,6,18.56
+2024-11-27,Costilla de Cerdo,5,14.25
+2024-11-28,Chorizo Criollo,6,11.25
+2024-11-28,Leche,4,12.24
+2024-11-28,Queso,2,19.23
+2024-11-29,Queso,2,17.23
+2024-11-30,Chorizo Criollo,6,11.25
+2024-11-30,Leche,1,12.24
+2024-12-01,Costilla de Cerdo,3,14.25
+2024-12-01,Leche,4,12.24
+2024-12-02,Leche,4,12.24
+2024-12-03,Chorizo Criollo,9,11.25
+2024-12-04,Pierna Especial de Pollo,11,18.56
+2024-12-04,Queso,4,19.23
+2024-12-05,Lomo de Res,6,28.56
+2024-12-05,Queso,3,19.23
+2024-12-06,Costilla de Cerdo,1,14.25
+2024-12-06,Queso,2,17.23
+2024-12-06,Salchicha,5,11.23
+2024-12-07,Queso,4,19.23
+2024-12-08,Pierna Especial de Pollo,4,18.56
+2024-12-08,Queso,1,17.23
+2024-12-08,Salchicha,2,11.23
+2024-12-09,Costilla de Cerdo,1,14.25
+2024-12-09,Leche,4,12.24
+2024-12-09,Pierna Especial de Pollo,2,18.56
+2024-12-10,Leche,5,12.24
+2024-12-10,Lomo de Res,6,28.56
+2024-12-10,Queso,4,19.23
+2024-12-10,Salchicha,2,11.23
+2024-12-11,Lomo de Res,6,28.56
+2024-12-12,Lomo de Res,2,28.56
+2024-12-12,Queso,2,17.23
+2024-12-12,Salchicha,6,11.23
+2024-12-13,Pierna Especial de Pollo,6,18.56
+2024-12-14,Queso,4,19.23
+2024-12-15,Queso,5,17.23
+2024-12-16,Chorizo Criollo,4,11.25
+2024-12-17,Chorizo Criollo,2,11.25
+2024-12-17,Lomo de Res,4,28.56
+2024-12-17,Pierna Especial de Pollo,4,18.56
+2024-12-18,Chorizo Criollo,3,11.25
+2024-12-18,Salchicha,6,11.23
+2024-12-19,Queso,6,17.23
+2024-12-19,Salchicha,4,11.23
+2024-12-20,Leche,5,12.24
+2024-12-20,Lomo de Res,8,28.56
+2024-12-21,Costilla de Cerdo,5,14.25
+2024-12-21,Leche,6,12.24
+2024-12-21,Salchicha,4,11.23
+2024-12-22,Costilla de Cerdo,1,14.25
+2024-12-24,Chorizo Criollo,3,11.25
+2024-12-24,Costilla de Cerdo,4,14.25
+2024-12-24,Lomo de Res,1,28.56
+2024-12-24,Queso,7,18.23
+2024-12-24,Salchicha,5,11.23
+2024-12-25,Costilla de Cerdo,6,14.25
+2024-12-25,Queso,6,17.23
+2024-12-26,Leche,3,12.24
+2024-12-26,Pierna Especial de Pollo,4,18.56
+2024-12-26,Salchicha,2,11.23
+2024-12-28,Chorizo Criollo,5,11.25
+2024-12-28,Lomo de Res,4,28.56
+2024-12-28,Pierna Especial de Pollo,5,18.56
+2024-12-29,Lomo de Res,3,28.56
+2024-12-30,Costilla de Cerdo,5,14.25
+2024-12-30,Salchicha,3,11.23

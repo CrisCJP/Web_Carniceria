@@ -9,6 +9,7 @@ const fs = require('fs'); // Asegúrate de importar el módulo fs
 const { exec } = require('child_process'); // Importa exec desde child_process
 const cron = require('node-cron');
 
+
 //Objects for calling functions
 const app = express();
 const multer = require('multer');
@@ -27,21 +28,41 @@ app.use(session({
 
 app.use(cors());
 
+// Middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Vistas
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
 /*const config = {
     server: 'DESKTOP-DEUHLCS',
 */
 const config = {
-    server: 'localhost',
+    server: 'serverbutchershop.database.windows.net',
     database: 'CarniceriaLupita',
     user: 'user_db',
-    password: '12345',
-    port: 1433,
+    password: 'iejr6225,',
+    port: 1433, // Puerto estándar de SQL Server
 
     options: {
-        trustServerCertificate: true,
-        encrypt: true,
-    }
+        encrypt: true,              // Requerido en Azure
+        trustServerCertificate: false, // No aceptar certificados no confiables
+    },
+    connectionTimeout: 30000 // 30 segundos
 };
+
+
+const { loginHandler, prediccionesHandler } = require('./handlers/loginHandler');
+const { progressHandler } = require('./handlers/progressHandler');
+
+// Rutas directas
+app.post('/login', loginHandler);                     // procesar login
+app.get('/predicciones', prediccionesHandler);        // devolver predicciones
+app.get('/progress', progressHandler);                // SSE progreso
+
 
 // Global variables
 let user_temp, historyInvoice_temp, mostselledproducts_temp, detailsdashboard_temp, countproducts_temp, countcategories_temp;
@@ -51,7 +72,7 @@ let array_sale = [];
 
 
 //const router_user = require('./routes/routes_user');
-
+const { getVentasPorProducto } = require('./model/dashboard_models/ventas_model');
 //CALL THE CONTROLLERS:::::::::::::::::::::::
 // Call the controller "loginuser_controller"
 const { loginUser } = require('./controller/login_controllers/loginuser_controller');
@@ -172,17 +193,44 @@ app.get("/login", noCache, (req, res) => {
 });
 
 //Path to render 'index.ejs'
+// Path to render 'index.ejs'
 app.get("/index", upload.none(), async function (req, res) {
-    if (typeof user_temp != undefined && user_temp != null && user_temp != '') {
-        historyInvoice_temp = await getInvoicesByUserId(user_temp.IdUsuario);
-        mostselledproducts_temp = await getSelledProducts(user_temp.IdUsuario);
-        detailsdashboard_temp = await getDetailsDashboard(user_temp.IdUsuario);
-        countproducts_temp = await getCountProductCategories();
-        countcategories_temp = await getCountCategories();
+  if (typeof user_temp !== 'undefined' && user_temp) {
+    historyInvoice_temp = await getInvoicesByUserId(user_temp.IdUsuario);
+    mostselledproducts_temp = await getSelledProducts(user_temp.IdUsuario);
+    detailsdashboard_temp = await getDetailsDashboard(user_temp.IdUsuario);
+    countproducts_temp = await getCountProductCategories();
+    countcategories_temp = await getCountCategories();
+  }
 
-    }
-    res.render('index', { user: user_temp, historyInvoice: historyInvoice_temp, selledProduct: mostselledproducts_temp, detailsDashboard: detailsdashboard_temp, countProduct: countproducts_temp, countCategories: countcategories_temp });
+  let entrenando = false;
+  let productos_hoy = [];
+  let productos_semana = [];
+
+  try {
+    const r = await fetch(`${req.protocol}://${req.get('host')}/predicciones`);
+    const pred = await r.json();
+    productos_hoy = pred.productos_hoy || [];
+    productos_semana = pred.productos_semana || [];
+    entrenando = pred.entrenando ?? false;
+  } catch (e) {
+    console.error('Error obteniendo predicciones para index:', e);
+  }
+
+  res.render('index', {
+    user: user_temp,
+    historyInvoice: historyInvoice_temp,
+    selledProduct: mostselledproducts_temp,
+    detailsDashboard: detailsdashboard_temp,
+    countProduct: countproducts_temp,
+    countCategories: countcategories_temp,
+    entrenando,
+    productos_hoy,
+    productos_semana
+  });
 });
+
+
 
 //Path to render 'vacio.ejs'
 app.get("/vacio", function (req, res) {
@@ -255,6 +303,19 @@ app.get('/arqueo', async (req, res) => {
 app.get('/reporte_arqueo', async (req, res) => {
     res.render('reporte_arqueo', { user: user_temp });
 });
+
+app.get('/api/comparacion', async (req, res) => {
+  const { producto, inicio, fin } = req.query;
+  try {
+    const ventas = await getVentasPorProducto(producto, inicio, fin); 
+    // ventas = [{ fecha, producto, cantidadVendida }, ...]
+    res.json(ventas);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'No se pudieron cargar las ventas reales' });
+  }
+});
+
 
 //:::Middleware:::
 app.use(express.static("public"));
@@ -1042,7 +1103,6 @@ cron.schedule('15 18 * * *', () => {
     realizarRespaldo();
 });
 */
-
 
 
 

@@ -2,17 +2,36 @@
 const { sql, config } = require('../connection_model');
 // Get User and Password
 const getUserById = async (username, password) => {
-    let pool;
-    try {
-        pool = await sql.connect(config);
-        const result = await pool.request()
-            .input('NameUse', sql.VarChar, username)
-            .input('Password', sql.VarChar, password)
-            .query("select IdUsuario, Correo, Nombre, Apellido, idrol, id_sucursal, convert(varchar(100), decryptbypassphrase('passwordCVB',Password_Encript)) as Contraseña_Desencryptada from Usuario where Correo LIKE @NameUse AND convert(varchar(100), decryptbypassphrase('passwordCVB',Password_Encript)) = @Password AND Estado = 'Activo'");
-        return result.recordset[0];
-    } finally {
-        pool.close();
+  let pool;
+  try {
+    // Abrir conexión
+    pool = await sql.connect(config);
+
+    // Ejecutar query
+    const result = await pool.request()
+      .input('NameUse', sql.VarChar, username)
+      .input('Password', sql.VarChar, password)
+      .query(`
+        SELECT IdUsuario, Correo, Nombre, Apellido, idrol, id_sucursal,
+               CONVERT(varchar(100), DECRYPTBYPASSPHRASE('passwordCVB', Password_Encript)) AS Contraseña_Desencryptada
+        FROM Usuario
+        WHERE Correo LIKE @NameUse
+          AND CONVERT(varchar(100), DECRYPTBYPASSPHRASE('passwordCVB', Password_Encript)) = @Password
+          AND Estado = 'Activo'
+      `);
+
+    // Retornar primer registro
+    return result.recordset[0] || null;
+
+  } catch (err) {
+    console.error('Error en getUserById:', err);
+    return null;
+  } finally {
+    // 👇 Cerrar conexión solo si existe
+    if (pool && typeof pool.close === 'function') {
+      await pool.close();
     }
+  }
 };
 
 

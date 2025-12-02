@@ -22,6 +22,15 @@
 
 <body id="page-top">
 
+    <!-- Modal de carga IA -->
+    <div id="loadingModal" style="position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.35); z-index:9999;">
+    <div style="background:#fff; padding:20px; border-radius:8px; width:320px; text-align:center;">
+        <div class="spinner" style="margin:10px auto; width:40px; height:40px; border:4px solid #ddd; border-top-color:#09f; border-radius:50%; animation:spin 1s linear infinite;"></div>
+        <p id="progressText" style="margin-top:10px; font-weight:600;">Cargando modelo... 0%</p>
+    </div>
+    </div>
+
+
     <!-- Page Wrapper -->
     <div id="wrapper">
 
@@ -354,12 +363,58 @@
                         <!-- Area Chart - Ventas de los ultimos 7 días -->
                         <div class="col-xl-8 col-lg-7">
                             <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
+                                <!-- Card - Ventas del día -->
+                                <div class="card shadow mb-4">
                                 <div class="card-header py-3 bg-second-primary">
-                                    <h6 class="m-0 font-weight-bold text-white">Ventas del dia</h6>
+                                    <h6 class="m-0 font-weight-bold text-white">Ventas del día</h6>
                                 </div>
-                                <!-- Card Body -->
+
                                 <div class="card-body">
+                                    <div class="chart-area" style="height: 350px !important;">
+                                    <table class="table table-sm table-striped" id="tbventa">
+                                        <thead>
+                                        <tr class="headers_styles">
+                                            <th>Producto</th>
+                                            <th>Proyección HOY (libras)</th>
+                                            <th>Acción</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <% if (!entrenando && productos_hoy && productos_hoy.length > 0) { %>
+                                            <% productos_hoy.forEach(function(prod, index) { %>
+                                            <tr class="dataenvoice_styles">
+                                                <td><%= prod.ProductoNombre %></td>
+                                                <td><%= Number.parseFloat(prod.VentasHoy || 0).toFixed(2) %></td>
+                                                <td>
+                                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalHoy<%= index %>">
+                                                    Ver detalles
+                                                </button>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                        <% } else { %>
+                                            <tr>
+                                            <td colspan="3">No hay proyecciones disponibles para hoy</td>
+                                            </tr>
+                                        <% } %>
+                                        </tbody>
+                                    </table>
+
+                                    <div class="mt-3" id="totalHoy">
+                                        <% if (!entrenando && productos_hoy && productos_hoy.length > 0) { %>
+                                        <strong>Total proyectado HOY:</strong>
+                                        <%= productos_hoy.reduce((sum, p) => sum + Number.parseFloat(p.VentasHoy || 0), 0).toFixed(2) %> libras
+                                        <% } else { %>
+                                        <strong>Total proyectado HOY:</strong> 0 libras
+                                        <% } %>
+                                    </div>
+                                    </div>
+                                </div>
+                                </div>
+
+                                
+                                <!-- Card Body -->
+                                <!--<div class="card-body">
                                     <div class="chart-area" style="height: 350px !important;">
 
                                         <% if(historyInvoice.length > 0) { %>
@@ -395,25 +450,42 @@
                                         <% } %>
 
                                     </div>
-                                </div>
+                                </div>-->
                             </div>
                         </div>
 
-                        <!-- Pie Chart - Productos más vendidos-->
+                        <!-- Card - Proyecciones por semana -->
                         <div class="col-xl-4 col-lg-5">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div class="card-header py-3 bg-second-primary">
-                                    <h6 class="m-0 font-weight-bold text-white">Productos más vendidos</h6>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="chart-pie" style="height: 350px !important ;">
-                                        <canvas id="charProductos"></canvas>
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 bg-second-primary d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-white">Proyecciones por semana</h6>
+                            </div>
+
+                            <div class="card-body">
+                            <!-- UL con ID para que JS lo actualice -->
+                            <ul id="listaSemanas" class="list-group list-group-flush">
+                                <% if (typeof semanasProyectadas !== 'undefined' && semanasProyectadas.length > 0) { %>
+                                <% semanasProyectadas.forEach(function(semana, index) { %>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong><%= semana.semana %></strong><br>
+                                        <small>Total proyectado: <%= semana.totalLibras.toFixed(2) %> lbs</small>
                                     </div>
-                                </div>
+                                    </li>
+                                <% }) %>
+                                <% } else { %>
+                                <li class="list-group-item">No hay proyecciones semanales disponibles</li>
+                                <% } %>
+                            </ul>
+
+                            <!-- Contenedor para total semanal que usa el JS -->
+                            <div class="mt-3" id="totalSemana">Total proyectado SEMANA: 0 libras</div>
                             </div>
                         </div>
+                        </div>
+
+
+
                     </div>
 
                     <!--  Modal-->
@@ -536,6 +608,367 @@
     </div>
     <!-- End of Page Wrapper -->
 
+    <!-- Modales personalizados para cada producto del día -->
+    <% if (!entrenando && productos_hoy && productos_hoy.length > 0) { %>
+    <% productos_hoy.forEach(function(prod, index) { %>
+        <div id="modalHoy<%= index %>" class="modal_efectivo">
+        <div class="modal-content_efectivo">
+            <span class="close_changedolar" onclick="cerrarModalHoy(<%= index %>)">&times;</span>
+            <p><strong><%= prod.ProductoNombre %></strong> - Proyección HOY: <%= Number.parseFloat(prod.VentasHoy || 0).toFixed(2) %> lbs</p>
+
+            <div class="form-group col-sm-6">
+            <label for="fechaInicioHoy<%= index %>">Fecha inicio</label>
+            <input type="date" id="fechaInicioHoy<%= index %>" class="form-control form-control-sm">
+            </div>
+
+            <div class="form-group col-sm-6">
+            <label for="fechaFinHoy<%= index %>">Fecha fin</label>
+            <input type="date" id="fechaFinHoy<%= index %>" class="form-control form-control-sm">
+            </div>
+
+            <div class="form-group col-sm-6 mt-3">
+            <button class="btn btn-success btn-sm btn-block"
+                onclick="compararVentasHoy(<%= index %>, '<%= prod.ProductoNombre %>', <%= Number.parseFloat(prod.VentasHoy || 0) %>)">
+                Mostrar comparación
+            </button>
+            </div>
+
+            <ul id="resultadoHoy<%= index %>" class="list-group mt-3"></ul>
+        </div>
+        </div>
+    <% }) %>
+    <% } %>
+
+
+    <!-- Modales dinámicos -->
+    <% if (typeof semanasProyectadas !== 'undefined' && semanasProyectadas.length > 0) { %>
+    <% semanasProyectadas.forEach(function(semana, index) { %>
+        <div class="modal fade" id="modalSemana<%= index %>" tabindex="-1" aria-labelledby="modalSemanaLabel<%= index %>" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalSemanaLabel<%= index %>"><%= semana.semana %> - Detalles</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <canvas id="chartSemana<%= index %>"></canvas>
+            </div>
+            </div>
+        </div>
+        </div>
+
+        <script>
+        const labelsSemana<%= index %> = <%- JSON.stringify(semana.productos.map(p => p.ProductoNombre)) %>;
+        const dataSemana<%= index %> = <%- JSON.stringify(
+            semana.productos
+            .sort((a,b) => b.VentasSemana - a.VentasSemana) // orden descendente
+            .map(p => Number.parseFloat(p.VentasSemana || 0))
+        ) %>;
+
+        const ctxSemana<%= index %> = document.getElementById('chartSemana<%= index %>').getContext('2d');
+        new Chart(ctxSemana<%= index %>, {
+            type: 'bar',
+            data: {
+            labels: labelsSemana<%= index %>,
+            datasets: [{
+                label: 'Proyección (libras)',
+                data: dataSemana<%= index %>,
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+            },
+            options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                title: { display: true, text: 'Productos más proyectados' }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+            }
+        });
+        </script>
+    <% }) %>
+    <% } %>
+
+    <script>
+        (function () {
+        // --- Verificar soporte SSE ---
+        if (typeof EventSource === 'undefined') {
+            console.warn('EventSource no está disponible en este navegador.');
+        }
+
+        // --- Conexión SSE principal ---
+        const evtSource = new EventSource('/progress');
+        console.log("🔌 Conectado al SSE /progress");
+
+        let modalVisible = false;
+        let completed = false;
+
+        function finalizarProceso() {
+            if (completed) return;
+            completed = true;
+            console.log('✅ Finalizando proceso: cerrando modal y actualizando dashboard');
+
+            const loadingModal = document.getElementById('loadingModal');
+            if (loadingModal) loadingModal.style.display = 'none';
+
+            try { evtSource.close(); } catch (e) { console.warn('Error cerrando SSE', e); }
+
+            modalVisible = false;
+
+            fetch('/predicciones')
+            .then(res => res.json())
+            .then(data => {
+                // Aceptar distintos nombres que pueda devolver el backend
+                const hoy = data.productos_hoy || data.hoy || [];
+                const semanas = data.semanasProyectadas || data.productos_semana || data.semanas || [];
+
+                // Llamadas defensivas: sólo si las funciones están definidas
+                if (typeof window.renderProyeccionesDia === 'function') {
+                window.renderProyeccionesDia(hoy);
+                }
+                if (typeof window.renderProyeccionesSemana === 'function') {
+                window.renderProyeccionesSemana(semanas);
+                }
+            })
+            .catch(err => console.error('❌ Error al cargar proyecciones:', err));
+        }
+
+        evtSource.onmessage = function (event) {
+            const msg = (event.data || '').trim();
+            console.log("📩 Mensaje SSE recibido:", msg);
+
+            // PROGRESO
+            if (msg.startsWith('PROGRESO:')) {
+            const porcentaje = msg.slice('PROGRESO:'.length).trim();
+            const progressText = document.getElementById('progressText');
+            if (progressText) progressText.innerText = `Estamos analizando tus ventas (${porcentaje})...`;
+
+            if (!modalVisible) {
+                const loadingModal = document.getElementById('loadingModal');
+                if (loadingModal) loadingModal.style.display = 'flex';
+                modalVisible = true;
+            }
+
+            if (!completed && porcentaje === '100%') finalizarProceso();
+            }
+
+            // ESTADO
+            if (msg.startsWith('ESTADO:')) {
+            const estado = msg.slice('ESTADO:'.length).trim();
+            if (estado.includes("YA_ENTRENADO")) finalizarProceso();
+
+            let friendlyMessage = "Estamos analizando tus ventas anteriores...";
+            if (estado.includes("Entrenando modelo diario")) friendlyMessage = "Preparando predicciones diarias de tus productos...";
+            else if (estado.includes("Entrenando modelo semanal")) friendlyMessage = "Calculando tendencias semanales de tu negocio...";
+            else if (estado.includes("global")) friendlyMessage = "Generando visión general de toda la carnicería...";
+
+            const progressText = document.getElementById('progressText');
+            if (progressText) progressText.innerText = friendlyMessage;
+
+            if (!modalVisible) {
+                const loadingModal = document.getElementById('loadingModal');
+                if (loadingModal) loadingModal.style.display = 'flex';
+                modalVisible = true;
+            }
+            }
+
+            // ERROR
+            if (msg.startsWith('ERROR:')) {
+            const progressText = document.getElementById('progressText');
+            if (progressText) progressText.innerText = '🕐Nos está tomando un tiempo';
+            if (!modalVisible) {
+                const loadingModal = document.getElementById('loadingModal');
+                if (loadingModal) loadingModal.style.display = 'flex';
+                modalVisible = true;
+            }
+            }
+        };
+
+        // --- Funciones de modal (si no existen en otro script) ---
+        window.abrirModalHoy = window.abrirModalHoy || function (index) {
+            const el = document.getElementById('modalHoy' + index);
+            if (el) el.style.display = 'block';
+            else console.warn('abrirModalHoy: modal no encontrado modalHoy' + index);
+        };
+
+        window.cerrarModalHoy = window.cerrarModalHoy || function (index) {
+            const el = document.getElementById('modalHoy' + index);
+            if (el) el.style.display = 'none';
+            else console.warn('cerrarModalHoy: modal no encontrado modalHoy' + index);
+        };
+
+        // --- Render Día (expuesto globalmente) ---
+        function renderProyeccionesDia(productos) {
+            const tbody = document.querySelector('#tbventa tbody');
+            const totalHoy = document.getElementById('totalHoy');
+            if (!tbody || !totalHoy) {
+            console.warn('renderProyeccionesDia: faltan #tbventa tbody o #totalHoy en el DOM.');
+            return;
+            }
+
+            tbody.innerHTML = '';
+            let total = 0;
+
+            (Array.isArray(productos) ? productos : []).forEach((prod, index) => {
+            const proy = Number.parseFloat(prod?.VentasHoy ?? 0);
+            total += isNaN(proy) ? 0 : proy;
+
+            const row = `
+                <tr>
+                <td>${prod?.ProductoNombre ?? '—'}</td>
+                <td>${(isNaN(proy) ? 0 : proy).toFixed(2)}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="abrirModalHoy(${index})">
+                    Ver detalles
+                    </button>
+                </td>
+                </tr>`;
+            tbody.insertAdjacentHTML('beforeend', row);
+            });
+
+            totalHoy.innerText = `Total proyectado HOY: ${total.toFixed(2)} libras`;
+        }
+
+        // --- Render Semana (acepta varios formatos) ---
+        function renderProyeccionesSemana(data) {
+            const ul = document.getElementById('listaSemanas');
+            const totalEl = document.getElementById('totalSemana');
+            if (!ul || !totalEl) {
+            console.warn('renderProyeccionesSemana: faltan #listaSemanas o #totalSemana en el DOM.');
+            return;
+            }
+
+            ul.innerHTML = '';
+
+            if (!Array.isArray(data) || data.length === 0) {
+            ul.innerHTML = '<li class="list-group-item">No hay proyecciones semanales disponibles</li>';
+            totalEl.innerText = 'Total proyectado SEMANA: 0 libras';
+            return;
+            }
+
+            const first = data[0];
+            let total = 0;
+
+            if (first && Object.prototype.hasOwnProperty.call(first, 'semana')) {
+            // Formato: [{ semana, totalLibras }, ...]
+            data.forEach(s => {
+                const val = Number.parseFloat(s?.totalLibras ?? 0);
+                total += isNaN(val) ? 0 : val;
+                ul.insertAdjacentHTML('beforeend', `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                    <strong>${s?.semana ?? '—'}</strong><br>
+                    <small>Total proyectado: ${(isNaN(val) ? 0 : val).toFixed(2)} lbs</small>
+                    </div>
+                </li>
+                `);
+            });
+            } else if (first && (Object.prototype.hasOwnProperty.call(first, 'ProductoNombre') || Object.prototype.hasOwnProperty.call(first, 'VentasSemana'))) {
+            // Formato: [{ ProductoNombre, VentasSemana }, ...]
+            data.forEach(p => {
+                const val = Number.parseFloat(p?.VentasSemana ?? 0);
+                total += isNaN(val) ? 0 : val;
+                ul.insertAdjacentHTML('beforeend', `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                    <strong>${p?.ProductoNombre ?? '—'}</strong><br>
+                    <small>Proyección semanal: ${(isNaN(val) ? 0 : val).toFixed(2)} lbs</small>
+                    </div>
+                </li>
+                `);
+            });
+            } else {
+            // Formato desconocido: mostrar JSON legible
+            data.forEach(item => {
+                ul.insertAdjacentHTML('beforeend', `<li class="list-group-item"><pre style="margin:0">${JSON.stringify(item)}</pre></li>`);
+            });
+            }
+
+            totalEl.innerText = `Total proyectado SEMANA: ${total.toFixed(2)} libras`;
+        }
+
+        // Exponer funciones al ámbito global
+        window.renderProyeccionesDia = renderProyeccionesDia;
+        window.renderProyeccionesSemana = renderProyeccionesSemana;
+
+        // --- Inicialización segura: pedir predicciones al cargar si la card existe ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Sólo pedir si la vista tiene los elementos donde pintar
+            const hasDia = document.querySelector('#tbventa tbody') && document.getElementById('totalHoy');
+            const hasSemana = document.getElementById('listaSemanas') && document.getElementById('totalSemana');
+
+            // Si no hay ninguno, no hacemos fetch inicial (evita errores en otras páginas)
+            if (!hasDia && !hasSemana) return;
+
+            fetch('/predicciones')
+            .then(r => r.json())
+            .then(data => {
+                if (hasDia) window.renderProyeccionesDia(data.productos_hoy || data.hoy || []);
+                if (hasSemana) {
+                const semanas = data.semanasProyectadas || data.productos_semana || data.semanas || [];
+                window.renderProyeccionesSemana(semanas);
+                }
+            })
+            .catch(err => console.error('❌ Error al cargar proyecciones iniciales:', err));
+        });
+        })();
+    </script>
+
+
+
+    <script>
+        function abrirModalHoy(index) {
+            document.getElementById('modalHoy' + index).style.display = 'block';
+        }
+
+        function cerrarModalHoy(index) {
+            document.getElementById('modalHoy' + index).style.display = 'none';
+        }
+    </script>
+
+
+
+    <script>
+    async function compararVentasHoy(index, producto, proyeccionHoy) {
+        const inicio = document.getElementById('fechaInicioHoy' + index).value;
+        const fin = document.getElementById('fechaFinHoy' + index).value;
+        const resultado = document.getElementById('resultadoHoy' + index);
+        resultado.innerHTML = '<li class="list-group-item text-center">Cargando comparación...</li>';
+
+        try {
+        const res = await fetch(`/api/comparacion?producto=${encodeURIComponent(producto)}&inicio=${inicio}&fin=${fin}`);
+        const data = await res.json();
+
+        if (!data || data.length === 0) {
+            resultado.innerHTML = '<li class="list-group-item">No hay datos disponibles en ese rango</li>';
+            return;
+        }
+
+        resultado.innerHTML = '';
+        data.forEach(item => {
+            const tasa = proyeccionHoy > 0 ? ((item.cantidadVendida / proyeccionHoy) * 100).toFixed(2) : '0.00';
+            resultado.innerHTML += `
+            <li class="list-group-item">
+                <strong>${item.fecha}</strong><br>
+                Producto: ${item.producto}<br>
+                Vendido: ${item.cantidadVendida.toFixed(2)} lbs<br>
+                Crecimiento: ${tasa}%
+            </li>
+            `;
+        });
+        } catch (err) {
+        resultado.innerHTML = '<li class="list-group-item text-danger">Error al cargar comparación</li>';
+        console.error(err);
+        }
+    }
+    </script>
+
+
+
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -553,9 +986,9 @@
     <!-- <script src="ajax/ajax_cajero_activity.js"></script> -->
     <script src="vendor/chart.js/Chart.min.js"></script>
     <script src="ajax/ajax_logout.js"></script>
-    <script src="ajax/ajax_index_viewdetails.js"></script>
+    <!-- <script src="ajax/ajax_index_viewdetails.js"></script> -->
     <script src="ajax/jspdf.min.js"></script>
-    <script src="ajax/ajax_change_dolar.js"></script>
+    <!--<script src="ajax/ajax_change_dolar.js"></script>-->
     
 
     <!-- SOLO ES DE EJEMPLO - IGNORAR 
@@ -598,10 +1031,32 @@
         });
     </script>
 
-<script src="ajax/ajax_notifiet.js"></script>
+<!--<script src="ajax/ajax_notifiet.js"></script>-->
 <script src="ajax/ajax_restaurarbd_butt.js"></script>
 
 <script src="ajax/ajax_manual.js"></script>
+
+<script>
+  function probarProgressXHR() {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", "/progress", true);
+
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 3) { // mientras la conexión está abierta
+        console.log("📩 [XHR parcial] Recibido:", xhr.responseText);
+      }
+      if (xhr.readyState === 4) { // cuando termina
+        console.log("✅ [XHR completo] Respuesta final:", xhr.responseText);
+      }
+    };
+
+    xhr.send();
+  }
+
+  // Ejecutar la prueba al cargar la página
+  probarProgressXHR();
+</script>
+
 
 </body>
 
