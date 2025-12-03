@@ -20,7 +20,7 @@ async function getVentasPorProducto(producto, inicio, fin) {
           CONVERT(varchar, f.FechaFactura, 23) AS fecha,
           p.NombreProducto AS producto,
           SUM(d.Cantidad) AS cantidadVendida
-        FROM DetalleFactura d
+        FROM DetallesFactura d
         INNER JOIN Factura f ON d.IdFactura = f.IdFactura
         INNER JOIN Producto p ON d.IdProducto = p.IdProducto
         WHERE p.NombreProducto = @producto

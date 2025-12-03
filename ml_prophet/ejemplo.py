@@ -1,18 +1,29 @@
 import pandas as pd
-from sklearn.metrics import mean_absolute_error, mean_squared_error
+from sklearn.metrics import mean_absolute_error, mean_squared_error, root_mean_squared_error
 import pyodbc
 from prophet import Prophet
 import plotly
 
 # Conexión a la base en la nube (Azure SQL)
+# conn = pyodbc.connect(
+#     "Driver={ODBC Driver 17 for SQL Server};"
+#     "Server=serverbutchershop.database.windows.net;"
+#     "Database=CarniceriaLupita;"
+#     "Uid=user_db;"
+#     "Pwd=iejr6225,;"  
+#     "Encrypt=yes;"
+#     "TrustServerCertificate=yes;"
+#     "Connection Timeout=30;"
+# )
+
 conn = pyodbc.connect(
     "Driver={ODBC Driver 17 for SQL Server};"
-    "Server=serverbutchershop.database.windows.net;"
+    "Server=localhost;"
     "Database=CarniceriaLupita;"
     "Uid=user_db;"
-    "Pwd=iejr6225,;"  
+    "Pwd=12345;"
     "Encrypt=yes;"
-    "TrustServerCertificate=yes;"
+    "TrustServerCertificate=no;"
     "Connection Timeout=30;"
 )
 
@@ -22,7 +33,8 @@ conn = pyodbc.connect(
 # -----------------------------
 def calcular_metricas(y_true, y_pred):
     mae = mean_absolute_error(y_true, y_pred)
-    rmse = mean_squared_error(y_true, y_pred, squared=False)
+    # rmse = mean_squared_error(y_true, y_pred, squared=False)
+    rmse = root_mean_squared_error(y_true, y_pred)
     mape = (abs((y_true - y_pred) / y_true).mean()) * 100
     return mae, rmse, mape
 

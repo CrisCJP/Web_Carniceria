@@ -9,6 +9,7 @@ const fs = require('fs'); // Asegúrate de importar el módulo fs
 const { exec } = require('child_process'); // Importa exec desde child_process
 const cron = require('node-cron');
 
+const axios = require('axios'); // Necesario para llamar al Microservicio Flask
 
 //Objects for calling functions
 const app = express();
@@ -40,18 +41,32 @@ app.set('views', path.join(__dirname, 'views'));
 /*const config = {
     server: 'DESKTOP-DEUHLCS',
 */
+// const config = {
+//     server: 'serverbutchershop.database.windows.net',
+//     database: 'CarniceriaLupita',
+//     user: 'user_db',
+//     password: 'iejr6225,',
+//     port: 1433, // Puerto estándar de SQL Server
+
+//     options: {
+//         encrypt: true,              // Requerido en Azure
+//         trustServerCertificate: false, // No aceptar certificados no confiables
+//     },
+//     connectionTimeout: 30000 // 30 segundos
+// };
+
 const config = {
-    server: 'serverbutchershop.database.windows.net',
+    server: 'localhost',
     database: 'CarniceriaLupita',
     user: 'user_db',
-    password: 'iejr6225,',
+    password: '12345',
     port: 1433, // Puerto estándar de SQL Server
 
     options: {
-        encrypt: true,              // Requerido en Azure
-        trustServerCertificate: false, // No aceptar certificados no confiables
+        trustServerCertificate: true,
+        encrypt: true,
     },
-    connectionTimeout: 30000 // 30 segundos
+    // connectionTimeout: 30000 // 30 segundos
 };
 
 
@@ -194,43 +209,124 @@ app.get("/login", noCache, (req, res) => {
 
 //Path to render 'index.ejs'
 // Path to render 'index.ejs'
+// app.get("/index", upload.none(), async function (req, res) {
+//   if (typeof user_temp !== 'undefined' && user_temp) {
+//     historyInvoice_temp = await getInvoicesByUserId(user_temp.IdUsuario);
+//     mostselledproducts_temp = await getSelledProducts(user_temp.IdUsuario);
+//     detailsdashboard_temp = await getDetailsDashboard(user_temp.IdUsuario);
+//     countproducts_temp = await getCountProductCategories();
+//     countcategories_temp = await getCountCategories();
+//   }
+
+//   let entrenando = false;
+//   let productos_hoy = [];
+//   let productos_semana = [];
+
+//   try {
+//     const r = await fetch(`${req.protocol}://${req.get('host')}/predicciones`);
+//     const pred = await r.json();
+//     productos_hoy = pred.productos_hoy || [];
+//     productos_semana = pred.productos_semana || [];
+//     entrenando = pred.entrenando ?? false;
+//   } catch (e) {
+//     console.error('Error obteniendo predicciones para index:', e);
+//   }
+
+//   res.render('index', {
+//     user: user_temp,
+//     historyInvoice: historyInvoice_temp,
+//     selledProduct: mostselledproducts_temp,
+//     detailsDashboard: detailsdashboard_temp,
+//     countProduct: countproducts_temp,
+//     countCategories: countcategories_temp,
+//     entrenando,
+//     productos_hoy,
+//     productos_semana
+//   });
+// });
+
+// index.js (Localiza la función app.get("/index", ...) y reemplaza el bloque try/catch)
+
 app.get("/index", upload.none(), async function (req, res) {
-  if (typeof user_temp !== 'undefined' && user_temp) {
-    historyInvoice_temp = await getInvoicesByUserId(user_temp.IdUsuario);
-    mostselledproducts_temp = await getSelledProducts(user_temp.IdUsuario);
-    detailsdashboard_temp = await getDetailsDashboard(user_temp.IdUsuario);
-    countproducts_temp = await getCountProductCategories();
-    countcategories_temp = await getCountCategories();
-  }
+    if (typeof(user_temp) != 'undefined' && user_temp) {
+        // ... (Líneas de obtención de datos existentes) ...
+        historyInvoice_temp = await getInvoicesByUserid(user_temp.IdUsuario);
+        mostselledproducts_temp = await getSelledProducts(user_temp.IdUsuario);
+        detailsdashboard_temp = await getDetailsDashboard(user_temp.IdUsuario);
+        countproducts_temp = await getCountProductCategories();
+        countcategories_temp = await getCountCategories();
+    }
 
-  let entrenando = false;
-  let productos_hoy = [];
-  let productos_semana = [];
+    // --- NUEVA LÓGICA DE PREDICCIÓN CON EL MICROSERVICIO (MLOps) ---
+    const PYTHON_API_URL = 'http://127.0.0.1:5000/api/v1/predicciones/semanal'; // Asegúrate de que este puerto coincida con tu Flask
+    
+    let datosIA = null;
+    let errorIA = null;
 
-  try {
-    const r = await fetch(`${req.protocol}://${req.get('host')}/predicciones`);
-    const pred = await r.json();
-    productos_hoy = pred.productos_hoy || [];
-    productos_semana = pred.productos_semana || [];
-    entrenando = pred.entrenando ?? false;
-  } catch (e) {
-    console.error('Error obteniendo predicciones para index:', e);
-  }
+    try {
+        const response = await axios.get(PYTHON_API_URL);
+        datosIA = response.data.data; // Contiene Proyecciones, Métricas y Promedio Histórico
+    } catch (e) {
+        // Manejo de error si el Microservicio Flask está caído o el JSON no existe
+        console.error("Error al obtener proyecciones desde la IA (Microservicio Python):", e.message);
+        errorIA = "Servicio de Proyecciones Inactivo (Flask down).";
+    }
 
-  res.render('index', {
-    user: user_temp,
-    historyInvoice: historyInvoice_temp,
-    selledProduct: mostselledproducts_temp,
-    detailsDashboard: detailsdashboard_temp,
-    countProduct: countproducts_temp,
-    countCategories: countcategories_temp,
-    entrenando,
-    productos_hoy,
-    productos_semana
-  });
+    // --- 2. Procesamiento de Datos para la Vista (Dashboard) ---
+    
+    let proyeccionSemanaActual = null;
+    let mensajeComparacion = null;
+    let precisionModelo = null;
+    let historicoSemanal = [];
+
+    if (datosIA && datosIA.Proyecciones_Semanales && datosIA.Proyecciones_Semanales.length > 0) {
+        
+        proyeccionSemanaActual = datosIA.Proyecciones_Semanales[0]; // La primera semana proyectada
+        const promedioHistorico = datosIA.Comparacion_Historica.Venta_Promedio_Semanal_Libras;
+        const totalProyectado = proyeccionSemanaActual.Total_Proyectado_Libras;
+
+        // ¡NUEVA EXTRACCIÓN! Asegúrate de que existe el campo en el JSON
+        historicoSemanal = datosIA.Comparacion_Historica.Historico_Semanal || [];
+        
+        // 1. Cálculo de Comparación Histórica (Requisito Académico)
+        const diferencia = totalProyectado - promedioHistorico;
+        const porcentajeCambio = ((diferencia / promedioHistorico) * 100).toFixed(2);
+        
+        if (diferencia >= 0) {
+            mensajeComparacion = `Se proyecta un AUMENTO del ${porcentajeCambio}% (${diferencia.toFixed(2)} lbs) con respecto al promedio histórico (${promedioHistorico} lbs).`;
+        } else {
+            mensajeComparacion = `Se proyecta una DISMINUCIÓN del ${Math.abs(porcentajeCambio)}% (${Math.abs(diferencia).toFixed(2)} lbs) con respecto al promedio histórico (${promedioHistorico} lbs).`;
+        }
+        
+        // 2. Métrica de Precisión (Requisito Académico)
+        precisionModelo = datosIA.Metrica_Precision.Precision_Acertada;
+
+    }
+
+    // --- 3. Renderizar la vista con los nuevos datos ---
+    res.render('index', { // Tu vista se llama 'index.ejs'
+        user: user_temp,
+        historyInvoice: historyInvoice_temp,
+        selledProduct: mostselledproducts_temp,
+        detailsDashboard: detailsdashboard_temp,
+        countProduct: countproducts_temp,
+        countCategories: countcategories_temp,
+
+        // ⬅️ NUEVOS DATOS DE PREDICCIÓN Y MLOPS
+        // Nota: Los nombres 'productos_hoy' y 'productos_semana' pueden ser usados para compatibilidad con la vista
+        productos_hoy: proyeccionSemanaActual ? proyeccionSemanaActual.Clasificacion_Productos : [],
+        productos_semana: datosIA ? datosIA.Proyecciones_Semanales : [], // Las 3 semanas
+
+        // Datos del dashboard para mostrar la comparación y la precisión
+        proyeccionTotalSemana1: proyeccionSemanaActual ? proyeccionSemanaActual.Total_Proyectado_Libras : 0,
+        mensajeComparacion: mensajeComparacion,
+        precisionModelo: precisionModelo,
+        errorIA: errorIA, // Mostrar si hay un error
+
+        // ⬅️ VARIABLE NECESARIA PARA EL NUEVO GRÁFICO
+        historicoSemanal: historicoSemanal // <--- ¡LISTO!
+    });
 });
-
-
 
 //Path to render 'vacio.ejs'
 app.get("/vacio", function (req, res) {

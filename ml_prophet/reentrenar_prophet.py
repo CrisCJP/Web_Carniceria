@@ -23,14 +23,26 @@ print("PROGRESO:5%", flush=True)
 print("ESTADO:Conectando a la base de datos...", flush=True)
 
 # --- Conexión a la base en la nube (Azure SQL) ---
+# conn = pyodbc.connect(
+#     "Driver={ODBC Driver 17 for SQL Server};"
+#     "Server=serverbutchershop.database.windows.net;"
+#     "Database=CarniceriaLupita;"
+#     "Uid=user_db;"
+#     "Pwd=iejr6225,;"
+#     "Encrypt=yes;"
+#     "TrustServerCertificate=no;"
+#     "Connection Timeout=30;"
+# )
+
+# --- Conexión a la base en local (SQL Server) ---
 conn = pyodbc.connect(
     "Driver={ODBC Driver 17 for SQL Server};"
-    "Server=serverbutchershop.database.windows.net;"
+    "Server=localhost;"
     "Database=CarniceriaLupita;"
     "Uid=user_db;"
-    "Pwd=iejr6225,;"
+    "Pwd=12345;"
     "Encrypt=yes;"
-    "TrustServerCertificate=no;"
+    "TrustServerCertificate=yes;"
     "Connection Timeout=30;"
 )
 

@@ -17,6 +17,7 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </head>
 
@@ -369,7 +370,7 @@
                                     <h6 class="m-0 font-weight-bold text-white">Ventas del día</h6>
                                 </div>
 
-                                <div class="card-body">
+                                <div class="card-body" style="overflow: auto;">
                                     <div class="chart-area" style="height: 350px !important;">
                                     <table class="table table-sm table-striped" id="tbventa">
                                         <thead>
@@ -457,34 +458,172 @@
                         <!-- Card - Proyecciones por semana -->
                         <div class="col-xl-4 col-lg-5">
                         <div class="card shadow mb-4">
-                            <div class="card-header py-3 bg-second-primary d-flex justify-content-between align-items-center">
-                            <h6 class="m-0 font-weight-bold text-white">Proyecciones por semana</h6>
-                            </div>
 
+                            <div class="card-header bg-second-primary text-white">
+                                Proyecciones por semana
+                            </div>
                             <div class="card-body">
-                            <!-- UL con ID para que JS lo actualice -->
-                            <ul id="listaSemanas" class="list-group list-group-flush">
-                                <% if (typeof semanasProyectadas !== 'undefined' && semanasProyectadas.length > 0) { %>
-                                <% semanasProyectadas.forEach(function(semana, index) { %>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong><%= semana.semana %></strong><br>
-                                        <small>Total proyectado: <%= semana.totalLibras.toFixed(2) %> lbs</small>
-                                    </div>
-                                    </li>
-                                <% }) %>
-                                <% } else { %>
-                                <li class="list-group-item">No hay proyecciones semanales disponibles</li>
-                                <% } %>
-                            </ul>
+                                <!-- <h5 class="card-title">Semana actual (1)</h5> -->
+                                <h5>Proyección de Venta (<%= productos_semana[0].Fecha_Inicio %> - <%= productos_semana[0].Fecha_Fin %>)</h5>
+                                <p class="card-text">
+                                    Total proyectado: <%= proyeccionTotalSemana1 %> libras
+                                </p>
 
-                            <!-- Contenedor para total semanal que usa el JS -->
-                            <div class="mt-3" id="totalSemana">Total proyectado SEMANA: 0 libras</div>
+                                <% if (mensajeComparacion) { %>
+                                    <p class="text-info small">
+                                        <%= mensajeComparacion %>
+                                    </p>
+                                <% } %>
+
+                                <% if (precisionModelo) { %>
+                                    <p class="text-success small">
+                                        Precisión esperada del modelo: <strong><%= precisionModelo %>%</strong>
+                                    </p>
+                                <% } %>
+
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalProyecciones">
+                                    Ver Proyecciones Detalladas (3 Semanas)
+                                </button>
+                            </div>
+
+                        <!--
+
+                        <div class="modal fade" id="modalProyecciones" tabindex="-1" aria-labelledby="modalProyeccionesLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="modalProyeccionesLabel">Proyecciones de Venta Detalladas (3 Semanas)</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+
+                                 
+                                    <div class="modal-body">
+                                        <% if (errorIA) { %>
+                                            <div class="alert alert-danger"><%= errorIA %></div>
+                                        <% } else if (productos_semana && productos_semana.length > 0) { %>
+                                            <% productos_semana.forEach(semana => { %>
+                                                <h6 class="mt-3">📅 Semana <%= semana.Semana_Numero %>: Total Proyectado <%= semana.Total_Proyectado_Libras %> libras</h6>
+                                                <table class="table table-sm table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>#</th>
+                                                            <th>Producto</th>
+                                                            <th>Proyección (Libras)</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <% semana.Clasificacion_Productos.forEach((producto, index) => { %>
+                                                            <tr>
+                                                                <td><%= index + 1 %></td>
+                                                                <td><%= producto.ProductoNombre %></td>
+                                                                <td><%= producto.ProyeccionLibras %></td>
+                                                            </tr>
+                                                        <% }) %>
+                                                    </tbody>
+                                                </table>
+                                            <% }) %>
+                                        <% } else { %>
+                                            <p>No hay proyecciones de IA disponibles en este momento.</p>
+                                        <% } %>
+                                    </div>
+                                    
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
+                        -->
+
+
+                        <div class="modal fade" id="modalProyecciones" tabindex="-1" aria-labelledby="modalProyeccionesLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="modalProyeccionesLabel">Gráfico de Proyecciones de Venta (Libras)</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <% if (errorIA) { %>
+                                            <div class="alert alert-danger"><%= errorIA %></div>
+                                        <% } else if (productos_semana && productos_semana.length > 0) { %>
+
+                                            <div class="btn-group mb-4" role="group" aria-label="Selector de Semanas">
+                                                <% productos_semana.forEach((semana, index) => { %>
+                                                    <button type="button" 
+                                                        class="btn btn-primary <%= index === 0 ? 'active' : '' %>" 
+                                                        onclick="actualizarGrafico(<%= index %>)">
+                                                        Semana <%= semana.Semana_Numero %> (<%= semana.Fecha_Inicio %> - <%= semana.Fecha_Fin %>)
+                                                    </button>
+                                                <% }) %>
+                                            </div>
+
+                                            <h6 id="tituloGrafico">Proyección para Semana 1</h6>
+                                            <div style="height: 450px; overflow-y: hidden; margin-top: 20px;">
+                                                <canvas id="proyeccionChart" width="400" height="200"></canvas>
+                                            </div>
+                                            
+                                            <div class="alert alert-info mt-3">
+                                                Total Proyectado para la <span id="spanSemanaActual">Semana 1</span>: 
+                                                <strong id="totalSemanaActual">0</strong> libras.
+                                            </div>
+                                            
+                                        <% } else { %>
+                                            <p>No hay datos de proyecciones de IA disponibles para graficar.</p>
+                                        <% } %>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
+                            <!-- <div class="card-header py-3 bg-second-primary d-flex justify-content-between align-items-center">
+                                <h6 class="m-0 font-weight-bold text-white">Proyecciones por semana</h6>
+                            </div> -->
 
+                            <!--
+                            <div class="card-body">
+                                 UL con ID para que JS lo actualice 
+                                <ul id="listaSemanas" class="list-group list-group-flush">
+                                    <% if (typeof semanasProyectadas !== 'undefined' && semanasProyectadas.length > 0) { %>
+                                    <% semanasProyectadas.forEach(function(semana, index) { %>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong><%= semana.semana %></strong><br>
+                                            <small>Total proyectado: <%= semana.totalLibras.toFixed(2) %> lbs</small>
+                                        </div>
+                                        </li>
+                                    <% }) %>
+                                    <% } else { %>
+                                    <li class="list-group-item">No hay proyecciones semanales disponibles</li>
+                                    <% } %>
+                                </ul>
+
+                                 Contenedor para total semanal que usa el JS
+                                <div class="mt-3" id="totalSemana">Total proyectado SEMANA: 0 libras</div>
+                            </div>
+                            -->
+                        </div>
+                        </div>
+
+                        <div class="col-md-12 mt-4">
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-second-primary text-white">
+                                    <i class="fas fa-chart-line"></i> 📈 Comparación Total de Venta: 3 Semanas Históricas vs 3 Proyectadas
+                                </div>
+                                <div class="card-body">
+                                    <div style="height: 350px;"> 
+                                        <canvas id="comparacionChart"></canvas>
+                                    </div>
+                                    <p class="text-muted mt-3">
+                                        <small>La <span style="color:#09f">línea azul</span> muestra las <b>ventas reales</b> de las últimas 3 semanas completas (S-3 a S-1). La <span style="color:rgb(236, 25, 25)">línea roja</span> muestra el <b>pronóstico</b> de las próximas 3 semanas (S+1 a S+3).</small>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
 
@@ -1057,6 +1196,304 @@
   probarProgressXHR();
 </script>
 
+<!--
+<script>
+    // 1. Obtener los datos completos de las 3 semanas que vienen de Node.js
+    const datosProyeccion = <%- JSON.stringify(productos_semana) %>;
+    let miGrafico; // Variable global para el objeto Chart
+
+    // Función para crear y actualizar el gráfico
+    function actualizarGrafico(indiceSemana) {
+        if (!datosProyeccion || datosProyeccion.length === 0) return;
+
+        const semana = datosProyeccion[indiceSemana];
+        
+        // El ranking viene de menor a mayor. Lo revertimos para graficar de mayor a menor.
+        const rankingRevertido = [...semana.Clasificacion_Productos].reverse();
+
+        const nombresProductos = rankingRevertido.map(p => p.ProductoNombre);
+        const proyeccionesLibras = rankingRevertido.map(p => p.ProyeccionLibras);
+
+        // Actualizar títulos y totales
+        document.getElementById('tituloGrafico').innerText = `Ranking Proyectado para Semana ${semana.Semana_Numero}`;
+        document.getElementById('spanSemanaActual').innerText = `Semana ${semana.Semana_Numero}`;
+        document.getElementById('totalSemanaActual').innerText = semana.Total_Proyectado_Libras;
+
+        // Destruir el gráfico anterior si existe
+        if (miGrafico) {
+            miGrafico.destroy();
+        }
+
+        // Crear el nuevo gráfico de barras
+        const ctx = document.getElementById('proyeccionChart').getContext('2d');
+        miGrafico = new Chart(ctx, {
+            type: 'bar', // Tipo de gráfico: barras
+            data: {
+                labels: nombresProductos,
+                datasets: [{
+                    label: 'Proyección (Libras)',
+                    data: proyeccionesLibras,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)', // Azul
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y', // Hace las barras horizontales (mejor para nombres largos)
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Libras Proyectadas'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+
+    // Inicializar el gráfico con la primera semana cuando el modal se abra
+    document.getElementById('modalProyecciones').addEventListener('shown.bs.modal', function () {
+        actualizarGrafico(0);
+    });
+</script>
+
+-->
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Asegúrate de que las variables 'productos_semana' y 'historicoSemanal' estén disponibles aquí
+    // ya que Node.js las pasó al render.
+
+    // 1. Obtener datos de Node.js (Ya disponibles en EJS)
+    const datosProyeccion = <%- JSON.stringify(productos_semana) %>;
+    const historicoSemanal = <%- JSON.stringify(historicoSemanal) %>;
+
+    function crearGraficoComparacion() {
+        if (!historicoSemanal || !datosProyeccion || historicoSemanal.length === 0 || datosProyeccion.length === 0) {
+            console.warn("Datos insuficientes para el gráfico de comparación (6 semanas).");
+            return;
+        }
+
+        // 2. UNIR DATOS: Histórico (S-3, S-2, S-1) + Proyección (S+1, S+2, S+3)
+        
+        // Mapear históricos: ['S-3', 'S-2', 'S-1']
+        const datosHistoricosMapeados = historicoSemanal.map(item => ({
+            label: item.Etiqueta, // S-3, S-2, S-1
+            libras: item.Total_Libras,
+            isProjection: false
+        }));
+
+        // Mapear proyecciones: ['S+1', 'S+2', 'S+3']
+        const datosProyeccionMapeados = datosProyeccion.map((item) => ({
+            label: `S+${item.Semana_Numero}`, // S+1, S+2, S+3
+            libras: item.Total_Proyectado_Libras,
+            isProjection: true
+        }));
+
+        // Combinar en el orden correcto
+        const datosCombinados = [...datosHistoricosMapeados, ...datosProyeccionMapeados];
+
+        const etiquetas = datosCombinados.map(d => d.label);
+        const valores = datosCombinados.map(d => d.libras);
+        
+        // 3. CREAR EL GRÁFICO DE LÍNEAS
+        const ctxComparacion = document.getElementById('comparacionChart').getContext('2d');
+        
+        new Chart(ctxComparacion, {
+            type: 'line',
+            data: {
+                labels: etiquetas,
+                datasets: [{
+                    label: 'Venta Total (Libras)',
+                    data: valores,
+                    
+                    // Estilos de la línea y los puntos
+                    borderColor: 'rgb(54, 162, 235)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    fill: false,
+                    tension: 0.1, // Suavidad de la línea
+                    
+                    // Colores de los puntos: azul para histórico, rojo para proyección
+                    pointBackgroundColor: datosCombinados.map(d => d.isProjection ? 'rgb(255, 99, 132)' : 'rgb(54, 162, 235)'),
+                    pointRadius: 5,
+                    
+                    // Línea punteada para la proyección (desde el punto S-1 hasta el final)
+                    borderDash: datosCombinados.map((d, index) => index >= datosHistoricosMapeados.length - 1 ? [6, 6] : []),
+                    
+                    // Color de la línea de histórico (azul) y proyección (rojo)
+                    segment: {
+                        borderColor: ctx => {
+                            // Cambia el color del segmento de línea donde comienza la proyección
+                            const projectionStartIndex = datosHistoricosMapeados.length - 1; 
+                            return ctx.p0DataIndex >= projectionStartIndex ? 'rgb(255, 99, 132)' : 'rgb(54, 162, 235)';
+                        },
+                    }
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Total de Ventas por Semana (Libras)'
+                    },
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Libras'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Semanas (S- = Histórico | S+ = Proyección)'
+                        }
+                    }
+                }
+            }
+        });
+    
+    }
+
+    // Asegúrate de llamar a esta función al cargar la página
+    document.addEventListener('DOMContentLoaded', crearGraficoComparacion);
+    
+</script>
+
+<script>
+    // 1. SOLUCIÓN AL ERROR DE SINTAXIS EJS: Imprimir el JSON y luego asignarlo a la constante.
+    // EJS imprimirá la cadena JSON válida aquí:
+    var JSON_PROYECCIONES = <%- JSON.stringify(productos_semana) %>; 
+
+    // Configuración: Define cuántos productos quieres mostrar (el "Top N")
+    const MAX_PRODUCTS = 20; 
+    const PIXELS_PER_BAR = 30; // Altura mínima de cada barra
+
+    const datosProyecciones = JSON_PROYECCIONES; // Ahora es una constante JavaScript normal
+    let miGrafico; // Variable global para el objeto Chart
+
+    // Función para crear y actualizar el gráfico
+    function actualizarGrafico(indiceSemana) {
+        if (!datosProyecciones || datosProyecciones.length === 0) return;
+
+        const semana = datosProyecciones[indiceSemana];
+        
+        // 1. Obtener el ranking (lo revertimos para graficar de mayor a menor)
+        const rankingCompleto = [...semana.Clasificacion_Productos].reverse();
+        
+        // 2. APLICAR FILTRO: Limitar a los N productos más proyectados
+        const rankingTopN = rankingCompleto.slice(0, MAX_PRODUCTS); 
+
+        const nombresProductos = rankingTopN.map(p => p.ProductoNombre);
+        const proyeccionesLibras = rankingTopN.map(p => p.ProyeccionLibras);
+
+        // Actualizar títulos y totales
+        document.getElementById('tituloGrafico').innerText = `Ranking Top ${rankingTopN.length} Proyectado para Semana ${semana.Semana_Numero}`;
+        document.getElementById('spanSemanaActual').innerText = `Semana ${semana.Semana_Numero}`;
+        document.getElementById('totalSemanaActual').innerText = semana.Total_Proyectado_Libras.toFixed(2);
+
+        // Destruir el gráfico anterior si existe
+        if (miGrafico) {
+            miGrafico.destroy();
+        }
+
+        const canvas = document.getElementById('proyeccionChart');
+
+        // 1. FORZAR LA ALTURA DEL CANVAS (IMPORTANTE)
+        // Esto soluciona el problema del espacio vacío gigante.
+        // const alturaNecesaria = (rankingTopN.length * PIXELS_PER_BAR) + 150; 
+        // canvas.style.height = `${alturaNecesaria}px`;
+        // canvas.style.width = '100%';
+
+        // Crear el nuevo gráfico de barras
+        const ctx = canvas.getContext('2d');
+        miGrafico = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: nombresProductos,
+                datasets: [{
+                    label: 'Proyección (Libras)',
+                    data: proyeccionesLibras,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+
+            options: {
+                indexAxis: 'x', // ¡CLAVE! Pone las barras en formato VERTICAL (Columnas)
+                responsive: true,
+                maintainAspectRatio: false, 
+                
+                scales: {
+                    x: { // Eje X: Productos
+                        // 1. Rota las etiquetas para que no se superpongan:
+                        ticks: {
+                            maxRotation: 45, // Rotación de 45 grados
+                            minRotation: 45,
+                            autoSkip: false // No saltar etiquetas
+                        },
+                        title: {
+                            display: true,
+                            text: 'Productos (Top 20)'
+                        }
+                    },
+                    y: { // Eje Y: Libras Proyectadas
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Libras Proyectadas'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+
+            
+        });
+            
+    }
+
+    // Inicializar el gráfico con la primera semana cuando el modal se abra
+    document.getElementById('modalProyecciones').addEventListener('shown.bs.modal', function () {
+        document.querySelectorAll('.btn-group button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.btn-group button')[0].classList.add('active');
+        actualizarGrafico(0);
+    });
+    
+    // Añadir listener para actualizar el botón activo
+    document.querySelectorAll('.btn-group button').forEach((btn, index) => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.btn-group button').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            actualizarGrafico(index);
+        });
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </body>
 

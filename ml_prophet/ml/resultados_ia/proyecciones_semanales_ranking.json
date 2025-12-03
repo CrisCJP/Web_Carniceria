@@ -1,0 +1,444 @@
+{
+    "Fecha_Generacion": "2025-12-03 12:52:45",
+    "Metrica_Precision": {
+        "MAPE_Actual": 15.5,
+        "Precision_Acertada": 84.5,
+        "Unidad": "%"
+    },
+    "Comparacion_Historica": {
+        "Venta_Promedio_Semanal_Libras": 509.53,
+        "Historico_Semanal": [
+            {
+                "Semana_Numero": -2,
+                "Etiqueta": "S-3",
+                "Fecha_Inicio": "10/11/2025",
+                "Fecha_Fin": "16/11/2025",
+                "Total_Libras": 549.5
+            },
+            {
+                "Semana_Numero": -1,
+                "Etiqueta": "S-2",
+                "Fecha_Inicio": "17/11/2025",
+                "Fecha_Fin": "23/11/2025",
+                "Total_Libras": 530.03
+            },
+            {
+                "Semana_Numero": 0,
+                "Etiqueta": "S-1",
+                "Fecha_Inicio": "24/11/2025",
+                "Fecha_Fin": "30/11/2025",
+                "Total_Libras": 160.76
+            }
+        ]
+    },
+    "Proyecciones_Semanales": [
+        {
+            "Semana_Numero": 1,
+            "Fecha_Inicio": "01/12/2025",
+            "Fecha_Fin": "07/12/2025",
+            "Total_Proyectado_Libras": 326.42,
+            "Clasificacion_Productos": [
+                {
+                    "ProductoNombre": "Muslo Especial",
+                    "ProyeccionLibras": 2.69
+                },
+                {
+                    "ProductoNombre": "Conito",
+                    "ProyeccionLibras": 5.9
+                },
+                {
+                    "ProductoNombre": "Producto de Prueba",
+                    "ProyeccionLibras": 6.27
+                },
+                {
+                    "ProductoNombre": "Pechuga Con Ala",
+                    "ProyeccionLibras": 6.28
+                },
+                {
+                    "ProductoNombre": "Centrolac leche entera 472 ml",
+                    "ProyeccionLibras": 6.38
+                },
+                {
+                    "ProductoNombre": "Lomo de Res",
+                    "ProyeccionLibras": 6.52
+                },
+                {
+                    "ProductoNombre": "Higado De Pollo",
+                    "ProyeccionLibras": 6.73
+                },
+                {
+                    "ProductoNombre": "Menudo",
+                    "ProyeccionLibras": 7.04
+                },
+                {
+                    "ProductoNombre": "Pierna Especial",
+                    "ProyeccionLibras": 7.23
+                },
+                {
+                    "ProductoNombre": "Medio Pollo",
+                    "ProyeccionLibras": 7.54
+                },
+                {
+                    "ProductoNombre": "Posta de Corona",
+                    "ProyeccionLibras": 7.59
+                },
+                {
+                    "ProductoNombre": "Costilla de Cerdo",
+                    "ProyeccionLibras": 8.19
+                },
+                {
+                    "ProductoNombre": "Sesina",
+                    "ProyeccionLibras": 8.73
+                },
+                {
+                    "ProductoNombre": "Salchichon",
+                    "ProyeccionLibras": 8.83
+                },
+                {
+                    "ProductoNombre": "Mortadela",
+                    "ProyeccionLibras": 9.21
+                },
+                {
+                    "ProductoNombre": "Costilla Alta",
+                    "ProyeccionLibras": 11.2
+                },
+                {
+                    "ProductoNombre": "Pechuga Especial",
+                    "ProyeccionLibras": 11.21
+                },
+                {
+                    "ProductoNombre": "Crema Perfecta",
+                    "ProyeccionLibras": 11.32
+                },
+                {
+                    "ProductoNombre": "Queso",
+                    "ProyeccionLibras": 11.65
+                },
+                {
+                    "ProductoNombre": "Titiles",
+                    "ProyeccionLibras": 11.73
+                },
+                {
+                    "ProductoNombre": "Posta de Pierna",
+                    "ProyeccionLibras": 12.23
+                },
+                {
+                    "ProductoNombre": "Muslo",
+                    "ProyeccionLibras": 12.37
+                },
+                {
+                    "ProductoNombre": "Chorizo Criollo",
+                    "ProyeccionLibras": 12.71
+                },
+                {
+                    "ProductoNombre": "Chincaca",
+                    "ProyeccionLibras": 13.33
+                },
+                {
+                    "ProductoNombre": "Posta de Cerdo",
+                    "ProyeccionLibras": 13.33
+                },
+                {
+                    "ProductoNombre": "Centrolac milk whole 1000 ml ",
+                    "ProyeccionLibras": 13.4
+                },
+                {
+                    "ProductoNombre": "Punta de Cacho",
+                    "ProyeccionLibras": 13.55
+                },
+                {
+                    "ProductoNombre": "Pierna Entera",
+                    "ProyeccionLibras": 13.59
+                },
+                {
+                    "ProductoNombre": "Posta De Gallina",
+                    "ProyeccionLibras": 14.36
+                },
+                {
+                    "ProductoNombre": "Salchicha",
+                    "ProyeccionLibras": 15.01
+                },
+                {
+                    "ProductoNombre": "Huesos Corriente",
+                    "ProyeccionLibras": 15.1
+                },
+                {
+                    "ProductoNombre": "Lomo de Cerdo",
+                    "ProyeccionLibras": 15.16
+                }
+            ]
+        },
+        {
+            "Semana_Numero": 2,
+            "Fecha_Inicio": "08/12/2025",
+            "Fecha_Fin": "14/12/2025",
+            "Total_Proyectado_Libras": 421.03,
+            "Clasificacion_Productos": [
+                {
+                    "ProductoNombre": "Muslo Especial",
+                    "ProyeccionLibras": -0.86
+                },
+                {
+                    "ProductoNombre": "Conito",
+                    "ProyeccionLibras": 1.83
+                },
+                {
+                    "ProductoNombre": "Producto de Prueba",
+                    "ProyeccionLibras": 3.86
+                },
+                {
+                    "ProductoNombre": "Menudo",
+                    "ProyeccionLibras": 5.29
+                },
+                {
+                    "ProductoNombre": "Higado De Pollo",
+                    "ProyeccionLibras": 5.44
+                },
+                {
+                    "ProductoNombre": "Lomo de Res",
+                    "ProyeccionLibras": 6.02
+                },
+                {
+                    "ProductoNombre": "Medio Pollo",
+                    "ProyeccionLibras": 6.21
+                },
+                {
+                    "ProductoNombre": "Pechuga Con Ala",
+                    "ProyeccionLibras": 7.14
+                },
+                {
+                    "ProductoNombre": "Centrolac leche entera 472 ml",
+                    "ProyeccionLibras": 8.79
+                },
+                {
+                    "ProductoNombre": "Costilla de Cerdo",
+                    "ProyeccionLibras": 9.36
+                },
+                {
+                    "ProductoNombre": "Posta de Corona",
+                    "ProyeccionLibras": 9.57
+                },
+                {
+                    "ProductoNombre": "Pierna Especial",
+                    "ProyeccionLibras": 9.62
+                },
+                {
+                    "ProductoNombre": "Sesina",
+                    "ProyeccionLibras": 10.23
+                },
+                {
+                    "ProductoNombre": "Salchichon",
+                    "ProyeccionLibras": 10.58
+                },
+                {
+                    "ProductoNombre": "Mortadela",
+                    "ProyeccionLibras": 11.79
+                },
+                {
+                    "ProductoNombre": "Costilla Alta",
+                    "ProyeccionLibras": 12.93
+                },
+                {
+                    "ProductoNombre": "Crema Perfecta",
+                    "ProyeccionLibras": 14.82
+                },
+                {
+                    "ProductoNombre": "Pechuga Especial",
+                    "ProyeccionLibras": 14.95
+                },
+                {
+                    "ProductoNombre": "Muslo",
+                    "ProyeccionLibras": 16.14
+                },
+                {
+                    "ProductoNombre": "Chorizo Criollo",
+                    "ProyeccionLibras": 16.41
+                },
+                {
+                    "ProductoNombre": "Queso",
+                    "ProyeccionLibras": 17.08
+                },
+                {
+                    "ProductoNombre": "Titiles",
+                    "ProyeccionLibras": 17.27
+                },
+                {
+                    "ProductoNombre": "Posta de Pierna",
+                    "ProyeccionLibras": 17.44
+                },
+                {
+                    "ProductoNombre": "Chincaca",
+                    "ProyeccionLibras": 18.55
+                },
+                {
+                    "ProductoNombre": "Posta de Cerdo",
+                    "ProyeccionLibras": 18.66
+                },
+                {
+                    "ProductoNombre": "Centrolac milk whole 1000 ml ",
+                    "ProyeccionLibras": 19.64
+                },
+                {
+                    "ProductoNombre": "Punta de Cacho",
+                    "ProyeccionLibras": 20.68
+                },
+                {
+                    "ProductoNombre": "Pierna Entera",
+                    "ProyeccionLibras": 21.14
+                },
+                {
+                    "ProductoNombre": "Posta De Gallina",
+                    "ProyeccionLibras": 21.54
+                },
+                {
+                    "ProductoNombre": "Salchicha",
+                    "ProyeccionLibras": 22.29
+                },
+                {
+                    "ProductoNombre": "Lomo de Cerdo",
+                    "ProyeccionLibras": 23.11
+                },
+                {
+                    "ProductoNombre": "Huesos Corriente",
+                    "ProyeccionLibras": 23.48
+                }
+            ]
+        },
+        {
+            "Semana_Numero": 3,
+            "Fecha_Inicio": "15/12/2025",
+            "Fecha_Fin": "21/12/2025",
+            "Total_Proyectado_Libras": 402.42,
+            "Clasificacion_Productos": [
+                {
+                    "ProductoNombre": "Muslo Especial",
+                    "ProyeccionLibras": -2.74
+                },
+                {
+                    "ProductoNombre": "Conito",
+                    "ProyeccionLibras": -2.12
+                },
+                {
+                    "ProductoNombre": "Producto de Prueba",
+                    "ProyeccionLibras": 0.86
+                },
+                {
+                    "ProductoNombre": "Higado De Pollo",
+                    "ProyeccionLibras": 2.33
+                },
+                {
+                    "ProductoNombre": "Menudo",
+                    "ProyeccionLibras": 2.48
+                },
+                {
+                    "ProductoNombre": "Lomo de Res",
+                    "ProyeccionLibras": 4.26
+                },
+                {
+                    "ProductoNombre": "Medio Pollo",
+                    "ProyeccionLibras": 4.85
+                },
+                {
+                    "ProductoNombre": "Pechuga Con Ala",
+                    "ProyeccionLibras": 7.03
+                },
+                {
+                    "ProductoNombre": "Sesina",
+                    "ProyeccionLibras": 8.81
+                },
+                {
+                    "ProductoNombre": "Salchichon",
+                    "ProyeccionLibras": 8.82
+                },
+                {
+                    "ProductoNombre": "Posta de Corona",
+                    "ProyeccionLibras": 8.98
+                },
+                {
+                    "ProductoNombre": "Centrolac leche entera 472 ml",
+                    "ProyeccionLibras": 9.22
+                },
+                {
+                    "ProductoNombre": "Costilla de Cerdo",
+                    "ProyeccionLibras": 9.73
+                },
+                {
+                    "ProductoNombre": "Mortadela",
+                    "ProyeccionLibras": 10.53
+                },
+                {
+                    "ProductoNombre": "Costilla Alta",
+                    "ProyeccionLibras": 10.77
+                },
+                {
+                    "ProductoNombre": "Pierna Especial",
+                    "ProyeccionLibras": 11.48
+                },
+                {
+                    "ProductoNombre": "Pechuga Especial",
+                    "ProyeccionLibras": 13.69
+                },
+                {
+                    "ProductoNombre": "Crema Perfecta",
+                    "ProyeccionLibras": 14.29
+                },
+                {
+                    "ProductoNombre": "Chorizo Criollo",
+                    "ProyeccionLibras": 16.0
+                },
+                {
+                    "ProductoNombre": "Muslo",
+                    "ProyeccionLibras": 16.27
+                },
+                {
+                    "ProductoNombre": "Titiles",
+                    "ProyeccionLibras": 17.59
+                },
+                {
+                    "ProductoNombre": "Queso",
+                    "ProyeccionLibras": 18.22
+                },
+                {
+                    "ProductoNombre": "Chincaca",
+                    "ProyeccionLibras": 18.24
+                },
+                {
+                    "ProductoNombre": "Posta de Pierna",
+                    "ProyeccionLibras": 18.47
+                },
+                {
+                    "ProductoNombre": "Posta de Cerdo",
+                    "ProyeccionLibras": 18.67
+                },
+                {
+                    "ProductoNombre": "Centrolac milk whole 1000 ml ",
+                    "ProyeccionLibras": 19.47
+                },
+                {
+                    "ProductoNombre": "Punta de Cacho",
+                    "ProyeccionLibras": 20.45
+                },
+                {
+                    "ProductoNombre": "Salchicha",
+                    "ProyeccionLibras": 22.09
+                },
+                {
+                    "ProductoNombre": "Posta De Gallina",
+                    "ProyeccionLibras": 22.5
+                },
+                {
+                    "ProductoNombre": "Pierna Entera",
+                    "ProyeccionLibras": 22.56
+                },
+                {
+                    "ProductoNombre": "Lomo de Cerdo",
+                    "ProyeccionLibras": 23.25
+                },
+                {
+                    "ProductoNombre": "Huesos Corriente",
+                    "ProyeccionLibras": 25.39
+                }
+            ]
+        }
+    ]
+}
