@@ -375,7 +375,7 @@
                                         <thead>
                                         <tr class="headers_styles">
                                             <th>Producto</th>
-                                            <th>Proyección HOY (libras)</th>
+                                            <th>Proyección del día (libras)</th>
                                             <th>Acción</th>
                                         </tr>
                                         </thead>
@@ -614,7 +614,7 @@
         <div id="modalHoy<%= index %>" class="modal_efectivo">
         <div class="modal-content_efectivo">
             <span class="close_changedolar" onclick="cerrarModalHoy(<%= index %>)">&times;</span>
-            <p><strong><%= prod.ProductoNombre %></strong> - Proyección HOY: <%= Number.parseFloat(prod.VentasHoy || 0).toFixed(2) %> lbs</p>
+            <p><strong><%= prod.ProductoNombre %></strong> - Proyección del día de HOY: <%= Number.parseFloat(prod.VentasHoy || 0).toFixed(2) %> lbs</p>
 
             <div class="form-group col-sm-6">
             <label for="fechaInicioHoy<%= index %>">Fecha inicio</label>
@@ -933,39 +933,100 @@
 
 
     <script>
-    async function compararVentasHoy(index, producto, proyeccionHoy) {
-        const inicio = document.getElementById('fechaInicioHoy' + index).value;
-        const fin = document.getElementById('fechaFinHoy' + index).value;
-        const resultado = document.getElementById('resultadoHoy' + index);
-        resultado.innerHTML = '<li class="list-group-item text-center">Cargando comparación...</li>';
+        // Diccionario NombreProducto → IdProducto
+        const productoMap = {
+            "Producto de Prueba": "P29",
+            "Pierna Especial": "P30",
+            "Muslo Especial": "P31",
+            "Crema Perfecta": "P32",
+            "Medio Pollo": "PC001",
+            "Pechuga Con Ala": "PC002",
+            "Pierna Entera": "PC003",
+            "Muslo": "PC004",
+            "Conito": "PC005",
+            "Menudo": "PC006",
+            "Chincaca": "PC007",
+            "Pechuga Especial": "PC008",
+            "Titiles": "PC009",
+            "Higado De Pollo": "PC010",
+            "Posta de Pierna": "PC011",
+            "Posta de Corona": "PC012",
+            "Lomo de Res": "PC013",
+            "Punta de Cacho": "PC014",
+            "Posta De Gallina": "PC015",
+            "Sesina": "PC016",
+            "Huesos Corriente": "PC017",
+            "Costilla Alta": "PC018",
+            "Lomo de Cerdo": "PC019",
+            "Posta de Cerdo": "PC020",
+            "Costilla de Cerdo": "PC021",
+            "Salchichon": "PE001",
+            "Salchicha": "PE002",
+            "Mortadela": "PE003",
+            "Chorizo Criollo": "PE004",
+            "Centrolac milk whole 1000 ml": "PL001",
+            "Centrolac leche entera 472 ml": "PL002",
+            "Queso": "PL003"
+        };
 
-        try {
-        const res = await fetch(`/api/comparacion?producto=${encodeURIComponent(producto)}&inicio=${inicio}&fin=${fin}`);
-        const data = await res.json();
+        async function compararVentasHoy(index, productoNombre, proyeccionHoy) {
+            const inicio = document.getElementById('fechaInicioHoy' + index).value;
+            const fin = document.getElementById('fechaFinHoy' + index).value;
+            const resultado = document.getElementById('resultadoHoy' + index);
 
-        if (!data || data.length === 0) {
-            resultado.innerHTML = '<li class="list-group-item">No hay datos disponibles en ese rango</li>';
-            return;
-        }
+            // Convertir nombre → IdProducto
+            const productoId = productoMap[productoNombre] || productoNombre;
 
-        resultado.innerHTML = '';
-        data.forEach(item => {
-            const tasa = proyeccionHoy > 0 ? ((item.cantidadVendida / proyeccionHoy) * 100).toFixed(2) : '0.00';
-            resultado.innerHTML += `
+            resultado.innerHTML = '<li class="list-group-item text-center">Cargando comparación...</li>';
+            console.log("Inicio input:", document.getElementById('fechaInicioHoy' + index).value);
+            console.log("Fin input:", document.getElementById('fechaFinHoy' + index).value);
+
+            try {
+                const res = await fetch(`/api/comparacion?producto=${encodeURIComponent(productoId)}&inicio=${inicio}&fin=${fin}`);
+                const data = await res.json();
+
+                if (!data || data.length === 0) {
+                    resultado.innerHTML = '<li class="list-group-item">No hay datos disponibles en ese rango</li>';
+                    return;
+                }
+
+                resultado.innerHTML = '';
+                data.forEach(item => {
+                    const vendido = Number.parseFloat(item.cantidadVendida ?? 0);
+                    const predicho = Number.parseFloat(item.prediccion ?? 0);
+
+                    let crecimientoTexto, colorClass, emoji;
+                    if (predicho > 0) {
+                        const crecimiento = ((vendido - predicho) / predicho) * 100;
+                        if (crecimiento > 0) { colorClass = 'text-success'; emoji = '📈'; }
+                        else if (crecimiento < 0) { colorClass = 'text-danger'; emoji = '📉'; }
+                        else { colorClass = 'text-muted'; emoji = '➖'; }
+                        crecimientoTexto = `${crecimiento.toFixed(2)}% ${emoji}`;
+                    } else {
+                        colorClass = 'text-muted';
+                        crecimientoTexto = 'Sin predicción histórica ❓';
+                    }
+
+                    resultado.innerHTML += `
             <li class="list-group-item">
-                <strong>${item.fecha}</strong><br>
-                Producto: ${item.producto}<br>
-                Vendido: ${item.cantidadVendida.toFixed(2)} lbs<br>
-                Crecimiento: ${tasa}%
+            <strong>${item.fecha}</strong><br>
+            Producto: ${productoNombre}<br>
+            Predicho: ${predicho.toFixed(2)} lbs<br>
+            Vendido: ${vendido.toFixed(2)} lbs<br>
+            Variación vs predicho: <span class="${colorClass}">${crecimientoTexto}</span>
             </li>
-            `;
-        });
-        } catch (err) {
-        resultado.innerHTML = '<li class="list-group-item text-danger">Error al cargar comparación</li>';
-        console.error(err);
+        `;
+                });
+            } catch (err) {
+                resultado.innerHTML = '<li class="list-group-item text-danger">Error al cargar comparación</li>';
+                console.error(err);
+            }
         }
-    }
     </script>
+
+
+
+
 
 
 
