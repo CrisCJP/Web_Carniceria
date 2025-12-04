@@ -20,6 +20,7 @@ const cors = require('cors');
 const session = require('express-session');
 const crypto = require('crypto');
 const secret = crypto.randomBytes(64).toString('hex');
+const csv = require('csv-parser');
 
 app.use(session({
     secret: 'keyboard cat', // Cambia esto a tu secreto
@@ -41,33 +42,33 @@ app.set('views', path.join(__dirname, 'views'));
 /*const config = {
     server: 'DESKTOP-DEUHLCS',
 */
-// const config = {
-//     server: 'serverbutchershop.database.windows.net',
-//     database: 'CarniceriaLupita',
-//     user: 'user_db',
-//     password: 'iejr6225,',
-//     port: 1433, // Puerto estándar de SQL Server
-
-//     options: {
-//         encrypt: true,              // Requerido en Azure
-//         trustServerCertificate: false, // No aceptar certificados no confiables
-//     },
-//     connectionTimeout: 30000 // 30 segundos
-// };
-
 const config = {
-    server: 'localhost',
+    server: 'serverbutchershop.database.windows.net',
     database: 'CarniceriaLupita',
     user: 'user_db',
-    password: '12345',
+    password: 'iejr6225,',
     port: 1433, // Puerto estándar de SQL Server
 
     options: {
-        trustServerCertificate: true,
-        encrypt: true,
+        encrypt: true,              // Requerido en Azure
+        trustServerCertificate: false, // No aceptar certificados no confiables
     },
-    // connectionTimeout: 30000 // 30 segundos
+    connectionTimeout: 30000 // 30 segundos
 };
+
+// const config = {
+//     server: 'localhost',
+//     database: 'CarniceriaLupita',
+//     user: 'user_db',
+//     password: '12345',
+//     port: 1433, // Puerto estándar de SQL Server
+
+//     options: {
+//         trustServerCertificate: true,
+//         encrypt: true,
+//     },
+//     // connectionTimeout: 30000 // 30 segundos
+// };
 
 
 const { loginHandler, prediccionesHandler } = require('./handlers/loginHandler');
@@ -400,15 +401,71 @@ app.get('/reporte_arqueo', async (req, res) => {
     res.render('reporte_arqueo', { user: user_temp });
 });
 
+
+const dayjs = require('dayjs'); // asegúrate de instalar: npm install dayjs
+
 app.get('/api/comparacion', async (req, res) => {
-  const { producto, inicio, fin } = req.query;
+  const { producto, inicio, fin } = req.query; // producto = IdProducto (ej. P30)
+
   try {
-    const ventas = await getVentasPorProducto(producto, inicio, fin); 
-    // ventas = [{ fecha, producto, cantidadVendida }, ...]
-    res.json(ventas);
+    // 1. Ventas reales desde tu DB
+    const ventas = await getVentasPorProducto(producto, inicio, fin);
+    // ventas = [{ fecha: "2025-11-01", producto: "P30", cantidadVendida: 2.5 }, ...]
+
+    // 2. Predicciones desde CSV
+    const predicciones = [];
+    const csvPath = path.join(__dirname, 'ml_prophet', 'ml', 'csv', `predicciones_producto_${producto}_diario.csv`);
+
+    if (fs.existsSync(csvPath)) {
+      await new Promise((resolve, reject) => {
+        fs.createReadStream(csvPath)
+          .pipe(csv())
+          .on('data', row => {
+            const fechaCsv = dayjs(row.ds, 'YYYY-MM-DD');
+            const inicioObj = dayjs(inicio, 'YYYY-MM-DD');
+            const finObj = dayjs(fin, 'YYYY-MM-DD');
+
+            // Debug opcional
+            console.log("Comparando:", row.ds, "inicio:", inicioObj.format(), "fin:", finObj.format());
+
+            if (fechaCsv.isSame(inicioObj) || fechaCsv.isSame(finObj) || (fechaCsv.isAfter(inicioObj) && fechaCsv.isBefore(finObj))) {
+              predicciones.push({
+                fecha: row.ds,
+                producto: row.ProductoID,
+                prediccion: parseFloat(row.yhat),
+                prediccion_lower: parseFloat(row.yhat_lower),
+                prediccion_upper: parseFloat(row.yhat_upper)
+              });
+            }
+          })
+          .on('end', resolve)
+          .on('error', reject);
+      });
+    } else {
+      console.warn(`⚠️ No se encontró el archivo de predicciones: ${csvPath}`);
+    }
+
+    // 3. Unir ventas + predicciones por fecha
+    const resultado = ventas.map(v => {
+      const p = predicciones.find(pr => pr.fecha === v.fecha);
+      return {
+        ...v,
+        prediccion: p ? p.prediccion : 0,
+        prediccion_lower: p ? p.prediccion_lower : null,
+        prediccion_upper: p ? p.prediccion_upper : null
+      };
+    });
+
+    // 4. Respuesta final
+    if (resultado.length === 0) {
+      return res.json([]);
+    }
+
+    res.json(resultado);
+
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'No se pudieron cargar las ventas reales' });
+    console.error('❌ Error en /api/comparacion:', error);
+    res.status(500).json({ error: 'No se pudieron cargar los datos de comparación' });
   }
 });
 

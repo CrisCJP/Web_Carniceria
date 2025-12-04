@@ -1,0 +1,40 @@
+name: Entrenamiento y despliegue modelo Prophet
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  train_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v2
+
+    - name: Configurar Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.13'
+
+    - name: Instalar dependencias
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Ejecutar script de entrenamiento
+      run: |
+        python src/training/reentrenar_prophet.py
+
+    - name: Guardar artefactos
+      uses: actions/upload-artifact@v2
+      with:
+        name: modelos-y-predicciones
+        path: |
+          ml/pkl/*.pkl
+          ml/csv/*.csv
+
+    - name: Desplegar modelo (ejemplo)
+      run: |
+        echo "Aquí iría el script o comando para desplegar el modelo en producción"
