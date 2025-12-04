@@ -1,12 +1,12 @@
 {
-    "Fecha_Generacion": "2025-12-03 12:52:45",
+    "Fecha_Generacion": "2025-12-05 20:09:52",
     "Metrica_Precision": {
         "MAPE_Actual": 15.5,
         "Precision_Acertada": 84.5,
         "Unidad": "%"
     },
     "Comparacion_Historica": {
-        "Venta_Promedio_Semanal_Libras": 509.53,
+        "Venta_Promedio_Semanal_Libras": 522.67,
         "Historico_Semanal": [
             {
                 "Semana_Numero": -2,

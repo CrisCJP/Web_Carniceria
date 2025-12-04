@@ -86,7 +86,7 @@ let user_temp, historyInvoice_temp, mostselledproducts_temp, detailsdashboard_te
 //Global arrays
 let array_sale = [];
 
-
+const { compararProducto } = require('./controller/login_controllers/comparacion_controller');
 //const router_user = require('./routes/routes_user');
 const { getVentasPorProducto } = require('./model/dashboard_models/ventas_model');
 //CALL THE CONTROLLERS:::::::::::::::::::::::
@@ -175,32 +175,32 @@ app.get("/", function (req, res) {
     res.render("login");
 });
 
-app.get("/productos", function(req, res) {
-    if(user_temp)
-        res.render('productos', {user:user_temp});
+app.get("/productos", function (req, res) {
+    if (user_temp)
+        res.render('productos', { user: user_temp });
     else
         res.status(404).render('Inicia seción o hubo un problema de conexión');
 });
 
-app.get("/categorias", function(req, res) {
-    res.render('categorias', {user:user_temp});
+app.get("/categorias", function (req, res) {
+    res.render('categorias', { user: user_temp });
 });
 
-app.get("/notificaciones", function(req, res){
-    res.render('notificaciones', {user:user_temp});
+app.get("/notificaciones", function (req, res) {
+    res.render('notificaciones', { user: user_temp });
 });
 
 
 app.get("/compras", function (req, res) {
-    res.render('compras', {user:user_temp});
+    res.render('compras', { user: user_temp });
 });
 
 app.get("/reporte_compra", function (req, res) {
-    res.render('reporte_compra', {user:user_temp});
+    res.render('reporte_compra', { user: user_temp });
 });
 
-app.get("/historial_compras", function (req, res){
-    res.render('historial_compras', {user:user_temp});
+app.get("/historial_compras", function (req, res) {
+    res.render('historial_compras', { user: user_temp });
 });
 
 //Path to render 'login.ejs'
@@ -208,125 +208,129 @@ app.get("/login", noCache, (req, res) => {
     res.render('login');
 });
 
+const { getStockActual } = require('./model/dashboard_models/getstockactual'); // importa la función
 //Path to render 'index.ejs'
 // Path to render 'index.ejs'
-// app.get("/index", upload.none(), async function (req, res) {
-//   if (typeof user_temp !== 'undefined' && user_temp) {
-//     historyInvoice_temp = await getInvoicesByUserId(user_temp.IdUsuario);
-//     mostselledproducts_temp = await getSelledProducts(user_temp.IdUsuario);
-//     detailsdashboard_temp = await getDetailsDashboard(user_temp.IdUsuario);
-//     countproducts_temp = await getCountProductCategories();
-//     countcategories_temp = await getCountCategories();
-//   }
-
-//   let entrenando = false;
-//   let productos_hoy = [];
-//   let productos_semana = [];
-
-//   try {
-//     const r = await fetch(`${req.protocol}://${req.get('host')}/predicciones`);
-//     const pred = await r.json();
-//     productos_hoy = pred.productos_hoy || [];
-//     productos_semana = pred.productos_semana || [];
-//     entrenando = pred.entrenando ?? false;
-//   } catch (e) {
-//     console.error('Error obteniendo predicciones para index:', e);
-//   }
-
-//   res.render('index', {
-//     user: user_temp,
-//     historyInvoice: historyInvoice_temp,
-//     selledProduct: mostselledproducts_temp,
-//     detailsDashboard: detailsdashboard_temp,
-//     countProduct: countproducts_temp,
-//     countCategories: countcategories_temp,
-//     entrenando,
-//     productos_hoy,
-//     productos_semana
-//   });
-// });
-
-// index.js (Localiza la función app.get("/index", ...) y reemplaza el bloque try/catch)
-
 app.get("/index", upload.none(), async function (req, res) {
-    if (typeof(user_temp) != 'undefined' && user_temp) {
-        // ... (Líneas de obtención de datos existentes) ...
-        historyInvoice_temp = await getInvoicesByUserid(user_temp.IdUsuario);
-        mostselledproducts_temp = await getSelledProducts(user_temp.IdUsuario);
-        detailsdashboard_temp = await getDetailsDashboard(user_temp.IdUsuario);
-        countproducts_temp = await getCountProductCategories();
-        countcategories_temp = await getCountCategories();
-    }
+    // Vars del dashboard
+    let historyInvoice_temp = [];
+    let mostselledproducts_temp = [];
+    let detailsdashboard_temp = {};
+    let countproducts_temp = 0;
+    let countcategories_temp = 0;
+    let stockActual_temp = [];
 
-    // --- NUEVA LÓGICA DE PREDICCIÓN CON EL MICROSERVICIO (MLOps) ---
-    const PYTHON_API_URL = 'http://127.0.0.1:5000/api/v1/predicciones/semanal'; // Asegúrate de que este puerto coincida con tu Flask
-    
+    // Vars IA / predicciones
+    const PYTHON_API_URL = 'http://127.0.0.1:5000/api/v1/predicciones/semanal';
     let datosIA = null;
     let errorIA = null;
+    let entrenando = false;
+    let productos_hoy = [];
+    let semanasProyectadas = [];
+    let productos_semana = [];
 
-    try {
-        const response = await axios.get(PYTHON_API_URL);
-        datosIA = response.data.data; // Contiene Proyecciones, Métricas y Promedio Histórico
-    } catch (e) {
-        // Manejo de error si el Microservicio Flask está caído o el JSON no existe
-        console.error("Error al obtener proyecciones desde la IA (Microservicio Python):", e.message);
-        errorIA = "Servicio de Proyecciones Inactivo (Flask down).";
-    }
-
-    // --- 2. Procesamiento de Datos para la Vista (Dashboard) ---
-    
+    // Vars de presentación
     let proyeccionSemanaActual = null;
     let mensajeComparacion = null;
     let precisionModelo = null;
     let historicoSemanal = [];
 
-    if (datosIA && datosIA.Proyecciones_Semanales && datosIA.Proyecciones_Semanales.length > 0) {
-        
-        proyeccionSemanaActual = datosIA.Proyecciones_Semanales[0]; // La primera semana proyectada
-        const promedioHistorico = datosIA.Comparacion_Historica.Venta_Promedio_Semanal_Libras;
-        const totalProyectado = proyeccionSemanaActual.Total_Proyectado_Libras;
-
-        // ¡NUEVA EXTRACCIÓN! Asegúrate de que existe el campo en el JSON
-        historicoSemanal = datosIA.Comparacion_Historica.Historico_Semanal || [];
-        
-        // 1. Cálculo de Comparación Histórica (Requisito Académico)
-        const diferencia = totalProyectado - promedioHistorico;
-        const porcentajeCambio = ((diferencia / promedioHistorico) * 100).toFixed(2);
-        
-        if (diferencia >= 0) {
-            mensajeComparacion = `Se proyecta un AUMENTO del ${porcentajeCambio}% (${diferencia.toFixed(2)} lbs) con respecto al promedio histórico (${promedioHistorico} lbs).`;
-        } else {
-            mensajeComparacion = `Se proyecta una DISMINUCIÓN del ${Math.abs(porcentajeCambio)}% (${Math.abs(diferencia).toFixed(2)} lbs) con respecto al promedio histórico (${promedioHistorico} lbs).`;
+    try {
+        // Cargar datos base si hay usuario en sesión
+        if (typeof user_temp !== 'undefined' && user_temp) {
+            historyInvoice_temp = await getInvoicesByUserId(user_temp.IdUsuario);
+            mostselledproducts_temp = await getSelledProducts(user_temp.IdUsuario);
+            detailsdashboard_temp = await getDetailsDashboard(user_temp.IdUsuario);
+            countproducts_temp = await getCountProductCategories();
+            countcategories_temp = await getCountCategories();
+            stockActual_temp = await getStockActual(); // [{ IdProducto, NombreProducto, StockActual }]
         }
-        
-        // 2. Métrica de Precisión (Requisito Académico)
-        precisionModelo = datosIA.Metrica_Precision.Precision_Acertada;
 
+        // IA semanal (Flask)
+        try {
+            const response = await axios.get(PYTHON_API_URL);
+            datosIA = response.data.data || response.data;
+        } catch (e) {
+            console.error("Error al obtener proyecciones desde la IA:", e.message);
+            errorIA = "Servicio de Proyecciones Inactivo (Flask down).";
+        }
+
+        // Predicciones locales (CSV) mediante endpoint interno
+        try {
+            const r = await fetch(`${req.protocol}://${req.get('host')}/predicciones`);
+            const pred = await r.json();
+            productos_hoy = pred.productos_hoy || [];
+            semanasProyectadas = pred.semanasProyectadas || [];
+            entrenando = pred.entrenando ?? false;
+        } catch (e) {
+            console.error("Error al obtener predicciones locales:", e.message);
+            // Mantener valores por defecto sin romper el render
+            productos_hoy = [];
+            semanasProyectadas = [];
+        }
+
+        // Procesar IA semanal si existe
+        if (datosIA?.Proyecciones_Semanales?.length > 0) {
+            productos_semana = datosIA.Proyecciones_Semanales;
+            proyeccionSemanaActual = productos_semana[0];
+
+            const promedioHistorico = datosIA?.Comparacion_Historica?.Venta_Promedio_Semanal_Libras || 0;
+            const totalProyectado = proyeccionSemanaActual?.Total_Proyectado_Libras || 0;
+
+            historicoSemanal = datosIA?.Comparacion_Historica?.Historico_Semanal || [];
+            precisionModelo = datosIA?.Metrica_Precision?.Precision_Acertada || null;
+
+            const diferencia = totalProyectado - promedioHistorico;
+            const porcentajeCambio = promedioHistorico > 0 ? ((diferencia / promedioHistorico) * 100).toFixed(2) : 0;
+
+            mensajeComparacion = diferencia >= 0
+                ? `Se proyecta un AUMENTO del ${porcentajeCambio}% (${diferencia.toFixed(2)} lbs) respecto al promedio histórico (${promedioHistorico} lbs).`
+                : `Se proyecta una DISMINUCIÓN del ${Math.abs(porcentajeCambio)}% (${Math.abs(diferencia).toFixed(2)} lbs) respecto al promedio histórico (${promedioHistorico} lbs).`;
+        }
+
+        // Enriquecer productos_hoy con StockActual (merge por NombreProducto)
+        // Si tu CSV incluye IdProducto, cambia a: stockMap[item.IdProducto] y usa prod.IdProducto.
+        if (Array.isArray(stockActual_temp) && stockActual_temp.length > 0 && Array.isArray(productos_hoy)) {
+            const stockMap = {};
+            stockActual_temp.forEach(item => {
+                stockMap[item.NombreProducto] = item.StockActual;
+            });
+
+            productos_hoy = productos_hoy.map(prod => ({
+                ...prod,
+                StockActual: stockMap[prod.ProductoNombre] ?? 0
+            }));
+        }
+
+        // Render
+        return res.render('index', {
+            user: typeof user_temp !== 'undefined' ? user_temp : null,
+
+            // Dashboard
+            historyInvoice: historyInvoice_temp,
+            selledProduct: mostselledproducts_temp,
+            detailsDashboard: detailsdashboard_temp,
+            countProduct: countproducts_temp,
+            countCategories: countcategories_temp,
+
+            // IA y predicciones
+            entrenando,
+            productos_hoy, // ya enriquecido con StockActual
+            semanasProyectadas,
+            productos_semana, // Proyecciones_Semanales completas desde Flask
+            proyeccionTotalSemana1: proyeccionSemanaActual ? proyeccionSemanaActual.Total_Proyectado_Libras : 0,
+            mensajeComparacion,
+            precisionModelo,
+            errorIA,
+            historicoSemanal,
+
+            // Stock (para tablas/modales adicionales)
+            stockActual: stockActual_temp
+        });
+    } catch (err) {
+        console.error('Error en GET /index:', err);
+        return res.status(500).render('login', { error: 'Ocurrió un error al cargar el dashboard.' });
     }
-
-    // --- 3. Renderizar la vista con los nuevos datos ---
-    res.render('index', { // Tu vista se llama 'index.ejs'
-        user: user_temp,
-        historyInvoice: historyInvoice_temp,
-        selledProduct: mostselledproducts_temp,
-        detailsDashboard: detailsdashboard_temp,
-        countProduct: countproducts_temp,
-        countCategories: countcategories_temp,
-
-        // ⬅️ NUEVOS DATOS DE PREDICCIÓN Y MLOPS
-        // Nota: Los nombres 'productos_hoy' y 'productos_semana' pueden ser usados para compatibilidad con la vista
-        productos_hoy: proyeccionSemanaActual ? proyeccionSemanaActual.Clasificacion_Productos : [],
-        productos_semana: datosIA ? datosIA.Proyecciones_Semanales : [], // Las 3 semanas
-
-        // Datos del dashboard para mostrar la comparación y la precisión
-        proyeccionTotalSemana1: proyeccionSemanaActual ? proyeccionSemanaActual.Total_Proyectado_Libras : 0,
-        mensajeComparacion: mensajeComparacion,
-        precisionModelo: precisionModelo,
-        errorIA: errorIA, // Mostrar si hay un error
-
-        // ⬅️ VARIABLE NECESARIA PARA EL NUEVO GRÁFICO
-        historicoSemanal: historicoSemanal // <--- ¡LISTO!
-    });
 });
 
 //Path to render 'vacio.ejs'
@@ -342,7 +346,7 @@ app.get("/nueva_venta", function (req, res) {
 });
 
 //Path to send 'find product'
-app.get ('/search_productsale', async (req, res) => {
+app.get('/search_productsale', async (req, res) => {
     const searchTerm = req.query.term.toLowerCase();
     const findproduct_temp = await findProductforSales();
     const productArray = Object.values(findproduct_temp);
@@ -389,7 +393,7 @@ app.get('/usuarios', async (req, res) => {
     res.render('usuarios', { user: user_temp });
 });
 
-app.get('/proveedores', function (req, res)  {
+app.get('/proveedores', function (req, res) {
     res.render('proveedores', { user: user_temp });
 });
 
@@ -405,68 +409,14 @@ app.get('/reporte_arqueo', async (req, res) => {
 const dayjs = require('dayjs'); // asegúrate de instalar: npm install dayjs
 
 app.get('/api/comparacion', async (req, res) => {
-  const { producto, inicio, fin } = req.query; // producto = IdProducto (ej. P30)
-
-  try {
-    // 1. Ventas reales desde tu DB
-    const ventas = await getVentasPorProducto(producto, inicio, fin);
-    // ventas = [{ fecha: "2025-11-01", producto: "P30", cantidadVendida: 2.5 }, ...]
-
-    // 2. Predicciones desde CSV
-    const predicciones = [];
-    const csvPath = path.join(__dirname, 'ml_prophet', 'ml', 'csv', `predicciones_producto_${producto}_diario.csv`);
-
-    if (fs.existsSync(csvPath)) {
-      await new Promise((resolve, reject) => {
-        fs.createReadStream(csvPath)
-          .pipe(csv())
-          .on('data', row => {
-            const fechaCsv = dayjs(row.ds, 'YYYY-MM-DD');
-            const inicioObj = dayjs(inicio, 'YYYY-MM-DD');
-            const finObj = dayjs(fin, 'YYYY-MM-DD');
-
-            // Debug opcional
-            console.log("Comparando:", row.ds, "inicio:", inicioObj.format(), "fin:", finObj.format());
-
-            if (fechaCsv.isSame(inicioObj) || fechaCsv.isSame(finObj) || (fechaCsv.isAfter(inicioObj) && fechaCsv.isBefore(finObj))) {
-              predicciones.push({
-                fecha: row.ds,
-                producto: row.ProductoID,
-                prediccion: parseFloat(row.yhat),
-                prediccion_lower: parseFloat(row.yhat_lower),
-                prediccion_upper: parseFloat(row.yhat_upper)
-              });
-            }
-          })
-          .on('end', resolve)
-          .on('error', reject);
-      });
-    } else {
-      console.warn(`⚠️ No se encontró el archivo de predicciones: ${csvPath}`);
+    const { producto, inicio, fin } = req.query;
+    try {
+        const resultado = await compararProducto(producto, inicio, fin);
+        res.json(resultado);
+    } catch (err) {
+        console.error('❌ Error en /api/comparacion:', err);
+        res.status(500).json({ error: 'No se pudieron cargar los datos de comparación' });
     }
-
-    // 3. Unir ventas + predicciones por fecha
-    const resultado = ventas.map(v => {
-      const p = predicciones.find(pr => pr.fecha === v.fecha);
-      return {
-        ...v,
-        prediccion: p ? p.prediccion : 0,
-        prediccion_lower: p ? p.prediccion_lower : null,
-        prediccion_upper: p ? p.prediccion_upper : null
-      };
-    });
-
-    // 4. Respuesta final
-    if (resultado.length === 0) {
-      return res.json([]);
-    }
-
-    res.json(resultado);
-
-  } catch (error) {
-    console.error('❌ Error en /api/comparacion:', error);
-    res.status(500).json({ error: 'No se pudieron cargar los datos de comparación' });
-  }
 });
 
 
@@ -476,6 +426,7 @@ app.use(express.static("public"));
 //:::Methods:::POSTS::::::::::::::::::::::::::::::::::::
 
 
+//For login.ejs
 //For login.ejs
 app.post('/login_user', upload.none(), async (req, res) => {
     const { mail, password } = req.body;
@@ -489,6 +440,7 @@ app.post('/login_user', upload.none(), async (req, res) => {
         countcategories_temp = await getCountCategories();
     }
 });
+
 
 //For 'nueva_venta.ejs'
 app.post('/addDataforSale', upload.none(), async (req, res) => {
@@ -552,7 +504,7 @@ app.post('/getHistoryInvoiceforSalesNumber', upload.none(), async (req, res) => 
 });
 
 // Send the details of the sale
-app.post('/getDetails_HistoryoftheSale', upload.none(), async (req,res) => {
+app.post('/getDetails_HistoryoftheSale', upload.none(), async (req, res) => {
     await set_salesHistorywithAll(req, res, user_temp);
 });
 
@@ -601,23 +553,23 @@ app.post('/setChangedolar', upload.none(), async (req, res) => {
     await setter_dolarChange(req, res);
 });
 
-app.post('/reporteproductovencido', upload.none(), function(req, res){
-    sql.connect(config).then(pool=>{
+app.post('/reporteproductovencido', upload.none(), function (req, res) {
+    sql.connect(config).then(pool => {
         return pool.request()
-        .query('select P.NombreProducto, D.FechaVencimiento, D.Cantidad_Peso from DetallesCompra D inner join Producto P on P.IdProducto = D.idproducto where D.FechaVencimiento is not null order by FechaVencimiento')
-        .then(result=>{
-            let NombreProduct = new Array(result.recordset.length);
-            let FechaVencimiento = new Array(result.recordset.length);
-            let Cantidad_Peso = new Array(result.recordset.length);
+            .query('select P.NombreProducto, D.FechaVencimiento, D.Cantidad_Peso from DetallesCompra D inner join Producto P on P.IdProducto = D.idproducto where D.FechaVencimiento is not null order by FechaVencimiento')
+            .then(result => {
+                let NombreProduct = new Array(result.recordset.length);
+                let FechaVencimiento = new Array(result.recordset.length);
+                let Cantidad_Peso = new Array(result.recordset.length);
 
-            for(let i = 0; i < result.recordset.length; i++){
-                NombreProduct[i] = result.recordset[i].NombreProducto;
-                FechaVencimiento[i] = result.recordset[i].FechaVencimiento;
-                Cantidad_Peso[i] = result.recordset[i].Cantidad_Peso;
-            }
-            
-            res.send({nombreproduct:NombreProduct, fechavencimiento:FechaVencimiento, cantidad_peso:Cantidad_Peso});
-        })
+                for (let i = 0; i < result.recordset.length; i++) {
+                    NombreProduct[i] = result.recordset[i].NombreProducto;
+                    FechaVencimiento[i] = result.recordset[i].FechaVencimiento;
+                    Cantidad_Peso[i] = result.recordset[i].Cantidad_Peso;
+                }
+
+                res.send({ nombreproduct: NombreProduct, fechavencimiento: FechaVencimiento, cantidad_peso: Cantidad_Peso });
+            })
     })
 })
 // Verificación de la ruta del archivo de respaldo
@@ -629,7 +581,7 @@ if (!fs.existsSync(backupPath)) {
 }
 
 // Post para restaurar la base de datos
-app.post('/restaurarrespaldo', function(req, res) {
+app.post('/restaurarrespaldo', function (req, res) {
     const killConnectionsQuery = `
       USE master;
       ALTER DATABASE [CarniceriaLupita] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
@@ -640,49 +592,49 @@ app.post('/restaurarrespaldo', function(req, res) {
     `;
 
     sql.connect(config).then(pool => {
-      return pool.request()
-        .query(killConnectionsQuery)
-        .then(result => {
-          res.send("Base de datos restaurada exitosamente");
+        return pool.request()
+            .query(killConnectionsQuery)
+            .then(result => {
+                res.send("Base de datos restaurada exitosamente");
 
-          // Espera un momento para asegurarse de que la respuesta se ha enviado
-          setTimeout(() => {
-            // Reinicia la aplicación
-            exec('npm restart', (err, stdout, stderr) => {
-              if (err) {
-                console.error(`Error al reiniciar la aplicación: ${err.message}`);
-                return;
-              }
-              console.log('Aplicación reiniciada exitosamente');
-              console.log(`stdout: ${stdout}`);
-              console.log(`stderr: ${stderr}`);
+                // Espera un momento para asegurarse de que la respuesta se ha enviado
+                setTimeout(() => {
+                    // Reinicia la aplicación
+                    exec('npm restart', (err, stdout, stderr) => {
+                        if (err) {
+                            console.error(`Error al reiniciar la aplicación: ${err.message}`);
+                            return;
+                        }
+                        console.log('Aplicación reiniciada exitosamente');
+                        console.log(`stdout: ${stdout}`);
+                        console.log(`stderr: ${stderr}`);
+                    });
+                }, 1000); // Espera 1 segundo antes de reiniciar
+            })
+            .catch(err => {
+                console.error("Error al restaurar la base de datos:", err);
+                res.status(500).send("Error al restaurar la base de datos");
             });
-          }, 1000); // Espera 1 segundo antes de reiniciar
-        })
-        .catch(err => {
-          console.error("Error al restaurar la base de datos:", err);
-          res.status(500).send("Error al restaurar la base de datos");
-        });
     }).catch(err => {
-      console.error("Error al conectar a la base de datos:", err);
-      res.status(500).send("Error al conectar a la base de datos");
+        console.error("Error al conectar a la base de datos:", err);
+        res.status(500).send("Error al conectar a la base de datos");
     });
 });
-  
 
-app.post('/optmarca', upload.none(),function(req,res){
-    sql.connect(config).then(pool =>{
+
+app.post('/optmarca', upload.none(), function (req, res) {
+    sql.connect(config).then(pool => {
         return pool.request()
-        .query('select Nombre_Proveedor from Proveedor')
-        .then(result =>{
-            let Marca = new Array(result.recordset.length);
+            .query('select Nombre_Proveedor from Proveedor')
+            .then(result => {
+                let Marca = new Array(result.recordset.length);
 
-            for(let i = 0; i < result.recordset.length; i++){
-                Marca[i] = result.recordset[i].Nombre_Proveedor;
-            }
-            
-            res.send({consult:Marca});
-        })
+                for (let i = 0; i < result.recordset.length; i++) {
+                    Marca[i] = result.recordset[i].Nombre_Proveedor;
+                }
+
+                res.send({ consult: Marca });
+            })
     })
 })
 
@@ -692,11 +644,11 @@ function convertirFechaSQL(fecha) {
     return `${partes[2]}-${partes[1]}-${partes[0]}`;
 }
 
-app.post('/reportesdecompras', upload.none(), function(req, res) {
+app.post('/reportesdecompras', upload.none(), function (req, res) {
     const { opt, inicio, fin } = req.body;
     const OPT = parseInt(opt);
-    const INICIO = convertirFechaSQL(""+inicio);
-    const FIN = convertirFechaSQL(""+fin);
+    const INICIO = convertirFechaSQL("" + inicio);
+    const FIN = convertirFechaSQL("" + fin);
 
     console.log(INICIO)
     console.log(FIN)
@@ -736,7 +688,7 @@ app.post('/reportesdecompras', upload.none(), function(req, res) {
     });
 });
 
-app.post('/formodal', upload.none(), function(req, res){
+app.post('/formodal', upload.none(), function (req, res) {
     const { idcompra } = req.body;
     sql.connect(config).then(pool => {
         // Consulta 1
@@ -746,7 +698,7 @@ app.post('/formodal', upload.none(), function(req, res){
             .then(result1 => {
                 console.log('Consulta 1 Result:', result1.recordset);
                 if (!result1.recordset.length) {
-                    return res.send({error: "No data found"});
+                    return res.send({ error: "No data found" });
                 }
                 let compraData = result1.recordset[0];
 
@@ -791,347 +743,347 @@ app.post('/formodal', upload.none(), function(req, res){
 });
 
 
-app.post('/nuevoproducto', upload.none(), function(req,res){
-    const{nombreProducto, PrecioVenta, UnidadMedida, Existencia, NombreCategoria, NombreProveedor}= req.body
+app.post('/nuevoproducto', upload.none(), function (req, res) {
+    const { nombreProducto, PrecioVenta, UnidadMedida, Existencia, NombreCategoria, NombreProveedor } = req.body
     sql.connect(config).then(pool => {
         return pool.request()
-        .input('NombreProducto', sql.VarChar, nombreProducto)
-        .input('PrecioVenta', sql.Money, PrecioVenta)
-        .input('NombreUnidadMedida', sql.VarChar, UnidadMedida)
-        .input('Existencia', sql.Decimal, Existencia)
-        .input('NombreCategoria', sql.VarChar, NombreCategoria)
-        .input('NombreProveedor', sql.VarChar, NombreProveedor)
-        .execute('InsertarNuevoProducto')
+            .input('NombreProducto', sql.VarChar, nombreProducto)
+            .input('PrecioVenta', sql.Money, PrecioVenta)
+            .input('NombreUnidadMedida', sql.VarChar, UnidadMedida)
+            .input('Existencia', sql.Decimal, Existencia)
+            .input('NombreCategoria', sql.VarChar, NombreCategoria)
+            .input('NombreProveedor', sql.VarChar, NombreProveedor)
+            .execute('InsertarNuevoProducto')
     })
 })
 
 
-app.post('/historialcompra', upload.none(), function(req, res){
-    
-    sql.connect(config).then(pool =>{
+app.post('/historialcompra', upload.none(), function (req, res) {
+
+    sql.connect(config).then(pool => {
         return pool.request()
-        .query('select C.FechaCompra, C.idcompra, P.Nombre_Proveedor, C.idUsuario, sum(Subtotal) as total from DetallesCompra D inner join Compras C on D.idcompra = C.IdCompra inner join Proveedor P on P.IdProveedor = C.idProveedor group by C.IdCompra, C.idUsuario, C.FechaCompra, P.Nombre_Proveedor')
-        .then(result => {
-            
-            let FechaCompra = new Array(result.recordset.length);
-            let IdCompra = new Array(result.recordset.length);
-            let NombreProveedor = new Array(result.recordset.length);
-            let IdUsuario = new Array(result.recordset.length);
-            let Total = new Array(result.recordset.length);
+            .query('select C.FechaCompra, C.idcompra, P.Nombre_Proveedor, C.idUsuario, sum(Subtotal) as total from DetallesCompra D inner join Compras C on D.idcompra = C.IdCompra inner join Proveedor P on P.IdProveedor = C.idProveedor group by C.IdCompra, C.idUsuario, C.FechaCompra, P.Nombre_Proveedor')
+            .then(result => {
 
-            for(let i = 0; i < result.recordset.length; i++){
-                FechaCompra[i] = result.recordset[i].FechaCompra;
-                IdCompra[i] = result.recordset[i].idcompra;
-                NombreProveedor[i] = result.recordset[i].Nombre_Proveedor;
-                IdUsuario[i] = result.recordset[i].idUsuario;
-                Total[i] = result.recordset[i].total;
-            }
+                let FechaCompra = new Array(result.recordset.length);
+                let IdCompra = new Array(result.recordset.length);
+                let NombreProveedor = new Array(result.recordset.length);
+                let IdUsuario = new Array(result.recordset.length);
+                let Total = new Array(result.recordset.length);
 
-            res.send({fechacompra:FechaCompra, idcompra:IdCompra, nombreproveedor:NombreProveedor, idusuario:IdUsuario, total:Total });
-        
-        })
+                for (let i = 0; i < result.recordset.length; i++) {
+                    FechaCompra[i] = result.recordset[i].FechaCompra;
+                    IdCompra[i] = result.recordset[i].idcompra;
+                    NombreProveedor[i] = result.recordset[i].Nombre_Proveedor;
+                    IdUsuario[i] = result.recordset[i].idUsuario;
+                    Total[i] = result.recordset[i].total;
+                }
+
+                res.send({ fechacompra: FechaCompra, idcompra: IdCompra, nombreproveedor: NombreProveedor, idusuario: IdUsuario, total: Total });
+
+            })
     })
 })
 
-app.post('/proveedorestable', upload.none(), function(req, res){
-    sql.connect(config).then(pool =>{
+app.post('/proveedorestable', upload.none(), function (req, res) {
+    sql.connect(config).then(pool => {
         return pool.request()
-        .query('select IdProveedor, Nombre_Proveedor, NombreCategoria from Proveedor P inner join CategoriaProducto C on P.idCategoria = C.IdCategoria')
-        .then(result =>{
-            let IdProveedor = new Array(result.recordset.length);
-            let Nombre_Proveedor = new Array(result.recordset.length);
-            let NombreCategoria = new Array(result.recordset.length);
+            .query('select IdProveedor, Nombre_Proveedor, NombreCategoria from Proveedor P inner join CategoriaProducto C on P.idCategoria = C.IdCategoria')
+            .then(result => {
+                let IdProveedor = new Array(result.recordset.length);
+                let Nombre_Proveedor = new Array(result.recordset.length);
+                let NombreCategoria = new Array(result.recordset.length);
 
-            for(let i = 0; i < result.recordset.length; i++){
-                IdProveedor[i] = result.recordset[i].IdProveedor;
-                Nombre_Proveedor[i] = result.recordset[i].Nombre_Proveedor;
-                NombreCategoria[i] = result.recordset[i].NombreCategoria;
-            }
+                for (let i = 0; i < result.recordset.length; i++) {
+                    IdProveedor[i] = result.recordset[i].IdProveedor;
+                    Nombre_Proveedor[i] = result.recordset[i].Nombre_Proveedor;
+                    NombreCategoria[i] = result.recordset[i].NombreCategoria;
+                }
 
-            res.send({idproveedor:IdProveedor, nombre_proveedor:Nombre_Proveedor, nombrecategoria:NombreCategoria});
-        })
+                res.send({ idproveedor: IdProveedor, nombre_proveedor: Nombre_Proveedor, nombrecategoria: NombreCategoria });
+            })
     })
 })
 
-app.post('/addproveedor', upload.none(), function(req, res){
-    const {nombreprov, categ} = req.body;
-    sql.connect(config).then(pool =>{
+app.post('/addproveedor', upload.none(), function (req, res) {
+    const { nombreprov, categ } = req.body;
+    sql.connect(config).then(pool => {
         // Consulta para obtener el último IdProveedor insertado
         return pool.request()
-        .query('select top 1 IdProveedor from Proveedor order by IdProveedor desc')
-        .then(result =>{
-            // Consulta para obtener el IdCategoria basado en el nombre de la categoría recibido
-            return pool.request()
-            .input('Category', sql.VarChar, categ)
-            .query('select IdCategoria from CategoriaProducto where NombreCategoria = @Category')
-            .then(result2 =>{
-                let newIdProveedor;
+            .query('select top 1 IdProveedor from Proveedor order by IdProveedor desc')
+            .then(result => {
+                // Consulta para obtener el IdCategoria basado en el nombre de la categoría recibido
+                return pool.request()
+                    .input('Category', sql.VarChar, categ)
+                    .query('select IdCategoria from CategoriaProducto where NombreCategoria = @Category')
+                    .then(result2 => {
+                        let newIdProveedor;
 
-                // Verificar si se obtuvo correctamente el IdCategoria
-                if (result2.recordset.length > 0) {
-                    // Obtén la parte numérica del último IdProveedor
-                    const currentId = result.recordset[0].IdProveedor.replace('R', '');
+                        // Verificar si se obtuvo correctamente el IdCategoria
+                        if (result2.recordset.length > 0) {
+                            // Obtén la parte numérica del último IdProveedor
+                            const currentId = result.recordset[0].IdProveedor.replace('R', '');
 
-                    // Verifica si la parte restante es numérica
-                    if (!isNaN(currentId)) {
-                        // Si es numérica, conviértela a entero
-                        const numericPart = parseInt(currentId, 10);
+                            // Verifica si la parte restante es numérica
+                            if (!isNaN(currentId)) {
+                                // Si es numérica, conviértela a entero
+                                const numericPart = parseInt(currentId, 10);
 
-                        // Incrementa el número
-                        const newNumericPart = numericPart + 1;
+                                // Incrementa el número
+                                const newNumericPart = numericPart + 1;
 
-                        // Formatea el número con ceros a la izquierda según la longitud original
-                        const newNumericPartStr = newNumericPart.toString().padStart(currentId.length, '0');
+                                // Formatea el número con ceros a la izquierda según la longitud original
+                                const newNumericPartStr = newNumericPart.toString().padStart(currentId.length, '0');
 
-                        // Crea el nuevo ID con el prefijo 'R'
-                        newIdProveedor = 'R' + newNumericPartStr;
+                                // Crea el nuevo ID con el prefijo 'R'
+                                newIdProveedor = 'R' + newNumericPartStr;
 
-                        console.log('Nuevo ID Proveedor:', newIdProveedor);
-                    } else {
-                        console.error('El valor de IdProveedor no es numérico después de eliminar el prefijo "R".');
-                        throw new Error('Error al generar el nuevo ID del proveedor');
-                    }
+                                console.log('Nuevo ID Proveedor:', newIdProveedor);
+                            } else {
+                                console.error('El valor de IdProveedor no es numérico después de eliminar el prefijo "R".');
+                                throw new Error('Error al generar el nuevo ID del proveedor');
+                            }
 
-                    // Insertar el nuevo proveedor en la base de datos
-                    return pool.request()
-                    .input('IdProveedor', sql.VarChar, newIdProveedor)
-                    .input('NombreProv', sql.VarChar, nombreprov)
-                    .input('IdCateg', sql.Int, result2.recordset[0].IdCategoria)
-                    .query('INSERT INTO Proveedor (IdProveedor, Nombre_Proveedor, idCategoria) VALUES (@IdProveedor, @NombreProv, @IdCateg)')
-                    .then(() => {
-                        res.status(200).send('Proveedor agregado exitosamente');
+                            // Insertar el nuevo proveedor en la base de datos
+                            return pool.request()
+                                .input('IdProveedor', sql.VarChar, newIdProveedor)
+                                .input('NombreProv', sql.VarChar, nombreprov)
+                                .input('IdCateg', sql.Int, result2.recordset[0].IdCategoria)
+                                .query('INSERT INTO Proveedor (IdProveedor, Nombre_Proveedor, idCategoria) VALUES (@IdProveedor, @NombreProv, @IdCateg)')
+                                .then(() => {
+                                    res.status(200).send('Proveedor agregado exitosamente');
+                                })
+                                .catch(err => {
+                                    console.error('Error al insertar proveedor:', err);
+                                    throw new Error('Error al insertar proveedor en la base de datos');
+                                });
+                        } else {
+                            console.error('No se encontró el IdCategoria para la categoría especificada:', categ);
+                            throw new Error('Error al obtener IdCategoria');
+                        }
                     })
-                    .catch(err => {
-                        console.error('Error al insertar proveedor:', err);
-                        throw new Error('Error al insertar proveedor en la base de datos');
-                    });
-                } else {
-                    console.error('No se encontró el IdCategoria para la categoría especificada:', categ);
-                    throw new Error('Error al obtener IdCategoria');
-                }
             })
-        })
+            .catch(err => {
+                console.error('Error en la consulta SQL:', err);
+                res.status(500).send('Error interno del servidor');
+            });
+    })
         .catch(err => {
-            console.error('Error en la consulta SQL:', err);
+            console.error('Error al conectar con la base de datos:', err);
             res.status(500).send('Error interno del servidor');
         });
-    })
-    .catch(err => {
-        console.error('Error al conectar con la base de datos:', err);
-        res.status(500).send('Error interno del servidor');
-    });
 });
 
 
-app.post('/updateprov', upload.none(), function(req, res){
-    const {NombreProveedor, IdProveedor} = req.body;
-    console.log('Datos recibidos para actualizar:', {IdProveedor, NombreProveedor});
+app.post('/updateprov', upload.none(), function (req, res) {
+    const { NombreProveedor, IdProveedor } = req.body;
+    console.log('Datos recibidos para actualizar:', { IdProveedor, NombreProveedor });
 
-    sql.connect(config).then(pool =>{
+    sql.connect(config).then(pool => {
         return pool.request()
-        .input('IdProveedor', sql.VarChar, IdProveedor)
-        .input('NombreProv', sql.VarChar, NombreProveedor)
-        .query('update Proveedor set Nombre_Proveedor = @NombreProv where IdProveedor = @IdProveedor')
-        .then(() => {
-            console.log('Proveedor actualizado exitosamente');
-            res.status(200).send('Proveedor actualizado exitosamente');
-        })
+            .input('IdProveedor', sql.VarChar, IdProveedor)
+            .input('NombreProv', sql.VarChar, NombreProveedor)
+            .query('update Proveedor set Nombre_Proveedor = @NombreProv where IdProveedor = @IdProveedor')
+            .then(() => {
+                console.log('Proveedor actualizado exitosamente');
+                res.status(200).send('Proveedor actualizado exitosamente');
+            })
+            .catch(err => {
+                console.error('Error al actualizar proveedor:', err);
+                res.status(500).send('Error interno del servidor al actualizar proveedor');
+            });
+    })
         .catch(err => {
-            console.error('Error al actualizar proveedor:', err);
-            res.status(500).send('Error interno del servidor al actualizar proveedor');
+            console.error('Error al conectar con la base de datos:', err);
+            res.status(500).send('Error interno del servidor al conectar con la base de datos');
         });
-    })
-    .catch(err => {
-        console.error('Error al conectar con la base de datos:', err);
-        res.status(500).send('Error interno del servidor al conectar con la base de datos');
-    });
 });
 
 
 
-app.post('/categoriasinventario', upload.none(), function(req, res){
-    sql.connect(config).then(pool =>{
+app.post('/categoriasinventario', upload.none(), function (req, res) {
+    sql.connect(config).then(pool => {
         return pool.request()
-        .query('select IdCategoria, NombreCategoria from CategoriaProducto')
-        .then(result =>{
-            let Idcategoria = new Array(result.recordset.length);
-            let Categoria = new Array(result.recordset.length);
+            .query('select IdCategoria, NombreCategoria from CategoriaProducto')
+            .then(result => {
+                let Idcategoria = new Array(result.recordset.length);
+                let Categoria = new Array(result.recordset.length);
 
-            for(let i = 0; i < result.recordset.length; i++){
-                Idcategoria[i] = result.recordset[i].IdCategoria;
-                Categoria[i] = result.recordset[i].NombreCategoria;
-            }
+                for (let i = 0; i < result.recordset.length; i++) {
+                    Idcategoria[i] = result.recordset[i].IdCategoria;
+                    Categoria[i] = result.recordset[i].NombreCategoria;
+                }
 
-            res.send({idcategoria:Idcategoria,categoria:Categoria});
-        })
+                res.send({ idcategoria: Idcategoria, categoria: Categoria });
+            })
     })
 })
 
-app.post('/addcategory', upload.none(), function(req, res){
-    const {categoria} = req.body;
-    sql.connect(config).then(pool =>{
+app.post('/addcategory', upload.none(), function (req, res) {
+    const { categoria } = req.body;
+    sql.connect(config).then(pool => {
         return pool.request()
-        .input('categoria', sql.VarChar, categoria)
-        .query('INSERT INTO CategoriaProducto (NombreCategoria) VALUES (@categoria)')
+            .input('categoria', sql.VarChar, categoria)
+            .query('INSERT INTO CategoriaProducto (NombreCategoria) VALUES (@categoria)')
     })
 })
 
-app.post('/updatecate', upload.none(), function(req, res){
-    const {categoria, idcategoria} = req.body;
-    sql.connect(config).then(pool =>{
+app.post('/updatecate', upload.none(), function (req, res) {
+    const { categoria, idcategoria } = req.body;
+    sql.connect(config).then(pool => {
         return pool.request()
-        .input('idcategoria', sql.Int, idcategoria)
-        .input('categoria', sql.VarChar, categoria)
-        .query('update CategoriaProducto set NombreCategoria = @categoria where IdCategoria = @idcategoria')
+            .input('idcategoria', sql.Int, idcategoria)
+            .input('categoria', sql.VarChar, categoria)
+            .query('update CategoriaProducto set NombreCategoria = @categoria where IdCategoria = @idcategoria')
     })
 })
 
-app.post('/optcategoria', upload.none(),function(req,res){
-    sql.connect(config).then( pool =>{
+app.post('/optcategoria', upload.none(), function (req, res) {
+    sql.connect(config).then(pool => {
         return pool.request()
-        .query('select NombreCategoria from CategoriaProducto')
-        .then(result =>{
-            let Categoria = new Array(result.recordset.length);
+            .query('select NombreCategoria from CategoriaProducto')
+            .then(result => {
+                let Categoria = new Array(result.recordset.length);
 
-            for(let i = 0; i < result.recordset.length; i++){
-                Categoria[i] = result.recordset[i].NombreCategoria;
-            }
+                for (let i = 0; i < result.recordset.length; i++) {
+                    Categoria[i] = result.recordset[i].NombreCategoria;
+                }
 
-            res.send({consult:Categoria});
-        })
+                res.send({ consult: Categoria });
+            })
     })
 })
 
-app.post('/optmedidas', upload.none(),function(req,res){
-    sql.connect(config).then(pool =>{
+app.post('/optmedidas', upload.none(), function (req, res) {
+    sql.connect(config).then(pool => {
         return pool.request()
-        .query('select IdUnidadDeMedida,UnidadMedida from UnidadDeMedida')
-        .then(result =>{
-            let Id = new Array(result.recordset.length);
-            let Medida = new Array(result.recordset.length);
+            .query('select IdUnidadDeMedida,UnidadMedida from UnidadDeMedida')
+            .then(result => {
+                let Id = new Array(result.recordset.length);
+                let Medida = new Array(result.recordset.length);
 
-            for(let i = 0; i < result.recordset.length; i++){
-                Id[i] = result.recordset[i].IdUnidadDeMedida;
-                Medida[i] = result.recordset[i].UnidadMedida;
-            }
+                for (let i = 0; i < result.recordset.length; i++) {
+                    Id[i] = result.recordset[i].IdUnidadDeMedida;
+                    Medida[i] = result.recordset[i].UnidadMedida;
+                }
 
-            res.send({id:Id, consult:Medida});
-        })
+                res.send({ id: Id, consult: Medida });
+            })
     })
 })
 
 
 //
-app.post('/inventary',upload.none(),function(req,res){
-    sql.connect(config).then( pool =>{
+app.post('/inventary', upload.none(), function (req, res) {
+    sql.connect(config).then(pool => {
         return pool.request()
-        .query('select * from Inventario')
-        .then(result => {
-            
-            let Id = new Array(result.recordset.length);
-            let Marca = new Array(result.recordset.length);
-            let Categoria = new Array(result.recordset.length);
-            let Stock = new Array(result.recordset.length);
-            let Precio = new Array(result.recordset.length);
-
-            for(let i = 0; i < result.recordset.length; i++){
-                Id[i] = result.recordset[i].ID;
-                Marca[i] = result.recordset[i].Marca;
-                Categoria[i] = result.recordset[i].Categoria;
-                Stock[i] = result.recordset[i].Stock;
-                Precio[i] = result.recordset[i].Precio;
-            }
-
-            return pool.request()
-            .query('select NombreProducto from Producto')
+            .query('select * from Inventario')
             .then(result => {
-                let NombreProduct = new Array(result.recordset.length);
 
-                for(let i = 0; i < result.recordset.length; i++){
-                    NombreProduct[i] = result.recordset[i].NombreProducto;
+                let Id = new Array(result.recordset.length);
+                let Marca = new Array(result.recordset.length);
+                let Categoria = new Array(result.recordset.length);
+                let Stock = new Array(result.recordset.length);
+                let Precio = new Array(result.recordset.length);
+
+                for (let i = 0; i < result.recordset.length; i++) {
+                    Id[i] = result.recordset[i].ID;
+                    Marca[i] = result.recordset[i].Marca;
+                    Categoria[i] = result.recordset[i].Categoria;
+                    Stock[i] = result.recordset[i].Stock;
+                    Precio[i] = result.recordset[i].Precio;
                 }
 
-                res.send({id:Id, marca:Marca, categoria:Categoria, stock:Stock, precio:Precio, nombreproduct:NombreProduct});
+                return pool.request()
+                    .query('select NombreProducto from Producto')
+                    .then(result => {
+                        let NombreProduct = new Array(result.recordset.length);
+
+                        for (let i = 0; i < result.recordset.length; i++) {
+                            NombreProduct[i] = result.recordset[i].NombreProducto;
+                        }
+
+                        res.send({ id: Id, marca: Marca, categoria: Categoria, stock: Stock, precio: Precio, nombreproduct: NombreProduct });
+                    })
+
             })
-
-        })
+            .catch(err => {
+                // Manejo de errores en la consulta SQL
+                console.error('Error en la consulta SQL:', err);
+                res.status(500).send('Error en la consulta SQL');
+            });
+    })
         .catch(err => {
-            // Manejo de errores en la consulta SQL
-            console.error('Error en la consulta SQL:', err);
-            res.status(500).send('Error en la consulta SQL');
+            // Manejo de errores en la conexión a la base de datos
+            console.error('Error al conectar con la base de datos:', err);
+            res.status(500).send('Error al conectar con la base de datos');
         });
-    })
-    .catch(err => {
-        // Manejo de errores en la conexión a la base de datos
-        console.error('Error al conectar con la base de datos:', err);
-        res.status(500).send('Error al conectar con la base de datos');
-    });
 })
 
-app.post('/updateproduct',upload.none(),function(req,res){
-    const {idproducto, stock, precio} = req.body;
-    sql.connect(config).then(pool =>{
+app.post('/updateproduct', upload.none(), function (req, res) {
+    const { idproducto, stock, precio } = req.body;
+    sql.connect(config).then(pool => {
         return pool.request()
-        .input('idproducto', sql.VarChar, idproducto)
-        .input('stock', sql.Decimal, stock)
-        .input('precio', sql.Decimal, precio)
-        .query('update Producto set Existencia = @stock, PrecioVenta = @precio where IdProducto = @idproducto')
+            .input('idproducto', sql.VarChar, idproducto)
+            .input('stock', sql.Decimal, stock)
+            .input('precio', sql.Decimal, precio)
+            .query('update Producto set Existencia = @stock, PrecioVenta = @precio where IdProducto = @idproducto')
     })
 })
 
-app.post('/getmedida',upload.none(),function(req,res){
-    const{Producto} = req.body;
+app.post('/getmedida', upload.none(), function (req, res) {
+    const { Producto } = req.body;
     var NameProduct = Producto;
-    sql.connect(config).then(pool =>{
+    sql.connect(config).then(pool => {
         return pool.request()
-        .input('Producto', sql.VarChar, NameProduct)
-        .query('select UnidadDeMedida from Producto where NombreProducto = @Producto')
-        .then(result =>{
-            let unidMedida = result.recordset[0].UnidadDeMedida;
-            console.log(unidMedida);
-            res.send({categoria:unidMedida});
-        })
+            .input('Producto', sql.VarChar, NameProduct)
+            .query('select UnidadDeMedida from Producto where NombreProducto = @Producto')
+            .then(result => {
+                let unidMedida = result.recordset[0].UnidadDeMedida;
+                console.log(unidMedida);
+                res.send({ categoria: unidMedida });
+            })
     })
 })
 
-app.post('/option',upload.none(),function(req,res){
-    sql.connect(config).then( pool =>{
-        
+app.post('/option', upload.none(), function (req, res) {
+    sql.connect(config).then(pool => {
+
         return pool.request()
-       .query('select IdProveedor, Nombre_Proveedor from Proveedor')
-       .then(result => {
-           let IdProveedor = new Array(result.recordset.length);
-           let Nombre_Proveedor = new Array(result.recordset.length);
-           for(let i=0;i<result.recordset.length;i++){
-               IdProveedor[i] = result.recordset[i].IdProveedor;
-               Nombre_Proveedor[i] = result.recordset[i].Nombre_Proveedor;
-            }
-            res.send({idproveedor:IdProveedor, nombre_proveedor:Nombre_Proveedor});
-        })
+            .query('select IdProveedor, Nombre_Proveedor from Proveedor')
+            .then(result => {
+                let IdProveedor = new Array(result.recordset.length);
+                let Nombre_Proveedor = new Array(result.recordset.length);
+                for (let i = 0; i < result.recordset.length; i++) {
+                    IdProveedor[i] = result.recordset[i].IdProveedor;
+                    Nombre_Proveedor[i] = result.recordset[i].Nombre_Proveedor;
+                }
+                res.send({ idproveedor: IdProveedor, nombre_proveedor: Nombre_Proveedor });
+            })
     })
 })
 var IdProveedor = '';
-app.post('/option2',upload.none(),function(req,res){
-    const {txtDocumentoProveedor} = req.body;
+app.post('/option2', upload.none(), function (req, res) {
+    const { txtDocumentoProveedor } = req.body;
     IdProveedor = txtDocumentoProveedor;
-    sql.connect(config).then(pool =>{
+    sql.connect(config).then(pool => {
         return pool.request()
-        .input('IdProveedor', sql.VarChar, IdProveedor)
-        .query('select IdProducto, NombreProducto from Producto A inner join Proveedor B on A.IdProveedor = B.IdProveedor where B.IdProveedor = @IdProveedor')
-        .then(result =>{
-            let NombreProducto = new Array(result.recordset.length);
-            let IdProducto = new Array(result.recordset.length);
-            for(let i = 0; i < result.recordset.length; i++){
-                NombreProducto[i] = result.recordset[i].NombreProducto;
-                IdProducto[i] = result.recordset[i].IdProducto;
-            }
-            res.send({idproducto:IdProducto, nombreproducto:NombreProducto});
-        })
+            .input('IdProveedor', sql.VarChar, IdProveedor)
+            .query('select IdProducto, NombreProducto from Producto A inner join Proveedor B on A.IdProveedor = B.IdProveedor where B.IdProveedor = @IdProveedor')
+            .then(result => {
+                let NombreProducto = new Array(result.recordset.length);
+                let IdProducto = new Array(result.recordset.length);
+                for (let i = 0; i < result.recordset.length; i++) {
+                    NombreProducto[i] = result.recordset[i].NombreProducto;
+                    IdProducto[i] = result.recordset[i].IdProducto;
+                }
+                res.send({ idproducto: IdProducto, nombreproducto: NombreProducto });
+            })
 
     })
 })
 
-app.post('/comprar', upload.none(), function(req,res){
+app.post('/comprar', upload.none(), function (req, res) {
     const { idUsuario, idproducto, cantidad, precio, FechaVencimiento, txtDocumentoId } = req.body;
 
     const idUsuarios = JSON.parse(idUsuario);
@@ -1143,14 +1095,14 @@ app.post('/comprar', upload.none(), function(req,res){
 
     const FechaActual = new Date();
 
-    sql.connect(config).then(pool =>{
+    sql.connect(config).then(pool => {
         var CLidproducto = new sql.Table('CLidproducto');
         var CLcantidad = new sql.Table('CLcantidad');
         var CLprecio = new sql.Table('CLprecio');
         var CLvencimiento = new sql.Table('CLfechavencimiento');
 
         CLcantidad.columns.add('UniqueId', sql.Int);
-        CLcantidad.columns.add('Cantidad', sql.Decimal(10,2));
+        CLcantidad.columns.add('Cantidad', sql.Decimal(10, 2));
 
         CLidproducto.columns.add('UniqueId', sql.Int);
         CLidproducto.columns.add('IdProducto', sql.VarChar(6));
@@ -1161,31 +1113,31 @@ app.post('/comprar', upload.none(), function(req,res){
         CLvencimiento.columns.add('UniqueId', sql.Int);
         CLvencimiento.columns.add('fechavencimiento', sql.Date);
 
-        for(let i=0; i<idproductos.length; i++){
+        for (let i = 0; i < idproductos.length; i++) {
             CLcantidad.rows.add(i, parseFloat(cantidades[i]));
             CLidproducto.rows.add(i, idproductos[i]);
-            CLprecio.rows.add(i, parseFloat( precios[i]));
+            CLprecio.rows.add(i, parseFloat(precios[i]));
             CLvencimiento.rows.add(i, fechavencimiento[i]);
         }
 
         return pool.request()
-        .input('FechaCompra', sql.Date, FechaActual)
-        .input('idProveedor', sql.VarChar(6), txtDocumentoIds)
-        .input('idusuario', sql.Int, idUsuarios)
-        .query('insert into Compras (FechaCompra, idProveedor, idUsuario) values (@FechaCompra, @idProveedor, @idusuario)')
-        .then(result =>{
-            return pool.request()
-            .query('select top 1 IdCompra from Compras order by IdCompra desc')
-            .then(result =>{
+            .input('FechaCompra', sql.Date, FechaActual)
+            .input('idProveedor', sql.VarChar(6), txtDocumentoIds)
+            .input('idusuario', sql.Int, idUsuarios)
+            .query('insert into Compras (FechaCompra, idProveedor, idUsuario) values (@FechaCompra, @idProveedor, @idusuario)')
+            .then(result => {
                 return pool.request()
-                .input('IdCompra', sql.Int, parseInt(result.recordset[0].IdCompra))
-                .input('CLcantidad', sql.TVP, CLcantidad)
-                .input('CLidproducto', sql.TVP, CLidproducto)
-                .input('CLprecio', sql.TVP, CLprecio)
-                .input('CLfechavencimiento', sql.TVP, CLvencimiento)
-                .execute('Comprar')
+                    .query('select top 1 IdCompra from Compras order by IdCompra desc')
+                    .then(result => {
+                        return pool.request()
+                            .input('IdCompra', sql.Int, parseInt(result.recordset[0].IdCompra))
+                            .input('CLcantidad', sql.TVP, CLcantidad)
+                            .input('CLidproducto', sql.TVP, CLidproducto)
+                            .input('CLprecio', sql.TVP, CLprecio)
+                            .input('CLfechavencimiento', sql.TVP, CLvencimiento)
+                            .execute('Comprar')
+                    })
             })
-        })
     })
 })
 

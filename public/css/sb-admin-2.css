@@ -11399,3 +11399,25 @@ body.sidebar-toggled footer.sticky-footer {
   text-decoration: none;
   cursor: pointer;
 }
+
+.modal_hoy {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content_hoy {
+  background-color: #fff;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 45%;        /* 🔴 más ancho que el otro modal */
+  max-width: 1200px; /* límite máximo */
+  border-radius: 8px;
+}

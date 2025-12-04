@@ -18,14 +18,15 @@ RESULTADO_JSON = os.path.join(OUTPUT_DIR, "proyecciones_semanales_ranking.json")
 
 DB_CONFIG = {
     "Driver": "{ODBC Driver 17 for SQL Server}",
-    "Server": "localhost",
+    "Server": "serverbutchershop.database.windows.net",
     "Database": "CarniceriaLupita",
     "Uid": "user_db",
-    "Pwd": "12345",
+    "Pwd": "iejr6225,",   # ← ojo con la coma, ¿es parte real de la contraseña?
     "Encrypt": "yes",
     "TrustServerCertificate": "yes",
-    "Connection Timeout": 30
+    "Connection Timeout": "30"
 }
+
 
 NUM_SEMANAS_PRONOSTICO = 3 
 VENTAS_HISTORICAS_MESES = 6 # Rango para calcular el promedio histórico (6 meses)

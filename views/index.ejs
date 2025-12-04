@@ -464,10 +464,17 @@
                             </div>
                             <div class="card-body">
                                 <!-- <h5 class="card-title">Semana actual (1)</h5> -->
-                                <h5>Proyección de Venta (<%= productos_semana[0].Fecha_Inicio %> - <%= productos_semana[0].Fecha_Fin %>)</h5>
-                                <p class="card-text">
-                                    Total proyectado: <%= proyeccionTotalSemana1 %> libras
-                                </p>
+                                <% if (productos_semana && productos_semana.length > 0) { %>
+                                    <h5>
+                                        Proyección de Venta (<%= productos_semana[0].Fecha_Inicio %> - <%= productos_semana[0].Fecha_Fin %>)
+                                    </h5>
+                                    <p class="card-text">
+                                        Total proyectado: <%= proyeccionTotalSemana1 %> libras
+                                    </p>
+                                <% } else { %>
+                                    <h5>No hay proyecciones disponibles</h5>
+                                <% } %>
+
 
                                 <% if (mensajeComparacion) { %>
                                     <p class="text-info small">
@@ -750,31 +757,40 @@
     <!-- Modales personalizados para cada producto del día -->
     <% if (!entrenando && productos_hoy && productos_hoy.length > 0) { %>
     <% productos_hoy.forEach(function(prod, index) { %>
-        <div id="modalHoy<%= index %>" class="modal_efectivo">
-        <div class="modal-content_efectivo">
-            <span class="close_changedolar" onclick="cerrarModalHoy(<%= index %>)">&times;</span>
-            <p><strong><%= prod.ProductoNombre %></strong> - Proyección del día de HOY: <%= Number.parseFloat(prod.VentasHoy || 0).toFixed(2) %> lbs</p>
+        <div id="modalHoy<%= index %>" class="modal_hoy">
+            <div class="modal-content_hoy">
+                <span class="close_changedolar" onclick="cerrarModalHoy(<%= index %>)">&times;</span>
 
-            <div class="form-group col-sm-6">
-            <label for="fechaInicioHoy<%= index %>">Fecha inicio</label>
-            <input type="date" id="fechaInicioHoy<%= index %>" class="form-control form-control-sm">
+                <p>
+                    <strong>
+                        <%= prod.ProductoNombre %>
+                    </strong><br>
+                    Proyección del día de HOY: <%= Number.parseFloat(prod.VentasHoy || 0).toFixed(2) %> lbs<br>
+                        Stock actual: <%= Number.parseFloat(prod.StockActual || 0).toFixed(2) %> lbs
+                </p>
+
+                <div class="form-group col-sm-6">
+                    <label for="fechaInicioHoy<%= index %>">Fecha inicio</label>
+                    <input type="date" id="fechaInicioHoy<%= index %>" class="form-control form-control-sm">
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <label for="fechaFinHoy<%= index %>">Fecha fin</label>
+                    <input type="date" id="fechaFinHoy<%= index %>" class="form-control form-control-sm">
+                </div>
+
+                <div class="form-group col-sm-6 mt-3">
+                    <button class="btn btn-success btn-sm btn-block"
+                        onclick="compararVentasHoy(<%= index %>, '<%= prod.ProductoNombre %>', <%= Number.parseFloat(prod.VentasHoy || 0) %>)">
+                        Mostrar comparación
+                    </button>
+                </div>
+
+                <ul id="resultadoHoy<%= index %>" class="list-group mt-3"></ul>
             </div>
-
-            <div class="form-group col-sm-6">
-            <label for="fechaFinHoy<%= index %>">Fecha fin</label>
-            <input type="date" id="fechaFinHoy<%= index %>" class="form-control form-control-sm">
-            </div>
-
-            <div class="form-group col-sm-6 mt-3">
-            <button class="btn btn-success btn-sm btn-block"
-                onclick="compararVentasHoy(<%= index %>, '<%= prod.ProductoNombre %>', <%= Number.parseFloat(prod.VentasHoy || 0) %>)">
-                Mostrar comparación
-            </button>
-            </div>
-
-            <ul id="resultadoHoy<%= index %>" class="list-group mt-3"></ul>
         </div>
-        </div>
+
+
     <% }) %>
     <% } %>
 
@@ -941,36 +957,39 @@
         };
 
         // --- Render Día (expuesto globalmente) ---
-        function renderProyeccionesDia(productos) {
-            const tbody = document.querySelector('#tbventa tbody');
-            const totalHoy = document.getElementById('totalHoy');
-            if (!tbody || !totalHoy) {
+    // --- Render Día (expuesto globalmente) ---
+    function renderProyeccionesDia(productos) {
+        const tbody = document.querySelector('#tbventa tbody');
+        const totalHoy = document.getElementById('totalHoy');
+        if (!tbody || !totalHoy) {
             console.warn('renderProyeccionesDia: faltan #tbventa tbody o #totalHoy en el DOM.');
             return;
-            }
+        }
 
-            tbody.innerHTML = '';
-            let total = 0;
+        tbody.innerHTML = '';
+        let total = 0;
 
-            (Array.isArray(productos) ? productos : []).forEach((prod, index) => {
+        (Array.isArray(productos) ? productos : []).forEach((prod, index) => {
             const proy = Number.parseFloat(prod?.VentasHoy ?? 0);
+            
             total += isNaN(proy) ? 0 : proy;
 
             const row = `
                 <tr>
-                <td>${prod?.ProductoNombre ?? '—'}</td>
-                <td>${(isNaN(proy) ? 0 : proy).toFixed(2)}</td>
-                <td>
-                    <button class="btn btn-sm btn-primary" onclick="abrirModalHoy(${index})">
-                    Ver detalles
-                    </button>
-                </td>
+                    <td>${prod?.ProductoNombre ?? '—'}</td>
+                    <td>${(isNaN(proy) ? 0 : proy).toFixed(2)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="abrirModalHoy(${index})">
+                            Ver detalles
+                        </button>
+                    </td>
                 </tr>`;
             tbody.insertAdjacentHTML('beforeend', row);
-            });
+        });
 
-            totalHoy.innerText = `Total proyectado HOY: ${total.toFixed(2)} libras`;
-        }
+        totalHoy.innerText = `Total proyectado HOY: ${total.toFixed(2)} libras`;
+    }
+
 
         // --- Render Semana (acepta varios formatos) ---
         function renderProyeccionesSemana(data) {
@@ -1072,7 +1091,6 @@
 
 
     <script>
-        // Diccionario NombreProducto → IdProducto
         const productoMap = {
             "Producto de Prueba": "P29",
             "Pierna Especial": "P30",
@@ -1108,17 +1126,14 @@
             "Queso": "PL003"
         };
 
-        async function compararVentasHoy(index, productoNombre, proyeccionHoy) {
+        async function compararVentasHoy(index, productoNombre) {
             const inicio = document.getElementById('fechaInicioHoy' + index).value;
             const fin = document.getElementById('fechaFinHoy' + index).value;
             const resultado = document.getElementById('resultadoHoy' + index);
 
-            // Convertir nombre → IdProducto
             const productoId = productoMap[productoNombre] || productoNombre;
 
             resultado.innerHTML = '<li class="list-group-item text-center">Cargando comparación...</li>';
-            console.log("Inicio input:", document.getElementById('fechaInicioHoy' + index).value);
-            console.log("Fin input:", document.getElementById('fechaFinHoy' + index).value);
 
             try {
                 const res = await fetch(`/api/comparacion?producto=${encodeURIComponent(productoId)}&inicio=${inicio}&fin=${fin}`);
@@ -1131,30 +1146,70 @@
 
                 resultado.innerHTML = '';
                 data.forEach(item => {
-                    const vendido = Number.parseFloat(item.cantidadVendida ?? 0);
+                    const vendido = Number.parseFloat(item.ventas_reales ?? 0);
                     const predicho = Number.parseFloat(item.prediccion ?? 0);
 
-                    let crecimientoTexto, colorClass, emoji;
+                    // --- Diferencia vs predicción ---
+                    let diferenciaTexto, colorClass, emoji;
                     if (predicho > 0) {
-                        const crecimiento = ((vendido - predicho) / predicho) * 100;
-                        if (crecimiento > 0) { colorClass = 'text-success'; emoji = '📈'; }
-                        else if (crecimiento < 0) { colorClass = 'text-danger'; emoji = '📉'; }
-                        else { colorClass = 'text-muted'; emoji = '➖'; }
-                        crecimientoTexto = `${crecimiento.toFixed(2)}% ${emoji}`;
+                        const diferenciaPct = ((vendido - predicho) / predicho) * 100;
+                        if (diferenciaPct > 0) {
+                            colorClass = 'text-success';
+                            emoji = '📈';
+                            diferenciaTexto = `La IA se quedó corta: se vendió ${diferenciaPct.toFixed(2)}% más de lo esperado ${emoji}`;
+                        } else if (diferenciaPct < 0) {
+                            colorClass = 'text-danger';
+                            emoji = '📉';
+                            diferenciaTexto = `La IA sobreestimó: se vendió ${Math.abs(diferenciaPct).toFixed(2)}% menos de lo esperado ${emoji}`;
+                        } else {
+                            colorClass = 'text-muted';
+                            emoji = '➖';
+                            diferenciaTexto = `La predicción fue exacta ${emoji}`;
+                        }
                     } else {
                         colorClass = 'text-muted';
-                        crecimientoTexto = 'Sin predicción histórica ❓';
+                        diferenciaTexto = 'Sin predicción histórica ❓';
                     }
 
+                    // --- Estado de quiebre ---
+                    const quiebreClass = item.quiebre ? 'text-danger fw-bold' : 'text-success';
+                    const quiebreTexto = item.quiebre ? 'Quiebre de stock' : 'Alineado';
+
+                    // --- Impacto económico y físico ---
+                    const impactoNum = Number.parseFloat(item.impacto_economico ?? 0);
+                    const impactoPositivo = impactoNum >= 0;
+                    const impactoClass = impactoPositivo ? 'text-success fw-bold' : 'text-danger fw-bold';
+
+                    // Mensaje claro con íconos
+                    const impactoBloque = `
+                        <span class="${impactoClass}">
+                            📦 Diferencia física: ${item.impacto_libras_texto ?? "0 lbs"} 
+                            (${impactoPositivo ? "más producto vendido que lo esperado" : "menos producto vendido que lo esperado"})<br>
+                            💰 Impacto económico: ${item.impacto_economico_texto ?? "C$0.00"} 
+                            (${impactoPositivo ? "ganancia adicional" : "pérdida respecto a lo esperado"})
+                        </span>
+                    `;
+
                     resultado.innerHTML += `
-            <li class="list-group-item">
-            <strong>${item.fecha}</strong><br>
-            Producto: ${productoNombre}<br>
-            Predicho: ${predicho.toFixed(2)} lbs<br>
-            Vendido: ${vendido.toFixed(2)} lbs<br>
-            Variación vs predicho: <span class="${colorClass}">${crecimientoTexto}</span>
-            </li>
-        `;
+                        <li class="list-group-item">
+                            <strong>${item.fecha}</strong><br>
+                            Producto: ${productoNombre}<br>
+                            Precio unitario: ${item.precio_unitario_texto ?? "C$0.00"}<br>
+                            Stock inicial: ${Number.parseFloat(item.stock_inicial ?? 0).toFixed(2)} lbs<br>
+                            Predicho: ${predicho.toFixed(2)} lbs |
+                            Vendido: ${vendido.toFixed(2)} lbs<br>
+                            Diferencia vs predicción: <span class="${colorClass}">${diferenciaTexto}</span><br>
+                            Ventas cubiertas: ${Number(item.ventas_cubiertas ?? 0).toFixed(2)} lbs<br>
+                            Demanda no cubierta: <span class="${item.demanda_no_cubierta > 0 ? 'text-danger' : 'text-muted'}">
+                                ${Number(item.demanda_no_cubierta ?? 0).toFixed(2)} lbs
+                            </span><br>
+                            Estado: <span class="${quiebreClass}">${quiebreTexto}</span><br>
+                            ${impactoBloque}<br>
+                            Logística: ${item.logistica ?? '-'}<br>
+                            Acción recomendada: ${item.accion_recomendada ?? '-'}<br>
+                            Stock final: ${Number.parseFloat(item.stock_final ?? 0).toFixed(2)} lbs<br>
+                        </li>
+                    `;
                 });
             } catch (err) {
                 resultado.innerHTML = '<li class="list-group-item text-danger">Error al cargar comparación</li>';
@@ -1162,6 +1217,8 @@
             }
         }
     </script>
+
+
 
 
 
@@ -1256,78 +1313,6 @@
   // Ejecutar la prueba al cargar la página
   probarProgressXHR();
 </script>
-
-<!--
-<script>
-    // 1. Obtener los datos completos de las 3 semanas que vienen de Node.js
-    const datosProyeccion = <%- JSON.stringify(productos_semana) %>;
-    let miGrafico; // Variable global para el objeto Chart
-
-    // Función para crear y actualizar el gráfico
-    function actualizarGrafico(indiceSemana) {
-        if (!datosProyeccion || datosProyeccion.length === 0) return;
-
-        const semana = datosProyeccion[indiceSemana];
-        
-        // El ranking viene de menor a mayor. Lo revertimos para graficar de mayor a menor.
-        const rankingRevertido = [...semana.Clasificacion_Productos].reverse();
-
-        const nombresProductos = rankingRevertido.map(p => p.ProductoNombre);
-        const proyeccionesLibras = rankingRevertido.map(p => p.ProyeccionLibras);
-
-        // Actualizar títulos y totales
-        document.getElementById('tituloGrafico').innerText = `Ranking Proyectado para Semana ${semana.Semana_Numero}`;
-        document.getElementById('spanSemanaActual').innerText = `Semana ${semana.Semana_Numero}`;
-        document.getElementById('totalSemanaActual').innerText = semana.Total_Proyectado_Libras;
-
-        // Destruir el gráfico anterior si existe
-        if (miGrafico) {
-            miGrafico.destroy();
-        }
-
-        // Crear el nuevo gráfico de barras
-        const ctx = document.getElementById('proyeccionChart').getContext('2d');
-        miGrafico = new Chart(ctx, {
-            type: 'bar', // Tipo de gráfico: barras
-            data: {
-                labels: nombresProductos,
-                datasets: [{
-                    label: 'Proyección (Libras)',
-                    data: proyeccionesLibras,
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)', // Azul
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                indexAxis: 'y', // Hace las barras horizontales (mejor para nombres largos)
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Libras Proyectadas'
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                }
-            }
-        });
-    }
-
-    // Inicializar el gráfico con la primera semana cuando el modal se abra
-    document.getElementById('modalProyecciones').addEventListener('shown.bs.modal', function () {
-        actualizarGrafico(0);
-    });
-</script>
-
--->
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
